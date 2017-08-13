@@ -12,7 +12,7 @@ int main (int argc, char *argv[]) {
     SDL_Quit ();
     return -1;
   }
-  SDL_Log ("Game running\n");
+  SDL_Log ("Game running");
 
   GGame_run (game);
   GGame_free (game);
