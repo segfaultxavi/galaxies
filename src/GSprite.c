@@ -67,11 +67,15 @@ int GSprite_action (GSprite *spr, GEvent *event) {
   GSprite *ptr = spr->children;
   if (!GSprite_is_inside (spr, event->x, event->y))
     return 0;
+  event->x -= spr->x;
+  event->y -= spr->y;
   while (ptr) {
     if (GSprite_action (ptr, event))
       return 1;
     ptr = ptr->next;
   }
+  event->x += spr->x;
+  event->y += spr->y;
   if (spr->action)
     return spr->action (spr, event);
   return 0;
