@@ -84,5 +84,6 @@ int GSprite_action (GSprite *spr, GEvent *event) {
 int GSprite_is_inside (GSprite *spr, int x, int y) {
   if (spr->is_inside)
     return spr->is_inside (spr, x, y);
+  if (spr->w == -1) return 1;
   return x >= spr->x && y >= spr->y && x <= spr->x + spr->w && y <= spr->y + spr->h;
 }

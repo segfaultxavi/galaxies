@@ -4,6 +4,7 @@
 #include "GSprite.h"
 #include "GSpriteTestBox.h"
 #include "GSpriteLabel.h"
+#include "GSpriteNull.h"
 
 struct _GGame {
   SDL_Window *sdl_window;
@@ -34,10 +35,12 @@ GGame *GGame_new () {
   }
 
   SDL_SetWindowTitle (game->sdl_window, "Galaxies");
-  game->root = GSpriteTestBox_new (100, 100, 440, 280);
-  GSprite_add_child (game->root, GSpriteLabel_new (20, 20, game->sdl_renderer, game->font_big, 0xFF0000FF, "hello"));
-  GSprite_add_child (game->root, GSpriteLabel_new (20, 80, game->sdl_renderer, game->font_med, 0xFFFFFF00, "medium"));
-  GSprite_add_child (game->root, GSpriteLabel_new (20, 100, game->sdl_renderer, game->font_small, 0xFFFFFFFF, "very small font"));
+  game->root = GSpriteNull_new (200, 0);
+  GSprite *test = GSpriteTestBox_new (100, 100, 440, 280);
+  GSprite_add_child (game->root, test);
+  GSprite_add_child (test, GSpriteLabel_new (20, 20, game->sdl_renderer, game->font_big, 0xFF0000FF, "hello"));
+  GSprite_add_child (test, GSpriteLabel_new (20, 80, game->sdl_renderer, game->font_med, 0xFFFFFF00, "medium"));
+  GSprite_add_child (test, GSpriteLabel_new (20, 100, game->sdl_renderer, game->font_small, 0xFFFFFFFF, "very small font"));
   return game;
 
 error:

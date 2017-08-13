@@ -171,6 +171,7 @@ copy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath)</Command>
     <ClCompile Include="..\..\src\GGame.c" />
     <ClCompile Include="..\..\src\GSprite.c" />
     <ClCompile Include="..\..\src\GSpriteLabel.c" />
+    <ClCompile Include="..\..\src\GSpriteNull.c" />
     <ClCompile Include="..\..\src\GSpriteTestBox.c" />
     <ClCompile Include="..\..\src\main.c" />
   </ItemGroup>
@@ -179,6 +180,7 @@ copy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath)</Command>
     <ClInclude Include="..\..\src\GGame.h" />
     <ClInclude Include="..\..\src\GSprite.h" />
     <ClInclude Include="..\..\src\GSpriteLabel.h" />
+    <ClInclude Include="..\..\src\GSpriteNull.h" />
     <ClInclude Include="..\..\src\GSpriteTestBox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

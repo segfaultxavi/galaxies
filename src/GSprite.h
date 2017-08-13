@@ -1,6 +1,7 @@
 #ifndef __GSPRITE_H__
 #define __GSPRITE_H__
 
+#include <SDL.h>
 #include "GEvent.h"
 
 typedef struct _GSprite GSprite;
