@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include "GGame.h"
 #include "GSprite.h"
 #include "GSpriteTestBox.h"

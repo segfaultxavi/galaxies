@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include "GGame.h"
 
@@ -6,6 +7,11 @@ int main (int argc, char *argv[]) {
   GGame *game;
   if (SDL_Init (SDL_INIT_VIDEO) != 0) {
     fprintf (stderr, "SDL_Init: %s\n", SDL_GetError());
+    return -1;
+  }
+  if (TTF_Init () == -1) {
+    fprintf (stderr, "TTF_Init: %s", TTF_GetError ());
+    return -1;
   }
   game = GGame_new ();
   if (!game) {
@@ -16,6 +22,7 @@ int main (int argc, char *argv[]) {
 
   GGame_run (game);
   GGame_free (game);
+  TTF_Quit ();
   SDL_Quit ();
 
   return 0;
