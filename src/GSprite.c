@@ -2,7 +2,7 @@
 #include "GSprite.h"
 #include <memory.h>
 
-GSprite *GSprite_new (int size, GSpriteRender render, GSpriteAction action, GSpriteIsInside is_inside)
+GSprite *GSprite_new (int size, GSpriteRender render, GSpriteAction action, GSpriteIsInside is_inside, GSpriteFree _free)
 {
   GSprite *spr = malloc (size);
   memset (spr, 0, sizeof (GSprite));
@@ -10,13 +10,23 @@ GSprite *GSprite_new (int size, GSpriteRender render, GSpriteAction action, GSpr
   spr->render = render;
   spr->action = action;
   spr->is_inside = is_inside;
+  spr->free = _free;
 
   return spr;
 }
 
 void GSprite_free (GSprite *spr) {
+  GSprite *ptr;
   if (!spr) return;
+  if (spr->free)
+    spr->free (spr);
+  ptr = spr->children;
   free (spr);
+  while (ptr) {
+    spr = ptr->next;
+    GSprite_free (ptr);
+    ptr = spr;
+  }
 }
 
 void GSprite_unparent (GSprite *spr) {
@@ -43,14 +53,13 @@ void GSprite_add_child (GSprite *parent, GSprite *child) {
   child->parent = parent;
 }
 
-void GSprite_render (GSprite *spr, SDL_Renderer *renderer) {
+void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int x, int y) {
+  GSprite *ptr = spr->children;
   if (spr->render)
-    spr->render (spr, renderer);
-  spr = spr->children;
-  while (spr) {
-    if (spr->render)
-      spr->render (spr, renderer);
-    spr = spr->next;
+    spr->render (spr, renderer, x, y);
+  while (ptr) {
+    GSprite_render (ptr, renderer, spr->x + x, spr->y + y);
+    ptr = ptr->next;
   }
 }
 

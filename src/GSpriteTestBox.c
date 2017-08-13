@@ -6,10 +6,10 @@ typedef struct _GSpriteTestBox {
   int color;
 } GSpriteTestBox;
 
-void GSpriteTestBox_render (GSpriteTestBox *spr, SDL_Renderer *renderer) {
+void GSpriteTestBox_render (GSpriteTestBox *spr, SDL_Renderer *renderer, int offsx, int offsy) {
   SDL_Rect rect;
-  rect.x = spr->base.x;
-  rect.y = spr->base.y;
+  rect.x = spr->base.x + offsx;
+  rect.y = spr->base.y + offsy;
   rect.w = spr->base.w;
   rect.h = spr->base.h;
   SDL_SetRenderDrawColor (renderer,
@@ -24,7 +24,7 @@ void GSpriteTestBox_render (GSpriteTestBox *spr, SDL_Renderer *renderer) {
 
 int GSpriteTestBox_action (GSpriteTestBox *spr, GEvent *event) {
   if (event->type == SDL_MOUSEBUTTONDOWN) {
-    spr->color ^= 0x0000FF00;
+    spr->color ^= 0x00008000;
     SDL_Log ("Clicked");
   }
   return 1;
@@ -32,7 +32,7 @@ int GSpriteTestBox_action (GSpriteTestBox *spr, GEvent *event) {
 
 GSprite *GSpriteTestBox_new (int x, int y, int w, int h) {
   GSpriteTestBox *spr = (GSpriteTestBox *)GSprite_new (sizeof (GSpriteTestBox),
-      (GSpriteRender)GSpriteTestBox_render, (GSpriteAction)GSpriteTestBox_action, NULL);
+      (GSpriteRender)GSpriteTestBox_render, (GSpriteAction)GSpriteTestBox_action, NULL, NULL);
   spr->base.x = x;
   spr->base.y = y;
   spr->base.w = w;
