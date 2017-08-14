@@ -3,6 +3,7 @@
 #include "GGame.h"
 #include "GSprite.h"
 #include "GSpriteMainMenu.h"
+#include "GSpriteNull.h"
 
 struct _GGame {
   SDL_Window *sdl_window;
@@ -20,10 +21,13 @@ int ggame_height = 480;
 
 GGame *GGame_new () {
   GGame *game = malloc (sizeof (GGame));
+
+  // Window
   if (SDL_CreateWindowAndRenderer (ggame_width, ggame_height, SDL_WINDOW_SHOWN, &game->sdl_window, &game->sdl_renderer) != 0) {
     SDL_Log ("SDL_CreateWindowAndRenderer: %s", SDL_GetError ());
     goto error;
   }
+  SDL_SetWindowTitle (game->sdl_window, "Galaxies");
 
   // Font
   game->font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
@@ -35,8 +39,9 @@ GGame *GGame_new () {
     goto error;
   }
 
-  SDL_SetWindowTitle (game->sdl_window, "Galaxies");
-  game->root = GSpriteMainMenu_new (game->sdl_renderer, game->font_big, game->font_med);
+  // Content
+  game->root = GSpriteNull_new (0, 0);
+  GSprite_add_child (game->root, GSpriteMainMenu_new (game->sdl_renderer, game->font_big, game->font_med));
   return game;
 
 error:
