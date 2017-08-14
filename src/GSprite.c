@@ -2,13 +2,13 @@
 #include "GSprite.h"
 #include <memory.h>
 
-GSprite *GSprite_new (int size, GSpriteRender render, GSpriteAction action, GSpriteIsInside is_inside, GSpriteFree _free)
+GSprite *GSprite_new (int size, GSpriteRender render, GSpriteEvent event, GSpriteIsInside is_inside, GSpriteFree _free)
 {
   GSprite *spr = malloc (size);
   memset (spr, 0, sizeof (GSprite));
 
   spr->render = render;
-  spr->action = action;
+  spr->event = event;
   spr->is_inside = is_inside;
   spr->free = _free;
 
@@ -63,22 +63,25 @@ void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int offsx, int offsy)
   }
 }
 
-int GSprite_action (GSprite *spr, GEvent *event) {
-  GSprite *ptr = spr->children;
-  if (!GSprite_is_inside (spr, event->x, event->y))
-    return 0;
-  event->x -= spr->x;
-  event->y -= spr->y;
+GSprite *GSprite_topmost_event_receiver (GSprite *parent, int x, int y) {
+  GSprite *ptr = parent->children;
+  if (!GSprite_is_inside (parent, x, y))
+    return NULL;
+  x -= parent->x;
+  y -= parent->y;
   while (ptr) {
-    if (GSprite_action (ptr, event))
-      return 1;
+    GSprite *ret = GSprite_topmost_event_receiver (ptr, x, y);
+    if (ret != NULL) return ret;
     ptr = ptr->next;
   }
-  event->x += spr->x;
-  event->y += spr->y;
-  if (spr->action)
-    return spr->action (spr, event);
-  return 0;
+  if (parent->event)
+    return parent;
+  return NULL;
+}
+
+void GSprite_event (GSprite *spr, GEvent *event) {
+  if (spr && spr->event)
+    spr->event (spr, event);
 }
 
 int GSprite_is_inside (GSprite *spr, int x, int y) {

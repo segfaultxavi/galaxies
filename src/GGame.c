@@ -60,29 +60,41 @@ void GGame_free (GGame *game) {
 
 void GGame_run (GGame *game) {
   int quit = 0;
+  GSprite *focus = NULL;
 
   while (!quit) {
     SDL_Event event;
     GEvent gevent;
     SDL_WaitEventTimeout (NULL, 40);
     while (SDL_PollEvent (&event)) {
-      gevent.type = event.type;
+      gevent.type = GEVENT_TYPE_NONE;
       switch (event.type) {
       case SDL_QUIT:
         quit = 1;
         break;
       case SDL_MOUSEBUTTONDOWN:
+        gevent.type = GEVENT_TYPE_SPRITE_ACTIVATE;
         gevent.x = event.button.x;
         gevent.y = event.button.y;
-        GSprite_action (game->root, &gevent);
         break;
       case SDL_MOUSEMOTION:
+        gevent.type = GEVENT_TYPE_MOVE;
         gevent.x = event.motion.x;
         gevent.y = event.motion.y;
-        GSprite_action (game->root, &gevent);
         break;
       default:
         break;
+      }
+      if (gevent.type != GEVENT_TYPE_NONE) {
+        GSprite *topmost = GSprite_topmost_event_receiver (game->root, gevent.x, gevent.y);
+        if (topmost != focus) {
+          GEvent focus_out_event = { GEVENT_TYPE_SPRITE_OUT, gevent.x, gevent.y };
+          GEvent focus_in_event = { GEVENT_TYPE_SPRITE_IN, gevent.x, gevent.y };
+          GSprite_event (focus, &focus_out_event);
+          GSprite_event (topmost, &focus_in_event);
+          focus = topmost;
+        }
+        GSprite_event (topmost, &gevent);
       }
     }
 

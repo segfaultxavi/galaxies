@@ -37,12 +37,15 @@ void GSpriteButton_render (GSpriteButton *spr, SDL_Renderer *renderer, int offsx
   }
 }
 
-int GSpriteButton_action (GSpriteButton *spr, GEvent *event) {
+int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
   switch (event->type) {
-    case SDL_MOUSEMOTION:
+    case GEVENT_TYPE_SPRITE_IN:
       spr->state = GBUTTON_STATE_HOVER;
       break;
-    case SDL_MOUSEBUTTONDOWN:
+    case GEVENT_TYPE_SPRITE_OUT:
+      spr->state = GBUTTON_STATE_NORMAL;
+      break;
+    case GEVENT_TYPE_SPRITE_ACTIVATE:
       spr->state = GBUTTON_STATE_ACTIVE;
       spr->callback (spr->userdata);
       break;
@@ -53,7 +56,7 @@ int GSpriteButton_action (GSpriteButton *spr, GEvent *event) {
 GSprite *GSpriteButton_new (int x, int y, int w, int h, SDL_Renderer *renderer, TTF_Font *font,
   Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata) {
   GSpriteButton *spr = (GSpriteButton *)GSprite_new (sizeof (GSpriteButton),
-      (GSpriteRender)GSpriteButton_render, (GSpriteAction)GSpriteButton_action, NULL, NULL);
+      (GSpriteRender)GSpriteButton_render, (GSpriteEvent)GSpriteButton_event, NULL, NULL);
   spr->base.x = x;
   spr->base.y = y;
   spr->base.w = w;
