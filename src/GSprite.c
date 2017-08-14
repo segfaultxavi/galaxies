@@ -53,12 +53,12 @@ void GSprite_add_child (GSprite *parent, GSprite *child) {
   child->parent = parent;
 }
 
-void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int x, int y) {
+void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int offsx, int offsy) {
   GSprite *ptr = spr->children;
   if (spr->render)
-    spr->render (spr, renderer, x, y);
+    spr->render (spr, renderer, offsx, offsy);
   while (ptr) {
-    GSprite_render (ptr, renderer, spr->x + x, spr->y + y);
+    GSprite_render (ptr, renderer, spr->x + offsx, spr->y + offsy);
     ptr = ptr->next;
   }
 }

@@ -32,7 +32,7 @@ GSprite *GSprite_new (int size, GSpriteRender render, GSpriteAction action, GSpr
 void GSprite_free (GSprite *spr);
 void GSprite_unparent (GSprite *spr);
 void GSprite_add_child (GSprite *parent, GSprite *child);
-void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int x, int y);
+void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int offsx, int offsy);
 int GSprite_action (GSprite *spr, GEvent *event);
 int GSprite_is_inside (GSprite *spr, int x, int y);
 
