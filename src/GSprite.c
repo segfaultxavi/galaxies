@@ -7,6 +7,7 @@ GSprite *GSprite_new (int size, GSpriteRender render, GSpriteEvent event, GSprit
   GSprite *spr = malloc (size);
   memset (spr, 0, sizeof (GSprite));
 
+  spr->visible = 1;
   spr->render = render;
   spr->event = event;
   spr->is_inside = is_inside;
@@ -55,6 +56,8 @@ void GSprite_add_child (GSprite *parent, GSprite *child) {
 
 void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int offsx, int offsy) {
   GSprite *ptr = spr->children;
+  if (!spr->visible)
+    return;
   if (spr->render)
     spr->render (spr, renderer, offsx, offsy);
   while (ptr) {
@@ -65,6 +68,8 @@ void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int offsx, int offsy)
 
 GSprite *GSprite_topmost_event_receiver (GSprite *parent, int x, int y) {
   GSprite *ptr = parent->children;
+  if (!parent->visible)
+    return NULL;
   if (!GSprite_is_inside (parent, x, y))
     return NULL;
   x -= parent->x;
@@ -85,6 +90,8 @@ void GSprite_event (GSprite *spr, GEvent *event) {
 }
 
 int GSprite_is_inside (GSprite *spr, int x, int y) {
+  if (!spr->visible)
+    return 0;
   if (spr->is_inside)
     return spr->is_inside (spr, x, y);
   if (spr->w == -1) return 1;

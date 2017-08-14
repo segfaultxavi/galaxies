@@ -16,6 +16,9 @@ struct _GSprite {
   int x, y;
   int w, h;
 
+  // Invisible sprites and their children are not rendered and do not receive events
+  int visible;
+
   // Our parent
   GSprite *parent;
   // Pointer to a doubly-linked list of our children
