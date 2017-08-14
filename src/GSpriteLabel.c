@@ -19,7 +19,8 @@ void GSpriteLabel_free (GSpriteLabel *spr) {
   SDL_DestroyTexture (spr->texture);
 }
 
-GSprite *GSpriteLabel_new (int x, int y, SDL_Renderer *renderer, TTF_Font *font, Uint32 color, const char *text) {
+GSprite *GSpriteLabel_new (int x, int y, GSpriteLabelJustify justify_hor, GSpriteLabelJustify justify_ver,
+    SDL_Renderer *renderer, TTF_Font *font, Uint32 color, const char *text) {
   SDL_Surface *surf;
   GSpriteLabel *spr = (GSpriteLabel *)GSprite_new (sizeof (GSpriteLabel),
       (GSpriteRender)GSpriteLabel_render, NULL, NULL, (GSpriteFree)GSpriteLabel_free);
@@ -30,8 +31,28 @@ GSprite *GSpriteLabel_new (int x, int y, SDL_Renderer *renderer, TTF_Font *font,
     GSprite_free ((GSprite *)spr);
     return NULL;
   }
-  spr->base.x = x;
-  spr->base.y = y;
+  switch (justify_hor) {
+    case GLABEL_JUSTIFY_BEGIN:
+      spr->base.x = x;
+      break;
+    case GLABEL_JUSTIFY_CENTER:
+      spr->base.x = x - surf->w / 2;
+      break;
+    case GLABEL_JUSTIFY_END:
+      spr->base.x = x - surf->w;
+      break;
+  }
+  switch (justify_ver) {
+  case GLABEL_JUSTIFY_BEGIN:
+    spr->base.y = y;
+    break;
+  case GLABEL_JUSTIFY_CENTER:
+    spr->base.y = y - surf->h / 2;
+    break;
+  case GLABEL_JUSTIFY_END:
+    spr->base.y = y - surf->h;
+    break;
+  }
   spr->base.w = surf->w;
   spr->base.h = surf->h;
   spr->texture = SDL_CreateTextureFromSurface (renderer, surf);
