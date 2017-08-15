@@ -19,6 +19,7 @@ GSprite *GSprite_new (int size, GSpriteRender render, GSpriteEvent event, GSprit
 void GSprite_free (GSprite *spr) {
   GSprite *ptr;
   if (!spr) return;
+  GSprite_unparent (spr);
   if (spr->free)
     spr->free (spr);
   ptr = spr->children;
