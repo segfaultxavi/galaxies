@@ -47,7 +47,8 @@ void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int offsx, int offsy)
 // or the parent, or NULL.
 GSprite *GSprite_topmost_event_receiver (GSprite *parent, int x, int y);
 // Pass the event to the sprite
-void GSprite_event (GSprite *spr, GEvent *event);
+// Returns 1 if the sprite is destroyed in the process, 0 otherwise.
+int GSprite_event (GSprite *spr, GEvent *event);
 // Returns 1 if the given position is over the sprite. By default (no is_inside method provided by the subclass)
 // the sprites are rectangular areas.
 int GSprite_is_inside (GSprite *spr, int x, int y);

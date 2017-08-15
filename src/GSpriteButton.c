@@ -38,6 +38,7 @@ void GSpriteButton_render (GSpriteButton *spr, SDL_Renderer *renderer, int offsx
 }
 
 int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
+  int ret = 0;
   switch (event->type) {
     case GEVENT_TYPE_SPRITE_IN:
       spr->state = GBUTTON_STATE_HOVER;
@@ -47,10 +48,10 @@ int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
       spr->state = GBUTTON_STATE_ACTIVE;
-      spr->callback (spr->userdata);
+      ret = spr->callback (spr->userdata);
       break;
   }
-  return 1;
+  return ret;
 }
 
 GSprite *GSpriteButton_new (int x, int y, int w, int h, SDL_Renderer *renderer, TTF_Font *font,

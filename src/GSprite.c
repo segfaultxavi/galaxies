@@ -85,7 +85,7 @@ GSprite *GSprite_topmost_event_receiver (GSprite *parent, int x, int y) {
   return NULL;
 }
 
-void GSprite_event (GSprite *spr, GEvent *event) {
+int GSprite_event (GSprite *spr, GEvent *event) {
   if (spr && spr->event)
     spr->event (spr, event);
 }

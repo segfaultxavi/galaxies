@@ -94,7 +94,9 @@ void GGame_run (GGame *game) {
           GSprite_event (topmost, &focus_in_event);
           focus = topmost;
         }
-        GSprite_event (topmost, &gevent);
+        if (GSprite_event (topmost, &gevent) == 1) {
+          focus = NULL;
+        }
       }
     }
 
