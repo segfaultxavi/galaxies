@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "GSprite.h"
+#include "GResources.h"
 
 typedef enum _GSpriteLabelJustify {
   GLABEL_JUSTIFY_BEGIN,
@@ -12,6 +13,6 @@ typedef enum _GSpriteLabelJustify {
 } GSpriteLabelJustify;
 
 GSprite *GSpriteLabel_new (int x, int y, GSpriteLabelJustify justify_hor, GSpriteLabelJustify justify_ver,
-  SDL_Renderer *renderer, TTF_Font *font, Uint32 color, const char *text);
+  GResources *res, TTF_Font *font, Uint32 color, const char *text);
 
 #endif

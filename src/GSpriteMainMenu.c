@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include "GGame.h"
+#include "GResources.h"
 #include "GSpriteMainMenu.h"
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
@@ -7,9 +8,7 @@
 
 typedef struct _GSpriteMainMenu {
   GSprite base;
-  SDL_Renderer *renderer;
-  TTF_Font *font_big;
-  TTF_Font *font_med;
+  GResources *res;
 } GSpriteMainMenu;
 
 int GSpriteMainMenu_play (void *userdata) {
@@ -28,24 +27,22 @@ int GSpriteMainMenu_credits (void *userdata) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Credits");
   spr->base.visible = 0;
-  GSprite_add_child (spr->base.parent, GSpriteCredits_new (spr->renderer, spr->font_big, spr->font_med, (GSprite *)spr));
+  GSprite_add_child (spr->base.parent, GSpriteCredits_new (spr->res, (GSprite *)spr));
   return 0;
 }
 
-GSprite *GSpriteMainMenu_new (SDL_Renderer *renderer, TTF_Font *font_big, TTF_Font *font_med) {
+GSprite *GSpriteMainMenu_new (GResources *res) {
   GSpriteMainMenu *spr = (GSpriteMainMenu *)GSprite_new (sizeof (GSpriteMainMenu),
       NULL, NULL, NULL, NULL);
   spr->base.w = spr->base.h = -1;
-  spr->renderer = renderer;
-  spr->font_big = font_big;
-  spr->font_med = font_med;
+  spr->res = res;
   GSprite_add_child ((GSprite *)spr,
-    GSpriteLabel_new (ggame_width / 2, 0, GLABEL_JUSTIFY_CENTER, GLABEL_JUSTIFY_BEGIN, renderer, font_big, 0xFFFFFF00, "galaxies"));
+    GSpriteLabel_new (res->game_width / 2, 0, GLABEL_JUSTIFY_CENTER, GLABEL_JUSTIFY_BEGIN, res, res->font_big, 0xFFFFFF00, "galaxies"));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (ggame_width / 4, 100, ggame_width / 2, 50, renderer, font_med, 0xFF0000FF, "play", GSpriteMainMenu_play, spr));
+    GSpriteButton_new (res->game_width / 4, 100, res->game_width / 2, 50, res, res->font_med, 0xFF0000FF, "play", GSpriteMainMenu_play, spr));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (ggame_width / 4, 150, ggame_width / 2, 50, renderer, font_med, 0xFF0000FF, "editor", GSpriteMainMenu_editor, spr));
+    GSpriteButton_new (res->game_width / 4, 150, res->game_width / 2, 50, res, res->font_med, 0xFF0000FF, "editor", GSpriteMainMenu_editor, spr));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (ggame_width / 4, 200, ggame_width / 2, 50, renderer, font_med, 0xFF0000FF, "credits", GSpriteMainMenu_credits, spr));
+    GSpriteButton_new (res->game_width / 4, 200, res->game_width / 2, 50, res, res->font_med, 0xFF0000FF, "credits", GSpriteMainMenu_credits, spr));
   return (GSprite *)spr;
 }

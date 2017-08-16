@@ -5,6 +5,6 @@
 #include <SDL_ttf.h>
 #include "GSprite.h"
 
-GSprite *GSpriteMainMenu_new (SDL_Renderer *renderer, TTF_Font *font_big, TTF_Font *font_med);
+GSprite *GSpriteMainMenu_new (GResources *resources);
 
 #endif

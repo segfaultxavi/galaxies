@@ -3,8 +3,9 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include "GResources.h"
 #include "GSprite.h"
 
-GSprite *GSpriteCredits_new (SDL_Renderer *renderer, TTF_Font *font_big, TTF_Font *font_med, GSprite *main_menu);
+GSprite *GSpriteCredits_new (GResources *resources, GSprite *main_menu);
 
 #endif

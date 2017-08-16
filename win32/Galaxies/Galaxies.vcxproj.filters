@@ -68,5 +68,8 @@
     <ClInclude Include="..\..\src\GSpriteCredits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\GResources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

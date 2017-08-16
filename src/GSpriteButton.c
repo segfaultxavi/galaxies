@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "GSpriteButton.h"
 #include "GSpriteLabel.h"
+#include "GResources.h"
 
 typedef enum _GButtonState {
   GBUTTON_STATE_NORMAL,
@@ -54,7 +55,7 @@ int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
   return ret;
 }
 
-GSprite *GSpriteButton_new (int x, int y, int w, int h, SDL_Renderer *renderer, TTF_Font *font,
+GSprite *GSpriteButton_new (int x, int y, int w, int h, GResources *res, TTF_Font *font,
   Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata) {
   GSpriteButton *spr = (GSpriteButton *)GSprite_new (sizeof (GSpriteButton),
       (GSpriteRender)GSpriteButton_render, (GSpriteEvent)GSpriteButton_event, NULL, NULL);
@@ -65,6 +66,7 @@ GSprite *GSpriteButton_new (int x, int y, int w, int h, SDL_Renderer *renderer, 
   spr->callback = callback;
   spr->userdata = userdata;
   spr->state = GBUTTON_STATE_NORMAL;
-  GSprite_add_child ((GSprite *)spr, GSpriteLabel_new (w / 2, h / 2, GLABEL_JUSTIFY_CENTER, GLABEL_JUSTIFY_CENTER, renderer, font, color, text));
+  GSprite_add_child ((GSprite *)spr, GSpriteLabel_new (w / 2, h / 2, GLABEL_JUSTIFY_CENTER, GLABEL_JUSTIFY_CENTER,
+    res, font, color, text));
   return (GSprite *)spr;
 }

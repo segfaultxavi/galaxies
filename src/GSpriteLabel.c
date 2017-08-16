@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include "GResources.h"
 #include "GSpriteLabel.h"
 
 typedef struct _GSpriteLabel {
@@ -20,7 +21,7 @@ void GSpriteLabel_free (GSpriteLabel *spr) {
 }
 
 GSprite *GSpriteLabel_new (int x, int y, GSpriteLabelJustify justify_hor, GSpriteLabelJustify justify_ver,
-    SDL_Renderer *renderer, TTF_Font *font, Uint32 color, const char *text) {
+    GResources *res, TTF_Font *font, Uint32 color, const char *text) {
   SDL_Surface *surf;
   GSpriteLabel *spr = (GSpriteLabel *)GSprite_new (sizeof (GSpriteLabel),
       (GSpriteRender)GSpriteLabel_render, NULL, NULL, (GSpriteFree)GSpriteLabel_free);
@@ -55,7 +56,7 @@ GSprite *GSpriteLabel_new (int x, int y, GSpriteLabelJustify justify_hor, GSprit
   }
   spr->base.w = surf->w;
   spr->base.h = surf->h;
-  spr->texture = SDL_CreateTextureFromSurface (renderer, surf);
+  spr->texture = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
   SDL_FreeSurface (surf);
   if (!spr->texture) {
     SDL_Log ("SDL_CreateTextureFromSurface: %s", SDL_GetError ());
