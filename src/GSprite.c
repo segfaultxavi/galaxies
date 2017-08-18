@@ -87,7 +87,8 @@ GSprite *GSprite_topmost_event_receiver (GSprite *parent, int x, int y) {
 
 int GSprite_event (GSprite *spr, GEvent *event) {
   if (spr && spr->event)
-    spr->event (spr, event);
+    return spr->event (spr, event);
+  return 0;
 }
 
 int GSprite_is_inside (GSprite *spr, int x, int y) {
