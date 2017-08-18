@@ -51,6 +51,8 @@ int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
       spr->state = GBUTTON_STATE_ACTIVE;
       ret = spr->callback (spr->userdata);
       break;
+    default:
+      break;
   }
   return ret;
 }
