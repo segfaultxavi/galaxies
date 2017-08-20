@@ -1,7 +1,6 @@
 #include <SDL.h>
 #include "GResources.h"
 #include "GSpriteLabel.h"
-#include "GJustify.h"
 
 typedef struct _GSpriteLabel {
   GSprite base;
@@ -21,7 +20,7 @@ void GSpriteLabel_free (GSpriteLabel *spr) {
   SDL_DestroyTexture (spr->texture);
 }
 
-GSprite *GSpriteLabel_new (int x, int y, GJustify justify_hor, GJustify justify_ver,
+GSprite *GSpriteLabel_new (int x, int y, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
     GResources *res, TTF_Font *font, Uint32 color, const char *text) {
   SDL_Surface *surf;
   GSpriteLabel *spr = (GSpriteLabel *)GSprite_new (sizeof (GSpriteLabel),
@@ -35,7 +34,7 @@ GSprite *GSpriteLabel_new (int x, int y, GJustify justify_hor, GJustify justify_
   }
   spr->base.w = surf->w;
   spr->base.h = surf->h;
-  GJustify_apply ((GSprite *)spr, x, y, justify_hor, justify_ver);
+  GSprite_justify ((GSprite *)spr, x, y, justify_hor, justify_ver);
   spr->texture = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
   SDL_FreeSurface (surf);
   if (!spr->texture) {

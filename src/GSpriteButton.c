@@ -1,7 +1,6 @@
 #include <SDL.h>
 #include "GSpriteButton.h"
 #include "GSpriteLabel.h"
-#include "GJustify.h"
 #include "GResources.h"
 
 typedef enum _GButtonState {
@@ -60,11 +59,11 @@ int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
   return ret;
 }
 
-GSprite *GSpriteButton_new (int x, int y, int w, int h, GJustify justify_hor, GJustify justify_ver,
+GSprite *GSpriteButton_new (int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
     GResources *res, TTF_Font *font, Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata) {
   GSprite *label;
   GSpriteButton *spr;
-  label = GSpriteLabel_new (0, 0, GJUSTIFY_BEGIN, GJUSTIFY_BEGIN, res, font, color, text);
+  label = GSpriteLabel_new (0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, res, font, color, text);
   if (w == -1) {
     label->x = GBUTTON_MARGIN;
     w = label->w + 2 * GBUTTON_MARGIN;
@@ -81,7 +80,7 @@ GSprite *GSpriteButton_new (int x, int y, int w, int h, GJustify justify_hor, GJ
       (GSpriteRender)GSpriteButton_render, (GSpriteEvent)GSpriteButton_event, NULL, NULL);
   spr->base.w = w;
   spr->base.h = h;
-  GJustify_apply ((GSprite *)spr, x, y, justify_hor, justify_ver);
+  GSprite_justify ((GSprite *)spr, x, y, justify_hor, justify_ver);
   spr->callback = callback;
   spr->userdata = userdata;
   spr->state = GBUTTON_STATE_NORMAL;

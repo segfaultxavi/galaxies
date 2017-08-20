@@ -42,7 +42,7 @@
     <ClCompile Include="..\..\src\GSpriteCredits.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\GJustify.c">
+    <ClCompile Include="..\..\src\GSpriteGalaxies.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,7 +74,7 @@
     <ClInclude Include="..\..\src\GResources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\GJustify.h">
+    <ClInclude Include="..\..\src\GSpriteGalaxies.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

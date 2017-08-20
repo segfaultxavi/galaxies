@@ -99,3 +99,28 @@ int GSprite_is_inside (GSprite *spr, int x, int y) {
   if (spr->w == -1) return 1;
   return x >= spr->x && y >= spr->y && x <= spr->x + spr->w && y <= spr->y + spr->h;
 }
+
+void GSprite_justify (GSprite *spr, int x, int y, GSpriteJustify justify_hor, GSpriteJustify justify_ver) {
+  switch (justify_hor) {
+    case GSPRITE_JUSTIFY_BEGIN:
+      spr->x = x;
+      break;
+    case GSPRITE_JUSTIFY_CENTER:
+      spr->x = x - spr->w / 2;
+      break;
+    case GSPRITE_JUSTIFY_END:
+      spr->x = x - spr->w;
+      break;
+  }
+  switch (justify_ver) {
+    case GSPRITE_JUSTIFY_BEGIN:
+      spr->y = y;
+      break;
+    case GSPRITE_JUSTIFY_CENTER:
+      spr->y = y - spr->h / 2;
+      break;
+    case GSPRITE_JUSTIFY_END:
+      spr->y = y - spr->h;
+      break;
+  }
+}

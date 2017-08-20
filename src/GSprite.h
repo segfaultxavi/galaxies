@@ -33,6 +33,12 @@ struct _GSprite {
   GSpriteFree free;
 };
 
+typedef enum _GSpriteJustify {
+  GSPRITE_JUSTIFY_BEGIN,
+  GSPRITE_JUSTIFY_CENTER,
+  GSPRITE_JUSTIFY_END
+} GSpriteJustify;
+
 // Intended for subclasses, since you have to provide subclass struct size and methods
 GSprite *GSprite_new (int size, GSpriteRender render, GSpriteEvent event, GSpriteIsInside is_inside, GSpriteFree free);
 // Free sprite
@@ -52,5 +58,7 @@ int GSprite_event (GSprite *spr, GEvent *event);
 // Returns 1 if the given position is over the sprite. By default (no is_inside method provided by the subclass)
 // the sprites are rectangular areas.
 int GSprite_is_inside (GSprite *spr, int x, int y);
+// Changes the position of the sprite depending on its w and h and the requested justification
+void GSprite_justify (GSprite *spr, int x, int y, GSpriteJustify justify_hor, GSpriteJustify justify_ver);
 
 #endif

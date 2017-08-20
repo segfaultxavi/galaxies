@@ -4,6 +4,7 @@
 #include "GSpriteMainMenu.h"
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
+#include "GSpriteGalaxies.h"
 #include "GSpriteCredits.h"
 
 typedef struct _GSpriteMainMenu {
@@ -14,6 +15,8 @@ typedef struct _GSpriteMainMenu {
 int GSpriteMainMenu_play (void *userdata) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Play");
+  spr->base.visible = 0;
+  GSprite_add_child (spr->base.parent, GSpriteGalaxies_new (spr->res, (GSprite *)spr));
   return 0;
 }
 
@@ -38,15 +41,15 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
   spr->base.w = spr->base.h = -1;
   spr->res = res;
   GSprite_add_child ((GSprite *)spr,
-    GSpriteLabel_new (res->game_width / 2, 0, GJUSTIFY_CENTER, GJUSTIFY_BEGIN, res, res->font_big, 0xFFFFFF00, "galaxies"));
+    GSpriteLabel_new (res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res, res->font_big, 0xFFFFFF00, "galaxies"));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (res->game_width / 2, 3 * line, res->game_width / 2, -1, GJUSTIFY_CENTER, GJUSTIFY_CENTER,
+    GSpriteButton_new (res->game_width / 2, 3 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
       res, res->font_med, 0xFF0000FF, "play", GSpriteMainMenu_play, spr));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (res->game_width / 2, 4 * line, res->game_width / 2, -1, GJUSTIFY_CENTER, GJUSTIFY_CENTER,
+    GSpriteButton_new (res->game_width / 2, 4 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
       res, res->font_med, 0xFF0000FF, "editor", GSpriteMainMenu_editor, spr));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (res->game_width / 2, 5 * line, res->game_width / 2, -1, GJUSTIFY_CENTER, GJUSTIFY_CENTER,
+    GSpriteButton_new (res->game_width / 2, 5 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
       res, res->font_med, 0xFF0000FF, "credits", GSpriteMainMenu_credits, spr));
   return (GSprite *)spr;
 }
