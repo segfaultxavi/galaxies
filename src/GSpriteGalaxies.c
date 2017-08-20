@@ -5,11 +5,13 @@
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
 #include "GSpriteNull.h"
+#include "GSpriteBoard.h"
 
 typedef struct _GSpriteGalaxies {
   GSprite base;
   GResources *res;
   GSprite *main_menu;
+  GSpriteBoard *board;
 } GSpriteGalaxies;
 
 int GSpriteGalaxies_reset (void *userdata) {
@@ -53,5 +55,8 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu) {
     GSpriteButton_new (mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
       res, res->font_small, 0xFF0000FF, "back", GSpriteGalaxies_back, spr));
   GSprite_add_child ((GSprite *)spr, margin);
+  spr->board = (GSpriteBoard *)GSpriteBoard_new (0, res);
+  GSpriteBoard_start (spr->board, 10, 10, NULL);
+  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   return (GSprite *)spr;
 }
