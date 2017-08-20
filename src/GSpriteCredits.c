@@ -19,11 +19,9 @@ int GSpriteCredits_back (void *userdata) {
 }
 
 const char *credits[][2] = {
-  {"programming", "xavi artigas"},
-  {"original idea", "tentai show"},
-  {"", "by nikoli"},
-  {"font", "bajoran"},
-  {"", "by kiwi media"},
+  {"programming", "XAVI ARTIGAS"},
+  {"original idea", "TENTAI SHOW by nikoli"},
+  {"font", "BAJORAN by kiwi media"},
   {"music", "?"},
   {"sound", "?"},
   {"libraries", "sdl, sdl_ttf"}
@@ -33,18 +31,22 @@ GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
   GSpriteCredits *spr = (GSpriteCredits *)GSprite_new (sizeof (GSpriteCredits),
       NULL, NULL, NULL, NULL);
   int l;
+  int line = res->game_height / 16;
   spr->base.w = spr->base.h = -1;
   spr->main_menu = main_menu;
   GSprite_add_child ((GSprite *)spr,
-    GSpriteLabel_new (res->game_width / 2, 0, GLABEL_JUSTIFY_CENTER, GLABEL_JUSTIFY_BEGIN, res, res->font_big, 0xFFFFFF00, "galaxies"));
+    GSpriteLabel_new (res->game_width / 2, 0, GJUSTIFY_CENTER, GJUSTIFY_BEGIN, res, res->font_big, 0xFFFFFF00, "galaxies"));
   for (l = 0; l < sizeof (credits) / sizeof (credits[0]); l++) {
     if (credits[l][0][0] != '\0')
     GSprite_add_child ((GSprite *)spr,
-      GSpriteLabel_new (res->game_width / 2 - 50, 75 + l * 25, GLABEL_JUSTIFY_END, GLABEL_JUSTIFY_BEGIN, res, res->font_small, 0xFFFFFFFF, credits [l][0]));
+      GSpriteLabel_new (res->game_width * 0.4f, (l + 4) * line, GJUSTIFY_END, GJUSTIFY_BEGIN,
+        res, res->font_small, 0xFFFFFFFF, credits [l][0]));
     GSprite_add_child ((GSprite *)spr,
-      GSpriteLabel_new (res->game_width / 2, 75 + l * 25, GLABEL_JUSTIFY_BEGIN, GLABEL_JUSTIFY_BEGIN, res, res->font_small, 0xFFFFFF00, credits [l][1]));
+      GSpriteLabel_new (res->game_width * 0.45f, (l + 4) * line, GJUSTIFY_BEGIN, GJUSTIFY_BEGIN,
+        res, res->font_small, 0xFFFFFF00, credits [l][1]));
   }
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (res->game_width - 150, res->game_height - 50, 150, 50, res, res->font_med, 0xFF0000FF, "back", GSpriteCredits_back, spr));
+    GSpriteButton_new (res->game_width, res->game_height, -1, -1, GJUSTIFY_END, GJUSTIFY_END,
+      res, res->font_med, 0xFF0000FF, "back", GSpriteCredits_back, spr));
   return (GSprite *)spr;
 }

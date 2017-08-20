@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "GResources.h"
 #include "GSpriteLabel.h"
+#include "GJustify.h"
 
 typedef struct _GSpriteLabel {
   GSprite base;
@@ -20,7 +21,7 @@ void GSpriteLabel_free (GSpriteLabel *spr) {
   SDL_DestroyTexture (spr->texture);
 }
 
-GSprite *GSpriteLabel_new (int x, int y, GSpriteLabelJustify justify_hor, GSpriteLabelJustify justify_ver,
+GSprite *GSpriteLabel_new (int x, int y, GJustify justify_hor, GJustify justify_ver,
     GResources *res, TTF_Font *font, Uint32 color, const char *text) {
   SDL_Surface *surf;
   GSpriteLabel *spr = (GSpriteLabel *)GSprite_new (sizeof (GSpriteLabel),
@@ -32,30 +33,9 @@ GSprite *GSpriteLabel_new (int x, int y, GSpriteLabelJustify justify_hor, GSprit
     GSprite_free ((GSprite *)spr);
     return NULL;
   }
-  switch (justify_hor) {
-    case GLABEL_JUSTIFY_BEGIN:
-      spr->base.x = x;
-      break;
-    case GLABEL_JUSTIFY_CENTER:
-      spr->base.x = x - surf->w / 2;
-      break;
-    case GLABEL_JUSTIFY_END:
-      spr->base.x = x - surf->w;
-      break;
-  }
-  switch (justify_ver) {
-  case GLABEL_JUSTIFY_BEGIN:
-    spr->base.y = y;
-    break;
-  case GLABEL_JUSTIFY_CENTER:
-    spr->base.y = y - surf->h / 2;
-    break;
-  case GLABEL_JUSTIFY_END:
-    spr->base.y = y - surf->h;
-    break;
-  }
   spr->base.w = surf->w;
   spr->base.h = surf->h;
+  GJustify_apply ((GSprite *)spr, x, y, justify_hor, justify_ver);
   spr->texture = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
   SDL_FreeSurface (surf);
   if (!spr->texture) {

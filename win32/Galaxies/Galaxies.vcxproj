@@ -169,6 +169,7 @@ copy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath)</Command>
   <ItemGroup>
     <ClCompile Include="..\..\src\bajoran_font.c" />
     <ClCompile Include="..\..\src\GGame.c" />
+    <ClCompile Include="..\..\src\GJustify.c" />
     <ClCompile Include="..\..\src\GSprite.c" />
     <ClCompile Include="..\..\src\GSpriteCredits.c" />
     <ClCompile Include="..\..\src\GSpriteLabel.c" />
@@ -180,6 +181,7 @@ copy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath)</Command>
   <ItemGroup>
     <ClInclude Include="..\..\src\GEvent.h" />
     <ClInclude Include="..\..\src\GGame.h" />
+    <ClInclude Include="..\..\src\GJustify.h" />
     <ClInclude Include="..\..\src\GResources.h" />
     <ClInclude Include="..\..\src\GSprite.h" />
     <ClInclude Include="..\..\src\GSpriteCredits.h" />

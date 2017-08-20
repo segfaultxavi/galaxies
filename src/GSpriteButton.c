@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "GSpriteButton.h"
 #include "GSpriteLabel.h"
+#include "GJustify.h"
 #include "GResources.h"
 
 typedef enum _GButtonState {
@@ -19,6 +20,8 @@ typedef struct _GSpriteButton {
 SDL_Color gcolor_normal = { 0x40, 0x40, 0x40, 0xFF };
 SDL_Color gcolor_hover = { 0x80, 0x80, 0x80, 0xFF };
 SDL_Color gcolor_active = { 0xC0, 0xC0, 0xC0, 0xFF };
+
+#define GBUTTON_MARGIN 10
 
 void GSpriteButton_render (GSpriteButton *spr, SDL_Renderer *renderer, int offsx, int offsy) {
   SDL_Rect rect;
@@ -57,18 +60,31 @@ int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
   return ret;
 }
 
-GSprite *GSpriteButton_new (int x, int y, int w, int h, GResources *res, TTF_Font *font,
-  Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata) {
-  GSpriteButton *spr = (GSpriteButton *)GSprite_new (sizeof (GSpriteButton),
+GSprite *GSpriteButton_new (int x, int y, int w, int h, GJustify justify_hor, GJustify justify_ver,
+    GResources *res, TTF_Font *font, Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata) {
+  GSprite *label;
+  GSpriteButton *spr;
+  label = GSpriteLabel_new (0, 0, GJUSTIFY_BEGIN, GJUSTIFY_BEGIN, res, font, color, text);
+  if (w == -1) {
+    label->x = GBUTTON_MARGIN;
+    w = label->w + 2 * GBUTTON_MARGIN;
+  } else {
+    label->x = w / 2 - label->w / 2;
+  }
+  if (h == -1) {
+    label->y = GBUTTON_MARGIN;
+    h = label->h + 2 * GBUTTON_MARGIN;
+  } else {
+    label->y = h / 2 - label->h / 2;
+  }
+  spr = (GSpriteButton *)GSprite_new (sizeof (GSpriteButton),
       (GSpriteRender)GSpriteButton_render, (GSpriteEvent)GSpriteButton_event, NULL, NULL);
-  spr->base.x = x;
-  spr->base.y = y;
   spr->base.w = w;
   spr->base.h = h;
+  GJustify_apply ((GSprite *)spr, x, y, justify_hor, justify_ver);
   spr->callback = callback;
   spr->userdata = userdata;
   spr->state = GBUTTON_STATE_NORMAL;
-  GSprite_add_child ((GSprite *)spr, GSpriteLabel_new (w / 2, h / 2, GLABEL_JUSTIFY_CENTER, GLABEL_JUSTIFY_CENTER,
-    res, font, color, text));
+  GSprite_add_child ((GSprite *)spr, label);
   return (GSprite *)spr;
 }

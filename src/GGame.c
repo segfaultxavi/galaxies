@@ -36,9 +36,9 @@ GGame *GGame_new () {
 
   // Font
   game->font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
-  res->font_big = TTF_OpenFontRW (game->font_rwops, 0, 64);
-  res->font_med = TTF_OpenFontRW (game->font_rwops, 0, 48);
-  res->font_small = TTF_OpenFontRW (game->font_rwops, 0, 32);
+  res->font_big = TTF_OpenFontRW (game->font_rwops, 0, res->game_height / 5);
+  res->font_med = TTF_OpenFontRW (game->font_rwops, 0, res->game_height / 10);
+  res->font_small = TTF_OpenFontRW (game->font_rwops, 0, res->game_height / 20);
   if (!res->font_big || !res->font_med || !res->font_small) {
     SDL_Log ("TTF_OpenFontRW: %s", SDL_GetError ());
     goto error;

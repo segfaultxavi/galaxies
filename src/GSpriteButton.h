@@ -4,11 +4,12 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "GSprite.h"
+#include "GJustify.h"
 #include "GResources.h"
 
 typedef int (* GSpriteButtonCallback)(void *userdata);
 
-GSprite *GSpriteButton_new (int x, int y, int w, int h, GResources *resources, TTF_Font *font,
-    Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata);
+GSprite *GSpriteButton_new (int x, int y, int w, int h, GJustify justify_hor, GJustify justify_ver,
+    GResources *resources, TTF_Font *font, Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata);
 
 #endif
