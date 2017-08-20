@@ -41,7 +41,6 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu) {
   spr->main_menu = main_menu;
   spr->res = res;
   spr->base.w = spr->base.h = -1;
-  spr->res = res;
   GSprite_add_child (margin,
     GSpriteLabel_new (mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res, res->font_med, 0xFFFFFF00, "galaxies"));
   GSprite_add_child (margin,
