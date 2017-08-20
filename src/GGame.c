@@ -21,7 +21,7 @@ GGame *GGame_new () {
   SDL_DisplayMode sdpm;
 
   // Window
-  SDL_GetDisplayMode (0, 0, &sdpm);
+  SDL_GetCurrentDisplayMode (0, &sdpm);
   res->game_width = sdpm.w;
   res->game_height = sdpm.h;
   SDL_Log ("Screen size is %dx%d", res->game_width, res->game_height);
