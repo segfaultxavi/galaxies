@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "GSprite.h"
+#include "GResources.h"
 
 GSprite *GSpriteMainMenu_new (GResources *resources);
 
