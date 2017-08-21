@@ -197,6 +197,7 @@ xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y</Command>
     <ClCompile Include="..\..\src\GSpriteMainMenu.c" />
     <ClCompile Include="..\..\src\GSpriteNull.c" />
     <ClCompile Include="..\..\src\GSpriteButton.c" />
+    <ClCompile Include="..\..\src\GSpriteTile.c" />
     <ClCompile Include="..\..\src\main.c" />
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +212,7 @@ xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y</Command>
     <ClInclude Include="..\..\src\GSpriteMainMenu.h" />
     <ClInclude Include="..\..\src\GSpriteNull.h" />
     <ClInclude Include="..\..\src\GSpriteButton.h" />
+    <ClInclude Include="..\..\src\GSpriteTile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
