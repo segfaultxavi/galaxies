@@ -1,8 +1,6 @@
 #ifndef __GSPRITE_BOARD_H__
 #define __GSPRITE_BOARD_H__
 
-#include <SDL.h>
-#include <SDL_ttf.h>
 #include "GSprite.h"
 #include "GResources.h"
 
