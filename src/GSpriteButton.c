@@ -16,9 +16,9 @@ typedef struct _GSpriteButton {
   GButtonState state;
 } GSpriteButton;
 
-SDL_Color gcolor_normal = { 0x40, 0x40, 0x40, 0xFF };
-SDL_Color gcolor_hover = { 0x80, 0x80, 0x80, 0xFF };
-SDL_Color gcolor_active = { 0xC0, 0xC0, 0xC0, 0xFF };
+static SDL_Color gcolor_button_normal = { 0x40, 0x40, 0x40, 0xFF };
+static SDL_Color gcolor_button_hover = { 0x80, 0x80, 0x80, 0xFF };
+static SDL_Color gcolor_button_active = { 0xC0, 0xC0, 0xC0, 0xFF };
 
 #define GBUTTON_MARGIN 10
 
@@ -30,9 +30,9 @@ void GSpriteButton_render (GSpriteButton *spr, SDL_Renderer *renderer, int offsx
   rect.w = spr->base.w;
   rect.h = spr->base.h;
   switch (spr->state) {
-    case GBUTTON_STATE_NORMAL: col = gcolor_normal; break;
-    case GBUTTON_STATE_HOVER: col = gcolor_hover; break;
-    case GBUTTON_STATE_ACTIVE: col = gcolor_active; break;
+    case GBUTTON_STATE_NORMAL: col = gcolor_button_normal; break;
+    case GBUTTON_STATE_HOVER: col = gcolor_button_hover; break;
+    case GBUTTON_STATE_ACTIVE: col = gcolor_button_active; break;
   }
   SDL_SetRenderDrawColor (renderer, col.r, col.g, col.b, col.a);
   if (SDL_RenderFillRect (renderer, &rect) != 0) {
