@@ -50,6 +50,6 @@ void GSpriteTile_setID (GSpriteTile *spr, int id, Uint32 color) {
   spr->color = color;
 }
 
-int GSpriteTile_getID (GSpriteTile *spr) {
+int GSpriteTile_getID (const GSpriteTile *spr) {
   return spr->id;
 }
