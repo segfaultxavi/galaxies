@@ -16,8 +16,6 @@ struct _GSpriteBoard {
   int editing;
 };
 
-#define GBOARD_TILE(spr,x,y) spr->tiles[y * spr->mapSizeX + x]
-
 void GSpriteBoard_render (GSpriteBoard *spr, SDL_Renderer *renderer, int offsx, int offsy) {
   int i;
   SDL_SetRenderDrawColor (renderer, 0x40, 0x40, 0x40, 0xFF);
