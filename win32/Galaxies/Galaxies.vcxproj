@@ -191,6 +191,7 @@ xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y</Command>
     <ClCompile Include="..\..\src\GGame.c" />
     <ClCompile Include="..\..\src\GSprite.c" />
     <ClCompile Include="..\..\src\GSpriteBoard.c" />
+    <ClCompile Include="..\..\src\GSpriteBoardGrid.c" />
     <ClCompile Include="..\..\src\GSpriteCredits.c" />
     <ClCompile Include="..\..\src\GSpriteGalaxies.c" />
     <ClCompile Include="..\..\src\GSpriteLabel.c" />
@@ -206,6 +207,7 @@ xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y</Command>
     <ClInclude Include="..\..\src\GResources.h" />
     <ClInclude Include="..\..\src\GSprite.h" />
     <ClInclude Include="..\..\src\GSpriteBoard.h" />
+    <ClInclude Include="..\..\src\GSpriteBoardGrid.h" />
     <ClInclude Include="..\..\src\GSpriteCredits.h" />
     <ClInclude Include="..\..\src\GSpriteGalaxies.h" />
     <ClInclude Include="..\..\src\GSpriteLabel.h" />

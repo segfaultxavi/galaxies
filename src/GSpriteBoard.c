@@ -6,6 +6,7 @@
 #include "GSpriteButton.h"
 #include "GSpriteNull.h"
 #include "GSpriteTile.h"
+#include "GSpriteBoardGrid.h"
 
 struct _GSpriteBoard {
   GSprite base;
@@ -13,21 +14,9 @@ struct _GSpriteBoard {
   int mapSizeX, mapSizeY;
   int tileSizeX, tileSizeY;
   GSpriteTile **tiles;
+  GSpriteBoardGrid *grid;
   int editing;
 };
-
-void GSpriteBoard_render (GSpriteBoard *spr, SDL_Renderer *renderer, int offsx, int offsy) {
-  int i;
-  SDL_SetRenderDrawColor (renderer, 0x40, 0x40, 0x40, 0xFF);
-  offsx += spr->base.x;
-  offsy += spr->base.y;
-  for (i = 0; i <= spr->mapSizeY; i++) {
-    SDL_RenderDrawLine (renderer, offsx, offsy + i * spr->tileSizeY, offsx + spr->tileSizeX * spr->mapSizeX, offsy + i * spr->tileSizeY);
-  }
-  for (i = 0; i <= spr->mapSizeX; i++) {
-    SDL_RenderDrawLine (renderer, offsx + i * spr->tileSizeX, offsy, offsx + i * spr->tileSizeX, offsy + spr->tileSizeY * spr->mapSizeY);
-  }
-}
 
 int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
   int res = 0;
@@ -35,7 +24,6 @@ int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
   switch (event->type) {
     case GEVENT_TYPE_SPRITE_IN:
       GSpriteTile_setID (GBOARD_TILE (spr, x, y), 0, 0xFFFFFFFF);
-      SDL_Log ("In tile %dx%d", x, y);
       break;
     case GEVENT_TYPE_SPRITE_OUT:
       GSpriteTile_setID (GBOARD_TILE (spr, x, y), 0, 0xFF202020);
@@ -47,8 +35,7 @@ int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
 }
 
 GSprite *GSpriteBoard_new (int editing, GResources *res) {
-  GSpriteBoard *spr = (GSpriteBoard *)GSprite_new (sizeof (GSpriteBoard),
-    (GSpriteRender)GSpriteBoard_render, NULL, NULL, NULL);
+  GSpriteBoard *spr = (GSpriteBoard *)GSprite_new (sizeof (GSpriteBoard), NULL, NULL, NULL, NULL);
   spr->editing = editing;
   spr->base.w = spr->base.h = res->game_height;
   spr->res = res;
@@ -74,4 +61,6 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, float *c
       GSpriteTile_setID (tile, -1, 0xFF202020);
     }
   }
+  spr->grid = (GSpriteBoardGrid *)GSpriteBoardGrid_new (spr->mapSizeX, spr->mapSizeY, spr->tileSizeX, spr->tileSizeY, spr->tiles);
+  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->grid);
 }
