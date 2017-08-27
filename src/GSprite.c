@@ -68,17 +68,23 @@ void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int offsx, int offsy)
 }
 
 GSprite *GSprite_topmost_event_receiver (GSprite *parent, int x, int y) {
-  GSprite *ptr = parent->children;
+  GSprite *ptr = parent->children, *ptr_prev = NULL;
   if (!parent->visible)
     return NULL;
   if (!GSprite_is_inside (parent, x, y))
     return NULL;
   x -= parent->x;
   y -= parent->y;
+  // Traverse children in reverse order
+  while (ptr) {
+    ptr_prev = ptr;
+    ptr = ptr->next;
+  }
+  ptr = ptr_prev;
   while (ptr) {
     GSprite *ret = GSprite_topmost_event_receiver (ptr, x, y);
     if (ret != NULL) return ret;
-    ptr = ptr->next;
+    ptr = ptr->prev;
   }
   if (parent->event)
     return parent;
