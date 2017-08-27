@@ -18,6 +18,8 @@ struct _GSpriteBoard {
   int editing;
 };
 
+#define GBOARD_TILE(spr,x,y) spr->tiles[(y) * spr->mapSizeX + (x)]
+
 int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
   int res = 0;
   GSpriteBoard *spr = userdata;
@@ -61,6 +63,12 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, float *c
       GSpriteTile_setID (tile, -1, 0xFF202020);
     }
   }
-  spr->grid = (GSpriteBoardGrid *)GSpriteBoardGrid_new (spr->mapSizeX, spr->mapSizeY, spr->tileSizeX, spr->tileSizeY, spr->tiles);
+  spr->grid = (GSpriteBoardGrid *)GSpriteBoardGrid_new (spr->mapSizeX, spr->mapSizeY, spr->tileSizeX, spr->tileSizeY, spr);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->grid);
+}
+
+GSpriteTile *GSpriteBoard_get_tile (GSpriteBoard *spr, int x, int y) {
+  if (x < 0 || x >= spr->mapSizeX || y < 0 || y >= spr->mapSizeY)
+    return NULL;
+  return GBOARD_TILE (spr, x, y);
 }
