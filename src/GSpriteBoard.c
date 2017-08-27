@@ -7,6 +7,7 @@
 #include "GSpriteNull.h"
 #include "GSpriteTile.h"
 #include "GSpriteBoardGrid.h"
+#include "GSpriteCore.h"
 
 struct _GSpriteBoard {
   GSprite base;
@@ -65,6 +66,8 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, float *c
   }
   spr->grid = (GSpriteBoardGrid *)GSpriteBoardGrid_new (spr->mapSizeX, spr->mapSizeY, spr->tileSizeX, spr->tileSizeY, spr);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->grid);
+
+  GSprite_add_child ((GSprite *)spr, GSpriteCore_new (5, 5, 0, spr->tileSizeX, spr->tileSizeY, NULL, NULL, spr->res));
 }
 
 GSpriteTile *GSpriteBoard_get_tile (GSpriteBoard *spr, int x, int y) {
