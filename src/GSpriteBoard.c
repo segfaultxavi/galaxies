@@ -37,8 +37,12 @@ int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
   return res;
 }
 
+void GSpriteBoard_free (GSpriteBoard *spr) {
+  free (spr->tiles);
+}
+
 GSprite *GSpriteBoard_new (int editing, GResources *res) {
-  GSpriteBoard *spr = (GSpriteBoard *)GSprite_new (sizeof (GSpriteBoard), NULL, NULL, NULL, NULL);
+  GSpriteBoard *spr = (GSpriteBoard *)GSprite_new (sizeof (GSpriteBoard), NULL, NULL, NULL, (GSpriteFree)GSpriteBoard_free);
   spr->editing = editing;
   spr->base.w = spr->base.h = res->game_height;
   spr->res = res;
