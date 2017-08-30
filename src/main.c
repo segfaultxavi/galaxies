@@ -21,6 +21,8 @@ int main (int argc, char *argv[]) {
   SDL_Log ("Game running");
 
   GGame_run (game);
+
+  SDL_Log ("Game quitting");
   GGame_free (game);
   TTF_Quit ();
   SDL_Quit ();

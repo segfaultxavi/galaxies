@@ -20,15 +20,16 @@ void GSprite_free (GSprite *spr) {
   GSprite *ptr;
   if (!spr) return;
   GSprite_unparent (spr);
+  ptr = spr->children;
+  while (ptr) {
+    GSprite *ptr2;
+    ptr2 = ptr->next;
+    GSprite_free (ptr);
+    ptr = ptr2;
+  }
   if (spr->free)
     spr->free (spr);
-  ptr = spr->children;
   free (spr);
-  while (ptr) {
-    spr = ptr->next;
-    GSprite_free (ptr);
-    ptr = spr;
-  }
 }
 
 void GSprite_unparent (GSprite *spr) {

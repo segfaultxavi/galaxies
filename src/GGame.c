@@ -56,9 +56,13 @@ error:
 
 void GGame_free (GGame *game) {
   if (!game) return;
+  GSprite_free (game->resources.root);
   TTF_CloseFont (game->resources.font_big);
   TTF_CloseFont (game->resources.font_med);
   TTF_CloseFont (game->resources.font_small);
+  SDL_DestroyRenderer (game->resources.sdl_renderer);
+  SDL_DestroyWindow (game->sdl_window);
+
   SDL_RWclose (game->font_rwops);
   free (game);
 }
