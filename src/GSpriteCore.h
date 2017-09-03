@@ -14,6 +14,7 @@ SDL_Texture *GSpriteCore_create_highlight_texture (GResources *res, int w, int h
 
 GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX, int radiusY, GSpriteCoreCallback callback, void *userdata);
 void GSpriteCore_set_highlight (GSpriteCore *spr, int highlighted);
+Uint32 GSpriteCore_get_color (GSpriteCore *spr);
 
 #endif
 

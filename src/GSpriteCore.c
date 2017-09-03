@@ -105,7 +105,8 @@ GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX
   r = rand () % 0x40 + 0x40;
   g = rand () % 0x40 + 0x40;
   b = rand () % 0x40 + 0x40;
-  spr->color = 0xFF000000 | (r << 16) + (g << 8) + b;
+  spr->id = id;
+  spr->color = 0x80000000 | (r << 16) + (g << 8) + b;
   spr->callback = callback;
   spr->userdata = userdata;
   spr->highlighted = 0;
@@ -114,4 +115,8 @@ GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX
 
 void GSpriteCore_set_highlight (GSpriteCore *spr, int highlighted) {
   spr->highlighted = highlighted;
+}
+
+Uint32 GSpriteCore_get_color (GSpriteCore *spr) {
+  return spr->color;
 }

@@ -33,6 +33,7 @@ GGame *GGame_new () {
     goto error;
   }
   SDL_SetWindowTitle (game->sdl_window, "Galaxies");
+  SDL_SetRenderDrawBlendMode (res->sdl_renderer, SDL_BLENDMODE_BLEND);
 
   // Font
   game->font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);

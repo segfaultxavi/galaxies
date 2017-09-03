@@ -51,7 +51,7 @@ GSprite *GSpriteTile_new (GResources *res, int x, int y, int tileSizeX, int tile
   spr->base.y = y * tileSizeY;
   spr->base.w = tileSizeX;
   spr->base.h = tileSizeY;
-  spr->color = 0xFF202020;
+  spr->color = 0xFFFFFFFF; // Unused color
   spr->highlighted = 0;
   spr->callback = callback;
   spr->userdata = userdata;
