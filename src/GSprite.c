@@ -2,11 +2,12 @@
 #include "GSprite.h"
 #include <memory.h>
 
-GSprite *GSprite_new (int size, GSpriteRender render, GSpriteEvent event, GSpriteIsInside is_inside, GSpriteFree _free)
+GSprite *GSprite_new (GResources *res, int size, GSpriteRender render, GSpriteEvent event, GSpriteIsInside is_inside, GSpriteFree _free)
 {
   GSprite *spr = malloc (size);
   memset (spr, 0, sizeof (GSprite));
 
+  spr->res = res;
   spr->visible = 1;
   spr->render = render;
   spr->event = event;
@@ -56,14 +57,14 @@ void GSprite_add_child (GSprite *parent, GSprite *child) {
   child->parent = parent;
 }
 
-void GSprite_render (GSprite *spr, SDL_Renderer *renderer, int offsx, int offsy) {
+void GSprite_render (GSprite *spr, int offsx, int offsy) {
   GSprite *ptr = spr->children;
   if (!spr->visible)
     return;
   if (spr->render)
-    spr->render (spr, renderer, offsx, offsy);
+    spr->render (spr, offsx, offsy);
   while (ptr) {
-    GSprite_render (ptr, renderer, spr->x + offsx, spr->y + offsy);
+    GSprite_render (ptr, spr->x + offsx, spr->y + offsy);
     ptr = ptr->next;
   }
 }

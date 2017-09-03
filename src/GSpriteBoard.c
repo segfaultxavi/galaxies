@@ -11,7 +11,6 @@
 
 struct _GSpriteBoard {
   GSprite base;
-  GResources *res;
   int mapSizeX, mapSizeY;
   int tileSizeX, tileSizeY;
   GSpriteTile **tiles;
@@ -41,11 +40,10 @@ void GSpriteBoard_free (GSpriteBoard *spr) {
   free (spr->tiles);
 }
 
-GSprite *GSpriteBoard_new (int editing, GResources *res) {
-  GSpriteBoard *spr = (GSpriteBoard *)GSprite_new (sizeof (GSpriteBoard), NULL, NULL, NULL, (GSpriteFree)GSpriteBoard_free);
+GSprite *GSpriteBoard_new (GResources *res, int editing) {
+  GSpriteBoard *spr = (GSpriteBoard *)GSprite_new (res, sizeof (GSpriteBoard), NULL, NULL, NULL, (GSpriteFree)GSpriteBoard_free);
   spr->editing = editing;
   spr->base.w = spr->base.h = res->game_height;
-  spr->res = res;
   return (GSprite *)spr;
 }
 
@@ -57,21 +55,21 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, float *c
   spr->tileSizeY = (spr->base.h - 1) / spr->mapSizeY;
   spr->base.w = spr->tileSizeX * spr->mapSizeX;
   spr->base.h = spr->tileSizeY * spr->mapSizeY;
-  spr->base.x = (spr->res->game_height - spr->base.w) / 2;
-  spr->base.y = (spr->res->game_height - spr->base.h) / 2;
+  spr->base.x = (spr->base.res->game_height - spr->base.w) / 2;
+  spr->base.y = (spr->base.res->game_height - spr->base.h) / 2;
   spr->tiles = malloc (mapSizeX * mapSizeY * sizeof (GSpriteTile *));
   for (y = 0; y < mapSizeY; y++) {
     for (x = 0; x < mapSizeX; x++) {
-      GSpriteTile *tile = (GSpriteTile *)GSpriteTile_new (x, y, spr->tileSizeX, spr->tileSizeY, GSpriteBoard_tile_event, spr);
+      GSpriteTile *tile = (GSpriteTile *)GSpriteTile_new (spr->base.res, x, y, spr->tileSizeX, spr->tileSizeY, GSpriteBoard_tile_event, spr);
       GBOARD_TILE (spr, x, y) = tile;
       GSprite_add_child ((GSprite *)spr, (GSprite *)tile);
       GSpriteTile_setID (tile, -1, 0xFF202020);
     }
   }
-  spr->grid = (GSpriteBoardGrid *)GSpriteBoardGrid_new (spr->mapSizeX, spr->mapSizeY, spr->tileSizeX, spr->tileSizeY, spr);
+  spr->grid = (GSpriteBoardGrid *)GSpriteBoardGrid_new (spr->base.res, spr->mapSizeX, spr->mapSizeY, spr->tileSizeX, spr->tileSizeY, spr);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->grid);
 
-  GSprite_add_child ((GSprite *)spr, GSpriteCore_new (5, 5, 0, spr->tileSizeX, spr->tileSizeY, NULL, NULL, spr->res));
+  GSprite_add_child ((GSprite *)spr, GSpriteCore_new (spr->base.res, 5, 5, 0, spr->tileSizeX, spr->tileSizeY, NULL, NULL));
 }
 
 GSpriteTile *GSpriteBoard_get_tile (GSpriteBoard *spr, int x, int y) {

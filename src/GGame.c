@@ -28,7 +28,7 @@ GGame *GGame_new () {
   SDL_GL_SetAttribute (SDL_GL_RED_SIZE, 8); // Workaround for Samsung Galaxy S3
   SDL_GL_SetAttribute (SDL_GL_GREEN_SIZE, 8);
   SDL_GL_SetAttribute (SDL_GL_BLUE_SIZE, 8);
-  if (SDL_CreateWindowAndRenderer (res->game_width, res->game_height, SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN, &game->sdl_window, &res->sdl_renderer) != 0) {
+  if (SDL_CreateWindowAndRenderer (res->game_width, res->game_height, SDL_WINDOW_SHOWN, &game->sdl_window, &res->sdl_renderer) != 0) {
     SDL_Log ("SDL_CreateWindowAndRenderer: %s", SDL_GetError ());
     goto error;
   }
@@ -45,7 +45,7 @@ GGame *GGame_new () {
   }
 
   // Content
-  res->root = GSpriteNull_new (0, 0);
+  res->root = GSpriteNull_new (res, 0, 0);
   GSprite_add_child (res->root, GSpriteMainMenu_new (res));
   return game;
 
@@ -111,7 +111,7 @@ void GGame_run (GGame *game) {
 
     SDL_SetRenderDrawColor (game->resources.sdl_renderer, 0, 0, 0, 0);
     SDL_RenderClear (game->resources.sdl_renderer);
-    GSprite_render (game->resources.root, game->resources.sdl_renderer, 0, 0);
+    GSprite_render (game->resources.root, 0, 0);
     SDL_RenderPresent (game->resources.sdl_renderer);
   }
 }

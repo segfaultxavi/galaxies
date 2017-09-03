@@ -3,6 +3,6 @@
 
 #include "GSprite.h"
 
-GSprite *GSpriteNull_new (int x, int y);
+GSprite *GSpriteNull_new (GResources *res, int x, int y);
 
 #endif

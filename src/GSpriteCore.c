@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include "GSpriteCore.h"
+#include "GResources.h"
 #include <stdlib.h>
 
 struct _GSpriteCore {
@@ -15,8 +16,9 @@ struct _GSpriteCore {
 #define SQR(x) ((x) * (x))
 #define GSPRITECORE_RADIUS 0.75f
 
-void GSpriteCore_render (GSpriteCore *spr, SDL_Renderer *renderer, int offsx, int offsy) {
+void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   SDL_Rect dst;
+  SDL_Renderer *renderer = spr->base.res->sdl_renderer;
   dst.x = spr->base.x + offsx;
   dst.y = spr->base.y + offsy;
   dst.w = spr->base.w;
@@ -53,20 +55,20 @@ SDL_Texture *GSpriteCore_create_texture (int w, int h, Uint32 color, GResources 
   for (y = 0; y < h; y++) {
     for (x = 0; x < w; x++) {
       if (SQR (x - w / 2) + SQR (y - h / 2) < R2)
-        colors[y * w + x] = color;
+        colors[y * w + x] = 0xFFFFFFFF;
       else
         colors[y * w + x] = 0x00000000;
     }
   }
-  surf = SDL_CreateRGBSurfaceFrom (data, w, h, 32, w * 4, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+  surf = SDL_CreateRGBSurfaceFrom (data, w, h, 32, w * 4, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
   tex = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
   SDL_FreeSurface (surf);
   free (data);
   return tex;
 }
 
-GSprite *GSpriteCore_new (float x, float y, int id, int radiusX, int radiusY, GSpriteCoreCallback callback, void *userdata, GResources *res) {
-  GSpriteCore *spr = (GSpriteCore *)GSprite_new (sizeof (GSpriteCore),
+GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX, int radiusY, GSpriteCoreCallback callback, void *userdata) {
+  GSpriteCore *spr = (GSpriteCore *)GSprite_new (res, sizeof (GSpriteCore),
     (GSpriteRender)GSpriteCore_render, (GSpriteEvent)GSpriteCore_event, (GSpriteIsInside)GSpriteCore_is_inside, (GSpriteFree)GSpriteCore_free);
   int r, g, b;
   spr->base.x = (int)(x * radiusX);

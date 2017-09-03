@@ -7,7 +7,7 @@
 
 typedef struct _GSpriteBoard GSpriteBoard;
 
-GSprite *GSpriteBoard_new (int editing, GResources *res);
+GSprite *GSpriteBoard_new (GResources *res, int editing);
 void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, float *cores);
 GSpriteTile *GSpriteBoard_get_tile (GSpriteBoard *spr, int x, int y);
 

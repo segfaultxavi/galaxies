@@ -7,8 +7,9 @@ typedef struct _GSpriteLabel {
   SDL_Texture *texture;
 } GSpriteLabel;
 
-void GSpriteLabel_render (GSpriteLabel *spr, SDL_Renderer *renderer, int offsx, int offsy) {
+void GSpriteLabel_render (GSpriteLabel *spr, int offsx, int offsy) {
   SDL_Rect dst;
+  SDL_Renderer *renderer = spr->base.res->sdl_renderer;
   dst.x = spr->base.x + offsx;
   dst.y = spr->base.y + offsy;
   dst.w = spr->base.w;
@@ -20,10 +21,10 @@ void GSpriteLabel_free (GSpriteLabel *spr) {
   SDL_DestroyTexture (spr->texture);
 }
 
-GSprite *GSpriteLabel_new (int x, int y, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
-    GResources *res, TTF_Font *font, Uint32 color, const char *text) {
+GSprite *GSpriteLabel_new (GResources *res, int x, int y, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
+    TTF_Font *font, Uint32 color, const char *text) {
   SDL_Surface *surf;
-  GSpriteLabel *spr = (GSpriteLabel *)GSprite_new (sizeof (GSpriteLabel),
+  GSpriteLabel *spr = (GSpriteLabel *)GSprite_new (res, sizeof (GSpriteLabel),
       (GSpriteRender)GSpriteLabel_render, NULL, NULL, (GSpriteFree)GSpriteLabel_free);
   SDL_Color col = { (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF, (color >> 24) & 0xFF};
   surf = TTF_RenderText_Blended (font, text, col);

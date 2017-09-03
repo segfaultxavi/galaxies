@@ -7,7 +7,7 @@
 
 typedef struct _GSpriteBoardGrid GSpriteBoardGrid;
 
-GSprite *GSpriteBoardGrid_new (int mapSizeX, int mapSizeY, int tileSizeX, int tileSizeY, GSpriteBoard *board);
+GSprite *GSpriteBoardGrid_new (GResources *res, int mapSizeX, int mapSizeY, int tileSizeX, int tileSizeY, GSpriteBoard *board);
 
 #endif
 

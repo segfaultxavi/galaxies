@@ -22,9 +22,10 @@ static SDL_Color gcolor_button_active = { 0xC0, 0xC0, 0xC0, 0xFF };
 
 #define GBUTTON_MARGIN 10
 
-void GSpriteButton_render (GSpriteButton *spr, SDL_Renderer *renderer, int offsx, int offsy) {
+void GSpriteButton_render (GSpriteButton *spr, int offsx, int offsy) {
   SDL_Rect rect;
   SDL_Color col;
+  SDL_Renderer *renderer = spr->base.res->sdl_renderer;
   rect.x = spr->base.x + offsx;
   rect.y = spr->base.y + offsy;
   rect.w = spr->base.w;
@@ -59,11 +60,11 @@ int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
   return ret;
 }
 
-GSprite *GSpriteButton_new (int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
-    GResources *res, TTF_Font *font, Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata) {
+GSprite *GSpriteButton_new (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
+    TTF_Font *font, Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata) {
   GSprite *label;
   GSpriteButton *spr;
-  label = GSpriteLabel_new (0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, res, font, color, text);
+  label = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, font, color, text);
   if (w == -1) {
     label->x = GBUTTON_MARGIN;
     w = label->w + 2 * GBUTTON_MARGIN;
@@ -76,7 +77,7 @@ GSprite *GSpriteButton_new (int x, int y, int w, int h, GSpriteJustify justify_h
   } else {
     label->y = h / 2 - label->h / 2;
   }
-  spr = (GSpriteButton *)GSprite_new (sizeof (GSpriteButton),
+  spr = (GSpriteButton *)GSprite_new (res, sizeof (GSpriteButton),
       (GSpriteRender)GSpriteButton_render, (GSpriteEvent)GSpriteButton_event, NULL, NULL);
   spr->base.w = w;
   spr->base.h = h;

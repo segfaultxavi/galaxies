@@ -6,7 +6,7 @@
 #include "GSprite.h"
 #include "GResources.h"
 
-GSprite *GSpriteLabel_new (int x, int y, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
-  GResources *res, TTF_Font *font, Uint32 color, const char *text);
+GSprite *GSpriteLabel_new (GResources *res, int x, int y, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
+  TTF_Font *font, Uint32 color, const char *text);
 
 #endif
