@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "GResources.h"
 #include "GSpriteLabel.h"
+#include "GGraphics.h"
 
 typedef struct _GSpriteLabel {
   GSprite base;
@@ -28,6 +29,7 @@ GSprite *GSpriteLabel_new (GResources *res, int x, int y, GSpriteJustify justify
       (GSpriteRender)GSpriteLabel_render, NULL, NULL, (GSpriteFree)GSpriteLabel_free);
   SDL_Color col = { (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF, (color >> 24) & 0xFF};
   surf = TTF_RenderText_Blended (font, text, col);
+  GGraphics_glow (surf, 20, 0x00FFFFFF);
   if (!surf) {
     SDL_Log ("TTF_RenderText_Blended: %s", TTF_GetError ());
     GSprite_free ((GSprite *)spr);
