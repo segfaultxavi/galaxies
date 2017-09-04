@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "GSpriteCore.h"
 #include "GResources.h"
+#include "GGraphics.h"
 #include <stdlib.h>
 
 struct _GSpriteCore {
@@ -13,7 +14,6 @@ struct _GSpriteCore {
   void *userdata;
 };
 
-#define SQR(x) ((x) * (x))
 #define GSPRITECORE_RADIUS 0.75f
 
 void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
@@ -30,6 +30,7 @@ void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   } else {
     SDL_SetTextureColorMod (res->core_texture, 0xC0, 0xC0, 0x00);
     SDL_RenderCopy (renderer, res->core_texture, NULL, &dst);
+    SDL_SetTextureColorMod (res->core_highlight_texture, 0xFF, 0xFF, 0x00);
     SDL_RenderCopy (renderer, res->core_highlight_texture, NULL, &dst);
   }
 }
@@ -50,47 +51,19 @@ int GSpriteCore_is_inside (GSprite *spr, int x, int y) {
 }
 
 SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h) {
-  unsigned char *data = malloc (w * h * 4);
-  Uint32 *colors = (Uint32 *)data;
-  SDL_Surface *surf;
+  SDL_Surface *surf = GGraphics_circle (w, h, 0, (int)(GSPRITECORE_RADIUS * w / 2));
   SDL_Texture *tex;
-  int x, y, R2;
-  R2 = (int)SQR (GSPRITECORE_RADIUS * w / 2);
-  for (y = 0; y < h; y++) {
-    for (x = 0; x < w; x++) {
-      if (SQR (x - w / 2) + SQR (y - h / 2) < R2)
-        colors[y * w + x] = 0xFFFFFFFF;
-      else
-        colors[y * w + x] = 0x00000000;
-    }
-  }
-  surf = SDL_CreateRGBSurfaceFrom (data, w, h, 32, w * 4, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
   tex = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
-  SDL_FreeSurface (surf);
-  free (data);
+  GGraphics_free_surface (surf);
   return tex;
 }
 
 SDL_Texture *GSpriteCore_create_highlight_texture (GResources *res, int w, int h) {
-  unsigned char *data = malloc (w * h * 4);
-  Uint32 *colors = (Uint32 *)data;
-  SDL_Surface *surf;
+  int r = (int)(GSPRITECORE_RADIUS * w / 2);
+  SDL_Surface *surf = GGraphics_circle (w, h, (int)(r * 0.9f), (int)(r * 1.1f));
   SDL_Texture *tex;
-  int x, y, R2;
-  R2 = (int)SQR (GSPRITECORE_RADIUS * w / 2);
-  for (y = 0; y < h; y++) {
-    for (x = 0; x < w; x++) {
-      float r = (float)(SQR (x - w / 2) + SQR (y - h / 2));
-      if ( r < R2 * 1.1f && r > R2 * 0.9f)
-        colors[y * w + x] = 0xFFFFFF00;
-      else
-        colors[y * w + x] = 0x00000000;
-    }
-  }
-  surf = SDL_CreateRGBSurfaceFrom (data, w, h, 32, w * 4, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
   tex = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
-  SDL_FreeSurface (surf);
-  free (data);
+  GGraphics_free_surface (surf);
   return tex;
 }
 
