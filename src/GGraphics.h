@@ -7,6 +7,6 @@
 
 void GGraphics_free_surface (SDL_Surface *suf);
 SDL_Surface *GGraphics_circle (int w, int h, int R1, int R2);
-void GGraphics_glow (SDL_Surface *surf, int strength, Uint32 color);
+void GGraphics_add_glow (SDL_Surface **surf, int strength, Uint32 color);
 
 #endif
