@@ -25,7 +25,7 @@ void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   dst.w = spr->base.w;
   dst.h = spr->base.h;
   if (spr->highlighted == 0) {
-    SDL_SetTextureColorMod (res->core_texture, (spr->color >> 16) & 0xFF, (spr->color >> 8) & 0xFF, (spr->color >> 0) & 0xFF);
+    SDL_SetTextureColorMod (res->core_texture, (0x40 + (spr->color >> 16)) & 0xFF, (0x40 + (spr->color >> 8)) & 0xFF, (0x40 + (spr->color >> 0)) & 0xFF);
     SDL_RenderCopy (renderer, res->core_texture, NULL, &dst);
   } else {
     SDL_SetTextureColorMod (res->core_texture, 0xC0, 0xC0, 0x00);
@@ -92,4 +92,11 @@ void GSpriteCore_set_highlight (GSpriteCore *spr, int highlighted) {
 
 Uint32 GSpriteCore_get_color (GSpriteCore *spr) {
   return spr->color;
+}
+
+void GSpriteCore_get_opposite (GSpriteCore *spr, int x, int y, int *x2, int *y2) {
+  int cx = (int)(spr->base.x / spr->base.w * 2);
+  int cy = (int)(spr->base.y / spr->base.h * 2);
+  *x2 = cx - x;
+  *y2 = cy - y;
 }

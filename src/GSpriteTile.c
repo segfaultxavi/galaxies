@@ -5,6 +5,7 @@ struct _GSpriteTile {
   GSprite base;
   int id;
   Uint32 color;
+  int flags;
   int highlighted;
   GSpriteTileCallback callback;
   void *userdata;
@@ -52,6 +53,7 @@ GSprite *GSpriteTile_new (GResources *res, int x, int y, int tileSizeX, int tile
   spr->base.w = tileSizeX;
   spr->base.h = tileSizeY;
   spr->color = 0xFFFFFFFF; // Unused color
+  spr->flags = 0;
   spr->highlighted = 0;
   spr->callback = callback;
   spr->userdata = userdata;
@@ -65,4 +67,12 @@ void GSpriteTile_setID (GSpriteTile *spr, int id, Uint32 color) {
 
 int GSpriteTile_getID (const GSpriteTile *spr) {
   return spr->id;
+}
+
+void GSpriteTile_set_flags (GSpriteTile *spr, int flags) {
+  spr->flags = flags;
+}
+
+int GSpriteTile_get_flags (const GSpriteTile *spr) {
+  return spr->flags;
 }
