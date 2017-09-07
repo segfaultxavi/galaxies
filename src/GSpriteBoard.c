@@ -44,7 +44,7 @@ int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
   switch (event->type) {
     case GEVENT_TYPE_SPRITE_ACTIVATE:
       if (spr->currCoreId > -1 && ((GSpriteTile_get_flags (tile) & GTILE_FLAG_FIXED) == 0)) {
-        GSpriteTile_setID (tile, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
+        GSpriteTile_set_id (tile, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
       }
     default:
       break;
@@ -87,7 +87,7 @@ GSprite *GSpriteBoard_new (GResources *res, int editing) {
 void GSpriteBoard_flood_fill (GSpriteBoard *spr, int sx, int sy, int id) {
   GSpriteTile *tile = GBOARD_TILE (spr, sx, sy);
   int flags;
-  if (GSpriteTile_getID (tile) != id) return;
+  if (GSpriteTile_get_id (tile) != id) return;
   flags = GSpriteTile_get_flags (tile);
   if ((flags & GTILE_FLAG_VISITED) != 0) return;
   GSpriteTile_set_flags (tile, flags | GTILE_FLAG_VISITED);
@@ -118,8 +118,8 @@ void GSpriteBoard_check_core (GSpriteBoard *spr, int id) {
   for (y = 0; y < spr->mapSizeY; y++)
     for (x = 0; x < spr->mapSizeX; x++) {
       GSpriteTile *tile = GBOARD_TILE (spr, x, y);
-      if (GSpriteTile_getID (tile) == id && (GSpriteTile_get_flags (tile) & GTILE_FLAG_VISITED) == 0) {
-        GSpriteTile_setID (tile, -1, 0);
+      if (GSpriteTile_get_id (tile) == id && (GSpriteTile_get_flags (tile) & GTILE_FLAG_VISITED) == 0) {
+        GSpriteTile_set_id (tile, -1, 0);
       }
     }
 }
@@ -135,16 +135,16 @@ void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, int id) {
   for (x = (int)sx; x < (int)sx + lenx; x++) {
     for (y = (int)sy; y < (int)sy + leny; y++) {
       GSpriteTile *tile = GBOARD_TILE (spr, x, y);
-      int tile_id = GSpriteTile_getID (tile);
+      int tile_id = GSpriteTile_get_id (tile);
       
       if (tile_id != -1) {
         int x2, y2;
         GSpriteCore_get_opposite (spr->cores[tile_id], x, y, &x2, &y2);
-        GSpriteTile_setID (GBOARD_TILE(spr, x2, y2), -1, 0x00000000);
+        GSpriteTile_set_id (GBOARD_TILE(spr, x2, y2), -1, 0x00000000);
         GSpriteBoard_check_core (spr, tile_id);
       }
       
-      GSpriteTile_setID (tile, id, GSpriteCore_get_color (spr->cores[id]));
+      GSpriteTile_set_id (tile, id, GSpriteCore_get_color (spr->cores[id]));
       GSpriteTile_set_flags (tile, GSpriteTile_get_flags (tile) | GTILE_FLAG_FIXED);
     }
   }
@@ -170,7 +170,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
       GSpriteTile *tile = (GSpriteTile *)GSpriteTile_new (spr->base.res, x, y, spr->tileSizeX, spr->tileSizeY, GSpriteBoard_tile_event, spr);
       GBOARD_TILE (spr, x, y) = tile;
       GSprite_add_child ((GSprite *)spr, (GSprite *)tile);
-      GSpriteTile_setID (tile, -1, 0x80202020);
+      GSpriteTile_set_id (tile, -1, 0x80202020);
     }
   }
   spr->grid = (GSpriteBoardGrid *)GSpriteBoardGrid_new (spr->base.res, spr->mapSizeX, spr->mapSizeY, spr->tileSizeX, spr->tileSizeY, spr);

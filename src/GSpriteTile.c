@@ -60,12 +60,12 @@ GSprite *GSpriteTile_new (GResources *res, int x, int y, int tileSizeX, int tile
   return (GSprite *)spr;
 }
 
-void GSpriteTile_setID (GSpriteTile *spr, int id, Uint32 color) {
+void GSpriteTile_set_id (GSpriteTile *spr, int id, Uint32 color) {
   spr->id = id;
   spr->color = color;
 }
 
-int GSpriteTile_getID (const GSpriteTile *spr) {
+int GSpriteTile_get_id (const GSpriteTile *spr) {
   return spr->id;
 }
 

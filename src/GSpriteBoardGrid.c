@@ -23,7 +23,7 @@ void GSpriteBoardGrid_render (GSpriteBoardGrid *spr, int offsx, int offsy) {
     for (x = 0; x < spr->mapSizeX; x++) {
       GSpriteTile *tile_up = GSpriteBoard_get_tile (spr->board, x, y - 1);
       GSpriteTile *tile_down = GSpriteBoard_get_tile (spr->board, x, y);
-      if (y == 0 || y == spr->mapSizeY || GSpriteTile_getID (tile_up) != GSpriteTile_getID (tile_down)) {
+      if (y == 0 || y == spr->mapSizeY || GSpriteTile_get_id (tile_up) != GSpriteTile_get_id (tile_down)) {
         SDL_Rect r;
         r.x = offsx + x * spr->tileSizeX;
         r.y = offsy + y * spr->tileSizeY - 1;
@@ -37,7 +37,7 @@ void GSpriteBoardGrid_render (GSpriteBoardGrid *spr, int offsx, int offsy) {
     for (y = 0; y < spr->mapSizeY; y++) {
       GSpriteTile *tile_left = GSpriteBoard_get_tile (spr->board, x - 1, y);
       GSpriteTile *tile_right = GSpriteBoard_get_tile (spr->board, x, y);
-      if (x == 0 || x == spr->mapSizeX || GSpriteTile_getID (tile_left) != GSpriteTile_getID (tile_right)) {
+      if (x == 0 || x == spr->mapSizeX || GSpriteTile_get_id (tile_left) != GSpriteTile_get_id (tile_right)) {
         SDL_Rect r;
         r.x = offsx + x * spr->tileSizeX - 1;
         r.y = offsy + y * spr->tileSizeY;
