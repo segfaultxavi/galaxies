@@ -13,19 +13,19 @@ typedef struct _GSpriteGalaxies {
   GSpriteBoard *board;
 } GSpriteGalaxies;
 
-int GSpriteGalaxies_reset (void *userdata) {
+static int GSpriteGalaxies_reset (void *userdata) {
   GSpriteGalaxies *spr = userdata;
   SDL_Log ("Galaxies:Reset");
   return 0;
 }
 
-int GSpriteGalaxies_solution (void *userdata) {
+static int GSpriteGalaxies_solution (void *userdata) {
   GSpriteGalaxies *spr = userdata;
   SDL_Log ("Galaxies:Solution");
   return 0;
 }
 
-int GSpriteGalaxies_back (void *userdata) {
+static int GSpriteGalaxies_back (void *userdata) {
   GSpriteGalaxies *spr = userdata;
   SDL_Log ("Galaxies:Back");
   spr->main_menu->visible = 1;

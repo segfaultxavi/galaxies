@@ -8,7 +8,7 @@ typedef struct _GSpriteLabel {
   SDL_Texture *texture;
 } GSpriteLabel;
 
-void GSpriteLabel_render (GSpriteLabel *spr, int offsx, int offsy) {
+static void GSpriteLabel_render (GSpriteLabel *spr, int offsx, int offsy) {
   SDL_Rect dst;
   SDL_Renderer *renderer = spr->base.res->sdl_renderer;
   dst.x = spr->base.x + offsx;
@@ -18,7 +18,7 @@ void GSpriteLabel_render (GSpriteLabel *spr, int offsx, int offsy) {
   SDL_RenderCopy (renderer, spr->texture, NULL, &dst);
 }
 
-void GSpriteLabel_free (GSpriteLabel *spr) {
+static void GSpriteLabel_free (GSpriteLabel *spr) {
   SDL_DestroyTexture (spr->texture);
 }
 

@@ -16,7 +16,7 @@ struct _GSpriteCore {
 
 #define GSPRITECORE_RADIUS 0.75f
 
-void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
+static void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   SDL_Rect dst;
   GResources *res = spr->base.res;
   SDL_Renderer *renderer = res->sdl_renderer;
@@ -35,13 +35,13 @@ void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   }
 }
 
-int GSpriteCore_event (GSpriteCore *spr, GEvent *event) {
+static int GSpriteCore_event (GSpriteCore *spr, GEvent *event) {
   if (spr->callback)
     return spr->callback (spr->id, event, spr->userdata);
   return 0;
 }
 
-int GSpriteCore_is_inside (GSprite *spr, int x, int y) {
+static int GSpriteCore_is_inside (GSprite *spr, int x, int y) {
   int r2, R2;
   if (x < spr->x || y < spr->y || x > spr->x + spr->w || y > spr->y + spr->h)
     return 0;

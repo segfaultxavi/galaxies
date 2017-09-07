@@ -22,7 +22,7 @@ static SDL_Color gcolor_button_active = { 0xC0, 0xC0, 0xC0, 0xFF };
 
 #define GBUTTON_MARGIN 10
 
-void GSpriteButton_render (GSpriteButton *spr, int offsx, int offsy) {
+static void GSpriteButton_render (GSpriteButton *spr, int offsx, int offsy) {
   SDL_Rect rect;
   SDL_Color col;
   SDL_Renderer *renderer = spr->base.res->sdl_renderer;
@@ -41,7 +41,7 @@ void GSpriteButton_render (GSpriteButton *spr, int offsx, int offsy) {
   }
 }
 
-int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
+static int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
   int ret = 0;
   switch (event->type) {
     case GEVENT_TYPE_SPRITE_IN:

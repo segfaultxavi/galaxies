@@ -23,7 +23,7 @@ struct _GSpriteBoard {
 
 #define GBOARD_TILE(spr,x,y) spr->tiles[(y) * spr->mapSizeX + (x)]
 
-void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
+static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
   int i;
   SDL_Renderer *renderer = spr->base.res->sdl_renderer;
   SDL_SetRenderDrawColor (renderer, 0x40, 0x40, 0x40, 0xFF);
@@ -37,7 +37,7 @@ void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
   }
 }
 
-int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
+static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
   int res = 0;
   GSpriteBoard *spr = userdata;
   GSpriteTile *tile = GBOARD_TILE (spr, x, y);
@@ -52,7 +52,7 @@ int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
   return res;
 }
 
-int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
+static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
   int res = 0;
   GSpriteBoard *spr = userdata;
   switch (event->type) {
@@ -84,7 +84,7 @@ GSprite *GSpriteBoard_new (GResources *res, int editing) {
   return (GSprite *)spr;
 }
 
-void GSpriteBoard_flood_fill (GSpriteBoard *spr, int sx, int sy, int id) {
+static void GSpriteBoard_flood_fill (GSpriteBoard *spr, int sx, int sy, int id) {
   GSpriteTile *tile = GBOARD_TILE (spr, sx, sy);
   int flags;
   if (GSpriteTile_get_id (tile) != id) return;
@@ -98,7 +98,7 @@ void GSpriteBoard_flood_fill (GSpriteBoard *spr, int sx, int sy, int id) {
   if (sy < spr->mapSizeY - 1) GSpriteBoard_flood_fill (spr, sx, sy + 1, id);
 }
 
-void GSpriteBoard_check_core (GSpriteBoard *spr, int id) {
+static void GSpriteBoard_check_core (GSpriteBoard *spr, int id) {
   GSpriteCore *core = spr->cores[id];
   int sx = (int)(((GSprite *)core)->x * spr->tileSizeX);
   int sy = (int)(((GSprite *)core)->y * spr->tileSizeY);
@@ -124,7 +124,7 @@ void GSpriteBoard_check_core (GSpriteBoard *spr, int id) {
     }
 }
 
-void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, int id) {
+static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, int id) {
   int x, y, lenx, leny;
   ((GSprite *)spr->cores[id])->x = (int)(sx * spr->tileSizeX);
   ((GSprite *)spr->cores[id])->y = (int)(sy * spr->tileSizeY);

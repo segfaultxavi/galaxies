@@ -11,7 +11,7 @@ typedef struct _GSpriteMainMenu {
   GSprite base;
 } GSpriteMainMenu;
 
-int GSpriteMainMenu_play (void *userdata) {
+static int GSpriteMainMenu_play (void *userdata) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Play");
   spr->base.visible = 0;
@@ -19,13 +19,13 @@ int GSpriteMainMenu_play (void *userdata) {
   return 0;
 }
 
-int GSpriteMainMenu_editor (void *userdata) {
+static int GSpriteMainMenu_editor (void *userdata) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Editor");
   return 0;
 }
 
-int GSpriteMainMenu_credits (void *userdata) {
+static int GSpriteMainMenu_credits (void *userdata) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Credits");
   spr->base.visible = 0;

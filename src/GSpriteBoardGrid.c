@@ -12,7 +12,7 @@ struct _GSpriteBoardGrid {
 
 static SDL_Color gcolor_grid_inactive = { 0x80, 0x80, 0x80, 0xFF };
 
-void GSpriteBoardGrid_render (GSpriteBoardGrid *spr, int offsx, int offsy) {
+static void GSpriteBoardGrid_render (GSpriteBoardGrid *spr, int offsx, int offsy) {
   int x, y;
   Uint32 color = 0xFFFFFF00;
   SDL_Renderer *renderer = spr->base.res->sdl_renderer;

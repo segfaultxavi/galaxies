@@ -11,7 +11,7 @@ struct _GSpriteTile {
   void *userdata;
 };
 
-void GSpriteTile_render (GSpriteTile *spr, int offsx, int offsy) {
+static void GSpriteTile_render (GSpriteTile *spr, int offsx, int offsy) {
   SDL_Rect rect;
   SDL_Renderer *renderer = spr->base.res->sdl_renderer;
   Uint32 color = spr->color;
@@ -25,7 +25,7 @@ void GSpriteTile_render (GSpriteTile *spr, int offsx, int offsy) {
   SDL_RenderFillRect (renderer, &rect);
 }
 
-int GSpriteTile_event (GSpriteTile *spr, GEvent *event) {
+static int GSpriteTile_event (GSpriteTile *spr, GEvent *event) {
   int x = spr->base.x / spr->base.w;
   int y = spr->base.y / spr->base.h;
 
