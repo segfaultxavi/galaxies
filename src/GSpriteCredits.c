@@ -35,15 +35,16 @@ GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
   spr->base.w = spr->base.h = -1;
   spr->main_menu = main_menu;
   GSprite_add_child ((GSprite *)spr,
-    GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_big, 0xFFFFFF00, "galaxies"));
+    GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_big,
+      0xFF000000, 0xFFFFFFFF, "galaxies"));
   for (l = 0; l < sizeof (credits) / sizeof (credits[0]); l++) {
     if (credits[l][0][0] != '\0')
     GSprite_add_child ((GSprite *)spr,
       GSpriteLabel_new (res, (int)(res->game_width * 0.4f), (l + 4) * line, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_BEGIN,
-        res->font_small, 0xFFFFFFFF, credits [l][0]));
+        res->font_small, 0xFFFFFFFF, 0, credits [l][0]));
     GSprite_add_child ((GSprite *)spr,
       GSpriteLabel_new (res, (int)(res->game_width * 0.45f), (l + 4) * line, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
-        res->font_small, 0xFFFFFF00, credits [l][1]));
+        res->font_small, 0xFFFFFF00, 0, credits [l][1]));
   }
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,

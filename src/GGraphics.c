@@ -3,7 +3,8 @@
 #include "string.h"
 
 void GGraphics_free_surface (SDL_Surface *surf) {
-  free (surf->pixels);
+  if (surf->userdata)
+    free (surf->userdata);
   SDL_FreeSurface (surf);
 }
 
@@ -24,6 +25,7 @@ SDL_Surface *GGraphics_circle (int w, int h, int R1, int R2) {
     }
   }
   surf = SDL_CreateRGBSurfaceFrom (data, w, h, 32, w * 4, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+  surf->userdata = data;
   return surf;
 }
 
@@ -36,7 +38,7 @@ void GGraphics_add_glow (SDL_Surface **org_surf, int strength, Uint32 color) {
   int gr = (color >> 16) & 0xFF;
   int gg = (color >>  8) & 0xFF;
   int gb = (color >>  0) & 0xFF;
-  int margin = 8;
+  int margin = 4;
 
   SDL_LockSurface (*org_surf);
   org_w = (*org_surf)->w;
@@ -60,19 +62,19 @@ void GGraphics_add_glow (SDL_Surface **org_surf, int strength, Uint32 color) {
     }
   }
   SDL_UnlockSurface (*org_surf);
-  SDL_FreeSurface (*org_surf);
+  GGraphics_free_surface (*org_surf);
   // Diffuse (Horribly naive approach)
   for (s = 0; s < strength; s++) {
     for (y = 0; y < h; y++) {
-      for (x = 1; x < w - 1; x++) {
+      for (x = 2; x < w - 2; x++) {
         int i = y * w + x;
-        alphas[i] = (int)(0.28f * alphas2[i - 1] + 0.44f * alphas2[i] + 0.28f * alphas2[i + 1]);
+        alphas[i] = ((int)alphas2[i - 2] + alphas2[i - 1] + alphas2[i] + alphas2[i + 1] + alphas2[i + 2]) / 5;
       }
     }
     for (x = 0; x < w; x++) {
-      for (y = 1; y < h - 1; y++) {
+      for (y = 2; y < h - 2; y++) {
         int i = y * w + x;
-        alphas2[i] = (int)(0.28f * alphas[i - w] + 0.44f * alphas[i] + 0.28f * alphas[i + w]);
+        alphas2[i] = ((int)alphas[i - 2 * w] + alphas[i - w] + alphas[i] + alphas[i + w] + alphas[i + 2 * w]) / 5;
       }
     }
   }

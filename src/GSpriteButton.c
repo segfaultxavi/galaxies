@@ -64,7 +64,7 @@ GSprite *GSpriteButton_new (GResources *res, int x, int y, int w, int h, GSprite
     TTF_Font *font, Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata) {
   GSprite *label;
   GSpriteButton *spr;
-  label = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, font, color, text);
+  label = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, font, color, 0, text);
   if (w == -1) {
     label->x = GBUTTON_MARGIN;
     w = label->w + 2 * GBUTTON_MARGIN;
