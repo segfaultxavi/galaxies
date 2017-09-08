@@ -5,7 +5,7 @@
 GSprite *GSprite_new (GResources *res, int size, GSpriteRender render, GSpriteEvent event, GSpriteIsInside is_inside, GSpriteFree _free)
 {
   GSprite *spr = malloc (size);
-  memset (spr, 0, sizeof (GSprite));
+  memset (spr, 0, size);
 
   spr->res = res;
   spr->visible = 1;
