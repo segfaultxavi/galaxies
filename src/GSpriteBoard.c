@@ -19,6 +19,7 @@ struct _GSpriteBoard {
   GSpriteBoardGrid *grid;
   int currCoreId;
   int editing;
+  char *last_code;
 };
 
 #define GBOARD_TILE(spr,x,y) spr->tiles[(y) * spr->mapSizeX + (x)]
@@ -71,6 +72,8 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
 }
 
 void GSpriteBoard_free (GSpriteBoard *spr) {
+  if (spr->last_code)
+    free (spr->last_code);
   free (spr->tiles);
   free (spr->cores);
   SDL_DestroyTexture (spr->base.res->core_texture);
@@ -100,8 +103,8 @@ static void GSpriteBoard_flood_fill (GSpriteBoard *spr, int sx, int sy, int id) 
 
 static void GSpriteBoard_check_core (GSpriteBoard *spr, int id) {
   GSpriteCore *core = spr->cores[id];
-  int sx = (int)(((GSprite *)core)->x * spr->tileSizeX);
-  int sy = (int)(((GSprite *)core)->y * spr->tileSizeY);
+  int sx = (int)(((GSprite *)core)->x / spr->tileSizeX);
+  int sy = (int)(((GSprite *)core)->y / spr->tileSizeY);
   int x, y;
   
   // Clear flag
@@ -130,10 +133,10 @@ static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, int 
   ((GSprite *)spr->cores[id])->y = (int)(sy * spr->tileSizeY);
   
   // Tiles under the core
-  lenx = (int)sx == sx ? 1 : 2;
-  leny = (int)sy == sy ? 1 : 2;
-  for (x = (int)sx; x < (int)sx + lenx; x++) {
-    for (y = (int)sy; y < (int)sy + leny; y++) {
+  lenx = (int)sx != sx ? 1 : 2;
+  leny = (int)sy != sy ? 1 : 2;
+  for (x = (int)(sx - 0.5f); x < (int)(sx - 0.5f) + lenx; x++) {
+    for (y = (int)(sy - 0.5f); y < (int)(sy - 0.5f) + leny; y++) {
       GSpriteTile *tile = GBOARD_TILE (spr, x, y);
       int tile_id = GSpriteTile_get_id (tile);
       
@@ -184,6 +187,77 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
     GSpriteBoard_deploy_core (spr, initialCores[x * 2 + 0], initialCores[x * 2 + 1], x);
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[x]);
   }
+}
+
+static int GSpriteBoard_a2i (char a) {
+  if (a >= 'a' && a <= 'z') return a - 'a';
+  if (a >= 'A' && a <= 'Z') return a - 'A' + 26;
+}
+
+static char GSpriteBoard_i2a (int i) {
+  if (i < 26) return 'a' + i;
+  return 'A' + i - 26;
+}
+
+int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
+  int desc_len;
+  int size_x, size_y;
+  int i, num_cores;
+  float *initial_cores;
+
+  if (desc == NULL) return 0;
+  desc_len = strlen (desc);
+
+  // Check if anything has changed
+  if (spr->last_code != NULL && strcmp (desc, spr->last_code) == 0) return 1;
+
+  // Check format
+  if (desc_len < 3) return 0; // Header
+  if (((desc_len - 3) & 2) == 1) return 0; // Extra characters
+  if (desc[0] != '1') return 0; // Version number
+  size_x = GSpriteBoard_a2i (desc[1]); // Board size
+  size_y = GSpriteBoard_a2i (desc[2]);
+  if (size_x < 3 || size_x > 20 || size_y < 3 || size_y > 20) return 0; // Invalid sizes
+  num_cores = (desc_len - 3) / 2;
+  initial_cores = malloc (num_cores * 2 * sizeof (float));
+  for (i = 0; i < num_cores; i++) {
+    float x = (GSpriteBoard_a2i (desc[3 + i * 2 + 0]) + 1) / 2.f;
+    float y = (GSpriteBoard_a2i (desc[3 + i * 2 + 1]) + 1) / 2.f;
+    if (x < 0 || x >= (size_x + 0.5f) || y < 0 || y >= (size_y + 0.5f)) {
+      SDL_Log ("%g,%g outside %dx%d", x, y, size_x, size_y);
+      free (initial_cores);
+      return 0;
+    }
+    initial_cores[i * 2 + 0] = x;
+    initial_cores[i * 2 + 1] = y;
+  }
+  // Check core collisions
+  for (i = 0; i < num_cores; i++) {
+    int minx = (int)(initial_cores[i * 2 + 0]);
+    int maxx = (int)(initial_cores[i * 2 + 0] + 0.5f);
+    int miny = (int)(initial_cores[i * 2 + 1]);
+    int maxy = (int)(initial_cores[i * 2 + 1] + 0.5f);
+    int j;
+    for (j = i + 1; j < num_cores; j++) {
+      if ((initial_cores[j * 2 + 0] >= minx) && (initial_cores[j * 2 + 0] <= maxx) &&
+          (initial_cores[j * 2 + 1] >= miny) && (initial_cores[j * 2 + 1] <= maxy)) {
+        SDL_Log ("Cores %d (%g,%g) and %d (%g,%g) overlap",
+          i, initial_cores[i * 2 + 0], initial_cores[i * 2 + 1],
+          j, initial_cores[j * 2 + 0], initial_cores[j * 2 + 1]);
+        free (initial_cores);
+        return 0;
+      }
+    }
+  }
+
+  // Build board: Needs to rebuild whole board in case of size change
+  GSpriteBoard_start (spr, size_x, size_x, num_cores, initial_cores);
+  free (initial_cores);
+  if (spr->last_code)
+    free (spr->last_code);
+  spr->last_code = strdup (desc);
+
+  return 1;
 }
 
 GSpriteTile *GSpriteBoard_get_tile (GSpriteBoard *spr, int x, int y) {

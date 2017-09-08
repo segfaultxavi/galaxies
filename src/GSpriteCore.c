@@ -20,8 +20,8 @@ static void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   SDL_Rect dst;
   GResources *res = spr->base.res;
   SDL_Renderer *renderer = res->sdl_renderer;
-  dst.x = spr->base.x + offsx;
-  dst.y = spr->base.y + offsy;
+  dst.x = spr->base.x + offsx - spr->base.w / 2;
+  dst.y = spr->base.y + offsy - spr->base.h / 2;
   dst.w = spr->base.w;
   dst.h = spr->base.h;
   if (spr->highlighted == 0) {
@@ -43,6 +43,8 @@ static int GSpriteCore_event (GSpriteCore *spr, GEvent *event) {
 
 static int GSpriteCore_is_inside (GSprite *spr, int x, int y) {
   int r2, R2;
+  x += spr->w / 2;
+  y += spr->h / 2;
   if (x < spr->x || y < spr->y || x > spr->x + spr->w || y > spr->y + spr->h)
     return 0;
   r2 = SQR (x - (spr->x + spr->w / 2)) + SQR (y - (spr->y + spr->h / 2));
@@ -95,8 +97,8 @@ Uint32 GSpriteCore_get_color (GSpriteCore *spr) {
 }
 
 void GSpriteCore_get_opposite (GSpriteCore *spr, int x, int y, int *x2, int *y2) {
-  int cx = (int)(spr->base.x / spr->base.w * 2);
-  int cy = (int)(spr->base.y / spr->base.h * 2);
+  int cx = (int)(spr->base.x * 2 / spr->base.w);
+  int cy = (int)(spr->base.y * 2 / spr->base.h);
   *x2 = cx - x;
   *y2 = cy - y;
 }

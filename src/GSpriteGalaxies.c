@@ -54,9 +54,8 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu) {
     GSpriteButton_new (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
       res->font_small, 0xFF0000FF, "back", GSpriteGalaxies_back, spr));
   GSprite_add_child ((GSprite *)spr, margin);
-  float cores[6] = {5.5f, 5.5f, 3.5f, 3, 7, 7};
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 0);
-  GSpriteBoard_start (spr->board, 10, 10, 3, cores);
+  GSpriteBoard_load (spr->board, "1hheebfakekgckbkimgmmhmikcm");
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   return (GSprite *)spr;
 }
