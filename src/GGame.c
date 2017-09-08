@@ -45,6 +45,11 @@ GGame *GGame_new () {
     goto error;
   }
 
+  // Cursors
+  res->pointer_cur = SDL_CreateSystemCursor (SDL_SYSTEM_CURSOR_ARROW);
+  res->hand_cur = SDL_CreateSystemCursor (SDL_SYSTEM_CURSOR_HAND);
+  SDL_SetCursor(res->pointer_cur);
+
   // Content
   res->root = GSpriteNull_new (res, 0, 0);
   GSprite_add_child (res->root, GSpriteMainMenu_new (res));
@@ -61,6 +66,8 @@ void GGame_free (GGame *game) {
   TTF_CloseFont (game->resources.font_big);
   TTF_CloseFont (game->resources.font_med);
   TTF_CloseFont (game->resources.font_small);
+  SDL_FreeCursor (game->resources.pointer_cur);
+  SDL_FreeCursor (game->resources.hand_cur);
   SDL_DestroyRenderer (game->resources.sdl_renderer);
   SDL_DestroyWindow (game->sdl_window);
 
@@ -107,6 +114,7 @@ void GGame_run (GGame *game) {
         if (GSprite_event (topmost, &gevent) == 1) {
           focus = NULL;
         }
+        SDL_SetCursor (topmost != NULL ? game->resources.hand_cur : game->resources.pointer_cur);
       }
     }
 
