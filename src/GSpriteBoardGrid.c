@@ -47,6 +47,39 @@ static void GSpriteBoardGrid_render (GSpriteBoardGrid *spr, int offsx, int offsy
       }
     }
   }
+
+  // Selected Galaxy
+  if (GSpriteBoard_get_selected_core (spr->board) != NULL) {
+    SDL_SetRenderDrawColor (renderer, 0xFF, 0xFF, 0x00, 0xFF);
+    for (y = 0; y <= spr->mapSizeY; y++) {
+      for (x = 0; x < spr->mapSizeX; x++) {
+        int up = GSpriteBoard_is_tile_selectable (spr->board, x, y - 1);
+        int down = GSpriteBoard_is_tile_selectable (spr->board, x, y);
+        if (up ^ down) {
+          SDL_Rect r;
+          r.x = offsx + x * spr->tileSizeX;
+          r.y = offsy + y * spr->tileSizeY - 2;
+          r.w = spr->tileSizeX;
+          r.h = 5;
+          SDL_RenderFillRect (renderer, &r);
+        }
+      }
+    }
+    for (x = 0; x <= spr->mapSizeX; x++) {
+      for (y = 0; y < spr->mapSizeY; y++) {
+        int left = GSpriteBoard_is_tile_selectable (spr->board, x - 1, y);
+        int right = GSpriteBoard_is_tile_selectable (spr->board, x, y);
+        if (left ^ right) {
+          SDL_Rect r;
+          r.x = offsx + x * spr->tileSizeX - 2;
+          r.y = offsy + y * spr->tileSizeY;
+          r.w = 5;
+          r.h = spr->tileSizeY;
+          SDL_RenderFillRect (renderer, &r);
+        }
+      }
+    }
+  }
 }
 
 GSprite *GSpriteBoardGrid_new (GResources *res, int mapSizeX, int mapSizeY, int tileSizeX, int tileSizeY, GSpriteBoard *board) {

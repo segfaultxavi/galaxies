@@ -18,6 +18,7 @@ struct _GSpriteBoard {
   GSpriteCore **cores;
   GSpriteBoardGrid *grid;
   int currCoreId;
+  int currTileX, currTileY;
   int editing;
   char *last_code;
 };
@@ -40,13 +41,14 @@ static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
 
 static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
   int res = 0;
+  int x2, y2;
   GSpriteBoard *spr = userdata;
   GSpriteTile *tile = GBOARD_TILE (spr, x, y);
   switch (event->type) {
-    case GEVENT_TYPE_SPRITE_ACTIVATE:
-      if (spr->currCoreId > -1 && ((GSpriteTile_get_flags (tile) & GTILE_FLAG_FIXED) == 0)) {
-        GSpriteTile_set_id (tile, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
-      }
+    case GEVENT_TYPE_SPRITE_IN:
+      spr->currTileX = x;
+      spr->currTileY = y;
+      break;
     default:
       break;
   }
@@ -187,6 +189,8 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
     GSpriteBoard_deploy_core (spr, initialCores[x * 2 + 0], initialCores[x * 2 + 1], x);
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[x]);
   }
+
+  spr->currCoreId = -1;
 }
 
 static int GSpriteBoard_a2i (char a) {
@@ -264,4 +268,44 @@ GSpriteTile *GSpriteBoard_get_tile (GSpriteBoard *spr, int x, int y) {
   if (x < 0 || x >= spr->mapSizeX || y < 0 || y >= spr->mapSizeY)
     return NULL;
   return GBOARD_TILE (spr, x, y);
+}
+
+GSpriteCore *GSpriteBoard_get_selected_core (GSpriteBoard *spr) {
+  if (spr->currCoreId > -1)
+    return spr->cores[spr->currCoreId];
+  return NULL;
+}
+
+static int GSpriteBoard_valid_tile_position (GSpriteBoard *spr, int x, int y, int id) {
+  int x2, y2;
+  if (id == -1) return 0;
+  if (x < 0 || x >= spr->mapSizeX || y < 0 || y >= spr->mapSizeY) return 0;
+
+  GSpriteCore_get_opposite (spr->cores[id], x, y, &x2, &y2);
+
+  if (x2 < 0 || x2 >= spr->mapSizeX || y2 < 0 || y2 >= spr->mapSizeY) return 0;
+  
+  if (GSpriteTile_get_flags (GBOARD_TILE (spr, x, y)) & GTILE_FLAG_FIXED) return 0;
+  if (GSpriteTile_get_flags (GBOARD_TILE (spr, x2, y2)) & GTILE_FLAG_FIXED) return 0;
+  
+  if (GSpriteTile_get_id (GBOARD_TILE (spr, x2, y2)) == id) return 0;
+  
+  if (x > 0 && GSpriteTile_get_id (GBOARD_TILE (spr, x - 1, y)) == id) return 1;
+  if (x < spr->mapSizeX - 1 && GSpriteTile_get_id (GBOARD_TILE (spr, x + 1, y)) == id) return 1;
+  if (y > 0 && GSpriteTile_get_id (GBOARD_TILE (spr, x, y - 1)) == id) return 1;
+  if (y < spr->mapSizeY - 1 && GSpriteTile_get_id (GBOARD_TILE (spr, x, y + 1)) == id) return 1;
+  
+  return 0;
+}
+
+int GSpriteBoard_is_tile_selectable (GSpriteBoard *spr, int x, int y) {
+  if (x < 0 || y < 0 || x >= spr->mapSizeX || y >= spr->mapSizeY) return 0;
+  if (GSpriteTile_get_id (GBOARD_TILE (spr, x, y)) == spr->currCoreId) return 1;
+  if (GSpriteBoard_valid_tile_position (spr, x, y, spr->currCoreId)) {
+    int x2, y2;
+    if (x == spr->currTileX && y == spr->currTileY) return 1;
+    GSpriteCore_get_opposite (spr->cores[spr->currCoreId], spr->currTileX, spr->currTileY, &x2, &y2);
+    if (x == x2 && y == y2) return 1;
+  }
+  return 0;
 }

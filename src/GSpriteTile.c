@@ -29,17 +29,6 @@ static int GSpriteTile_event (GSpriteTile *spr, GEvent *event) {
   int x = spr->base.x / spr->base.w;
   int y = spr->base.y / spr->base.h;
 
-  switch (event->type) {
-    case GEVENT_TYPE_SPRITE_IN:
-      spr->highlighted = 1;
-      break;
-    case GEVENT_TYPE_SPRITE_OUT:
-      spr->highlighted = 0;
-      break;
-    default:
-      break;
-  }
-
   if (spr->callback)
     return spr->callback (x, y, event, spr->userdata);
   return 0;
