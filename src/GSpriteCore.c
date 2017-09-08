@@ -7,7 +7,6 @@
 struct _GSpriteCore {
   GSprite base;
   int id;
-  int radius;
   Uint32 color;
   int highlighted;
   GSpriteCoreCallback callback;
