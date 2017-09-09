@@ -8,6 +8,7 @@
 #include "GSpriteTile.h"
 #include "GSpriteBoardGrid.h"
 #include "GSpriteCore.h"
+#include <string.h>
 
 struct _GSpriteBoard {
   GSprite base;
@@ -196,6 +197,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
 static int GSpriteBoard_a2i (char a) {
   if (a >= 'a' && a <= 'z') return a - 'a';
   if (a >= 'A' && a <= 'Z') return a - 'A' + 26;
+  return 0;
 }
 
 static char GSpriteBoard_i2a (int i) {
@@ -210,7 +212,7 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
   float *initial_cores;
 
   if (desc == NULL) return 0;
-  desc_len = strlen (desc);
+  desc_len = (int)strlen (desc);
 
   // Check if anything has changed
   if (spr->last_code != NULL && strcmp (desc, spr->last_code) == 0) return 1;
