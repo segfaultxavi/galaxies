@@ -6,6 +6,8 @@
 #include "GSprite.h"
 #include "GResources.h"
 
+typedef struct _GSpriteButton GSpriteButton;
+
 typedef int (* GSpriteButtonCallback)(void *userdata);
 
 GSprite *GSpriteButton_new (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,

@@ -4,10 +4,10 @@
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
 
-typedef struct _GSpriteCredits {
+struct _GSpriteCredits {
   GSprite base;
   GSprite *main_menu;
-} GSpriteCredits;
+};
 
 int GSpriteCredits_back (void *userdata) {
   GSpriteCredits *spr = userdata;

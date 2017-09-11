@@ -6,6 +6,8 @@
 #include "GSprite.h"
 #include "GResources.h"
 
+typedef struct _GSpriteMainMenu GSpriteMainMenu;
+
 GSprite *GSpriteMainMenu_new (GResources *resources);
 
 #endif

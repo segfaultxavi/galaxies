@@ -9,12 +9,12 @@ typedef enum _GButtonState {
   GBUTTON_STATE_ACTIVE
 } GButtonState;
 
-typedef struct _GSpriteButton {
+struct _GSpriteButton {
   GSprite base;
   GSpriteButtonCallback callback;
   void *userdata;
   GButtonState state;
-} GSpriteButton;
+};
 
 static SDL_Color gcolor_button_normal = { 0x40, 0x40, 0x40, 0xFF };
 static SDL_Color gcolor_button_hover = { 0x80, 0x80, 0x80, 0xFF };

@@ -7,9 +7,9 @@
 #include "GSpriteGalaxies.h"
 #include "GSpriteCredits.h"
 
-typedef struct _GSpriteMainMenu {
+struct _GSpriteMainMenu {
   GSprite base;
-} GSpriteMainMenu;
+};
 
 static int GSpriteMainMenu_play (void *userdata) {
   GSpriteMainMenu *spr = userdata;

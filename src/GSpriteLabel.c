@@ -3,10 +3,10 @@
 #include "GSpriteLabel.h"
 #include "GGraphics.h"
 
-typedef struct _GSpriteLabel {
+struct _GSpriteLabel {
   GSprite base;
   SDL_Texture *texture;
-} GSpriteLabel;
+};
 
 static void GSpriteLabel_render (GSpriteLabel *spr, int offsx, int offsy) {
   SDL_Rect dst;
