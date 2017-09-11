@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "GGame.h"
 #include "GResources.h"
+#include "GSpriteGalaxies.h"
 #include "GSpriteBoard.h"
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
@@ -38,6 +39,17 @@ static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
   for (i = 0; i <= spr->mapSizeX; i++) {
     SDL_RenderDrawLine (renderer, offsx + i * spr->tileSizeX, offsy, offsx + i * spr->tileSizeX, offsy + spr->tileSizeY * spr->mapSizeY);
   }
+}
+
+static int GSpriteBoard_check_completion (GSpriteBoard *spr) {
+  int x, y;
+  for (y = 0; y < spr->mapSizeY; y++) {
+    for (x = 0; x < spr->mapSizeX; x++) {
+      if (GSpriteTile_get_id (GBOARD_TILE (spr, x, y)) == -1)
+        return 0;
+    }
+  }
+  return 1;
 }
 
 static int GSpriteBoard_valid_tile_position (GSpriteBoard *spr, int x, int y, int id) {
@@ -168,6 +180,10 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y) {
   // Assign tile to current core
   GSpriteTile_set_id (tile, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
   GSpriteTile_set_id (tile2, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
+
+  if (GSpriteBoard_check_completion (spr)) {
+    GSpriteGalaxies_complete ((GSpriteGalaxies *)spr->base.parent);
+  }
 }
 
 static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {

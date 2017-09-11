@@ -7,11 +7,14 @@
 #include "GSpriteNull.h"
 #include "GSpriteBoard.h"
 
-typedef struct _GSpriteGalaxies {
+struct _GSpriteGalaxies {
   GSprite base;
   GSprite *main_menu;
+  GSprite *reset;
+  GSprite *solution;
+  GSprite *completed;
   GSpriteBoard *board;
-} GSpriteGalaxies;
+};
 
 static int GSpriteGalaxies_reset (void *userdata) {
   GSpriteGalaxies *spr = userdata;
@@ -44,12 +47,16 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu) {
   GSprite_add_child (margin,
     GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
       0xFF000000, 0xFFFFFFFF, "galaxies"));
-  GSprite_add_child (margin,
-    GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_small, 0xFF0000FF, "reset", GSpriteGalaxies_reset, spr));
-  GSprite_add_child (margin,
-    GSpriteButton_new (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_small, 0xFF0000FF, "solution", GSpriteGalaxies_solution, spr));
+  spr->reset = GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+    res->font_small, 0xFF0000FF, "reset", GSpriteGalaxies_reset, spr);
+  GSprite_add_child (margin, spr->reset);
+  spr->solution = GSpriteButton_new (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+    res->font_small, 0xFF0000FF, "solution", GSpriteGalaxies_solution, spr);
+  GSprite_add_child (margin, spr->solution);
+  spr->completed = GSpriteLabel_new (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
+    res->font_med, 0xFFFFFFFF, 0xFFFF0000, "level complete");
+  GSprite_add_child (margin, spr->completed);
+  spr->completed->visible = 0;
   GSprite_add_child (margin,
     GSpriteButton_new (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
       res->font_small, 0xFF0000FF, "back", GSpriteGalaxies_back, spr));
@@ -58,4 +65,10 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu) {
   GSpriteBoard_load (spr->board, "1hheebfakekgckbkimgmmhmikcm");
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   return (GSprite *)spr;
+}
+
+void GSpriteGalaxies_complete (GSpriteGalaxies *spr) {
+  spr->reset->visible = 0;
+  spr->solution->visible = 0;
+  spr->completed->visible = 1;
 }

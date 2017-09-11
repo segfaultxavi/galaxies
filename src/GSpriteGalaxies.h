@@ -6,6 +6,9 @@
 #include "GSprite.h"
 #include "GResources.h"
 
+typedef struct _GSpriteGalaxies GSpriteGalaxies;
+
 GSprite *GSpriteGalaxies_new (GResources *resources, GSprite *main_menu);
+void GSpriteGalaxies_complete (GSpriteGalaxies *spr);
 
 #endif
