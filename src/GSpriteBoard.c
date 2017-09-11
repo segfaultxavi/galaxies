@@ -137,7 +137,12 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y) {
     // Without selected core, clicked on an owned tile 
     spr->currCoreId = tile_id;
     return;
+  } else if (spr->currCoreId == tile_id) {
+    // Clicked on tile already owned: deselect core
+    spr->currCoreId = -1;
+    return;
   }
+
   if (GSpriteBoard_valid_tile_position (spr, x, y, spr->currCoreId) == 0) {
     // Clicked on an owned tile, which is invalid for the current core
     spr->currCoreId = tile_id;
@@ -208,14 +213,11 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
   int res = 0;
   GSpriteBoard *spr = userdata;
   switch (event->type) {
-    case GEVENT_TYPE_SPRITE_IN:
-      GSpriteCore_set_highlight (spr->cores [id], 1);
-      break;
-    case GEVENT_TYPE_SPRITE_OUT:
-      GSpriteCore_set_highlight (spr->cores [id], 0);
-      break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
-      spr->currCoreId = id;
+      if (spr->currCoreId != id)
+        spr->currCoreId = id;
+      else
+        spr->currCoreId = -1;
     default:
       break;
   }
