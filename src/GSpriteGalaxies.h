@@ -8,7 +8,7 @@
 
 typedef struct _GSpriteGalaxies GSpriteGalaxies;
 
-GSprite *GSpriteGalaxies_new (GResources *resources, GSprite *main_menu);
+GSprite *GSpriteGalaxies_new (GResources *resources, GSprite *main_menu, const char *level_description);
 void GSpriteGalaxies_complete (GSpriteGalaxies *spr);
 
 #endif

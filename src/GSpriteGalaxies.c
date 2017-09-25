@@ -36,7 +36,7 @@ static int GSpriteGalaxies_back (void *userdata) {
   return 1;
 }
 
-GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu) {
+GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu, const char *level_description) {
   int line = res->game_height / 16;
   int mwidth = res->game_width - res->game_height;
   GSpriteGalaxies *spr = (GSpriteGalaxies *)GSprite_new (res, sizeof (GSpriteGalaxies),
@@ -62,7 +62,7 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu) {
       res->font_small, 0xFF0000FF, "back", GSpriteGalaxies_back, spr));
   GSprite_add_child ((GSprite *)spr, margin);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 0);
-  GSpriteBoard_load (spr->board, "1hheebfakekgckbkimgmmhmikcm");
+  GSpriteBoard_load (spr->board, level_description);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   return (GSprite *)spr;
 }

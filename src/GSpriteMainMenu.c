@@ -4,7 +4,7 @@
 #include "GSpriteMainMenu.h"
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
-#include "GSpriteGalaxies.h"
+#include "GSpriteLevelSelect.h"
 #include "GSpriteCredits.h"
 
 struct _GSpriteMainMenu {
@@ -15,7 +15,7 @@ static int GSpriteMainMenu_play (void *userdata) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Play");
   spr->base.visible = 0;
-  GSprite_add_child (spr->base.parent, GSpriteGalaxies_new (spr->base.res, (GSprite *)spr));
+  GSprite_add_child (spr->base.parent, GSpriteLevelSelect_new (spr->base.res, (GSprite *)spr));
   return 0;
 }
 
