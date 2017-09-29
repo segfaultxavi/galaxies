@@ -270,8 +270,8 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   int x, y;
   spr->mapSizeX = mapSizeX;
   spr->mapSizeY = mapSizeY;
-  spr->tileSizeX = (spr->base.w - 1) / spr->mapSizeX;
-  spr->tileSizeY = (spr->base.h - 1) / spr->mapSizeY;
+  spr->tileSizeX = ((spr->base.w - 1) / spr->mapSizeX / 2) * 2;
+  spr->tileSizeY = ((spr->base.h - 1) / spr->mapSizeY / 2) * 2;
   spr->base.w = spr->tileSizeX * spr->mapSizeX;
   spr->base.h = spr->tileSizeY * spr->mapSizeY;
   spr->base.x = (spr->base.res->game_height - spr->base.w) / 2;
