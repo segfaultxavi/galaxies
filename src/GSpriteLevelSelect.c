@@ -4,6 +4,7 @@
 #include "GSpriteGalaxies.h"
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
+#include <stdio.h>
 
 #define GLEVEL_BUTTONS_PER_LINE 5
 
