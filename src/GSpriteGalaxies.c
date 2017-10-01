@@ -53,8 +53,8 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu, const char *l
   spr->solution = GSpriteButton_new (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
     res->font_small, 0xFF0000FF, "solution", GSpriteGalaxies_solution, spr);
   GSprite_add_child (margin, spr->solution);
-  spr->completed = GSpriteLabel_new (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
-    res->font_med, 0xFFFFFFFF, 0xFFFF0000, "level complete");
+  spr->completed = GSpriteLabel_new_multiline (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
+    res->font_med, 0xFFFFFFFF, 0xFFFF0000, "level\ncomplete");
   GSprite_add_child (margin, spr->completed);
   spr->completed->visible = 0;
   GSprite_add_child (margin,

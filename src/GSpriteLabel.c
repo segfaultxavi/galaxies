@@ -2,6 +2,8 @@
 #include "GResources.h"
 #include "GSpriteLabel.h"
 #include "GGraphics.h"
+#include "GSpriteNull.h"
+#include <string.h>
 
 struct _GSpriteLabel {
   GSprite base;
@@ -47,4 +49,25 @@ GSprite *GSpriteLabel_new (GResources *res, int x, int y, GSpriteJustify justify
     return NULL;
   }
   return (GSprite *)spr;
+}
+
+GSprite *GSpriteLabel_new_multiline (GResources *res, int x, int y, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
+    TTF_Font *font, Uint32 text_color, Uint32 glow_color, const char *text) {
+  GSprite *spr;
+  char *split_text = strdup (text);
+  const char *ptr;
+
+  spr = GSpriteNull_new (res, 0, 0);
+
+  strcpy (split_text, text);
+  ptr = strtok (split_text, "\n");
+  while (ptr != NULL) {
+    GSprite *line = GSpriteLabel_new (res, x, y, justify_hor, justify_ver, font, text_color, glow_color, ptr);
+    GSprite_add_child (spr, line);
+    y += line->h;
+    ptr = strtok (NULL, "\n");
+  }
+
+  free (split_text);
+  return spr;
 }
