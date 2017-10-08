@@ -19,6 +19,7 @@ GGame *GGame_new () {
   GGame *game = malloc (sizeof (GGame));
   GResources *res = &game->resources;
   SDL_DisplayMode sdpm;
+  SDL_memset (game, 0, sizeof (GGame));
 
   // Window
   SDL_GetCurrentDisplayMode (0, &sdpm);
