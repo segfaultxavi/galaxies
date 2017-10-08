@@ -40,12 +40,14 @@ GGame *GGame_new () {
 
   // Font
   font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
-  res->font_big = TTF_OpenFontRW (font_rwops, 1, res->game_height / 5);
+  res->font_title_big = TTF_OpenFontRW (font_rwops, 1, res->game_height / 5);
+  font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
+  res->font_title_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
   font_rwops = SDL_RWFromConstMem (nulshock_ttf, nulshock_ttf_len);
   res->font_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
   font_rwops = SDL_RWFromConstMem (nulshock_ttf, nulshock_ttf_len);
   res->font_small = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
-  if (!res->font_big || !res->font_med || !res->font_small) {
+  if (!res->font_title_big || !res->font_med || !res->font_small) {
     SDL_Log ("TTF_OpenFontRW: %s", SDL_GetError ());
     goto error;
   }
@@ -68,7 +70,8 @@ error:
 void GGame_free (GGame *game) {
   if (!game) return;
   GSprite_free (game->resources.root);
-  TTF_CloseFont (game->resources.font_big);
+  TTF_CloseFont (game->resources.font_title_big);
+  TTF_CloseFont (game->resources.font_title_med);
   TTF_CloseFont (game->resources.font_med);
   TTF_CloseFont (game->resources.font_small);
   SDL_FreeCursor (game->resources.pointer_cur);

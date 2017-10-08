@@ -11,7 +11,7 @@ typedef struct _GResources GResources;
 struct _GResources {
   // Owned by GGame
   SDL_Renderer *sdl_renderer;
-  TTF_Font *font_big, *font_med, *font_small;
+  TTF_Font *font_title_big, *font_title_med, *font_med, *font_small;
   SDL_Cursor *pointer_cur, *hand_cur;
   GSprite *root;
   int game_width;

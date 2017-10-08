@@ -45,7 +45,7 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu, const char *l
   spr->main_menu = main_menu;
   spr->base.w = spr->base.h = -1;
   GSprite_add_child (margin,
-    GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
+    GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
       0xFF000000, 0xFFFFFFFF, "galaxies"));
   spr->reset = GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
     res->font_small, 0xFF0000FF, "reset", GSpriteGalaxies_reset, spr);

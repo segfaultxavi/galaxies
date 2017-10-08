@@ -39,7 +39,7 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
       NULL, NULL, NULL, NULL);
   spr->base.w = spr->base.h = -1;
   GSprite_add_child ((GSprite *)spr,
-    GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_big,
+    GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_big,
       0xFF000000, 0xFFFFFFFF, "galaxies"));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 3 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
