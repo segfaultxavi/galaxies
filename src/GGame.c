@@ -8,17 +8,19 @@
 
 struct _GGame {
   SDL_Window *sdl_window;
-  SDL_RWops *font_rwops;
   GResources resources;
 };
 
 extern unsigned const char ___BA_TTF[];
 extern unsigned int ___BA_TTF_len;
+extern unsigned const char nulshock_ttf[];
+extern unsigned int nulshock_ttf_len;
 
 GGame *GGame_new () {
   GGame *game = malloc (sizeof (GGame));
   GResources *res = &game->resources;
   SDL_DisplayMode sdpm;
+  SDL_RWops *font_rwops;
   SDL_memset (game, 0, sizeof (GGame));
 
   // Window
@@ -37,10 +39,12 @@ GGame *GGame_new () {
   SDL_SetRenderDrawBlendMode (res->sdl_renderer, SDL_BLENDMODE_BLEND);
 
   // Font
-  game->font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
-  res->font_big = TTF_OpenFontRW (game->font_rwops, 0, res->game_height / 5);
-  res->font_med = TTF_OpenFontRW (game->font_rwops, 0, res->game_height / 10);
-  res->font_small = TTF_OpenFontRW (game->font_rwops, 0, res->game_height / 20);
+  font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
+  res->font_big = TTF_OpenFontRW (font_rwops, 1, res->game_height / 5);
+  font_rwops = SDL_RWFromConstMem (nulshock_ttf, nulshock_ttf_len);
+  res->font_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
+  font_rwops = SDL_RWFromConstMem (nulshock_ttf, nulshock_ttf_len);
+  res->font_small = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
   if (!res->font_big || !res->font_med || !res->font_small) {
     SDL_Log ("TTF_OpenFontRW: %s", SDL_GetError ());
     goto error;
@@ -72,7 +76,6 @@ void GGame_free (GGame *game) {
   SDL_DestroyRenderer (game->resources.sdl_renderer);
   SDL_DestroyWindow (game->sdl_window);
 
-  SDL_RWclose (game->font_rwops);
   free (game);
 }
 
