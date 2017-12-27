@@ -1,0 +1,5 @@
+SETUP:
+
+Follow https://wiki.libsdl.org/Android
+Starting from Android SDK 26 the "android" tool does not support the "update project" command. Install version 25 from: http://dl-ssl.google.com/android/repository/platform_tools_r25.2.5-linux.zip
+And then: tools/bin/sdkmanager "platform-tools" "platforms;android-26" "build-tools;26.0.3"
