@@ -223,6 +223,9 @@ xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y</Command>
     <ClInclude Include="..\..\src\GSpriteButton.h" />
     <ClInclude Include="..\..\src\GSpriteTile.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\TODO.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

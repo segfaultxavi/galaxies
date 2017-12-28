@@ -1,0 +1,8 @@
+TODO
+- Publish to Play Store
+- ESC key (Android back button) to go back
+- Exit program
+- Mark completed levels
+- Save completed levels list
+- Save levels in progress
+- Android lifetime management
