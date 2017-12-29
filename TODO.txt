@@ -1,8 +1,12 @@
 TODO
-- Publish to Play Store
+- Handle keyboard events besides mouse events
 - ESC key (Android back button) to go back
 - Exit program
 - Mark completed levels
 - Save completed levels list
 - Save levels in progress
 - Android lifetime management
+- Find a Free replacement for the Nulshock font
+
+DONE
+* Publish to Play Store (Alpha)
