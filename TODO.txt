@@ -8,5 +8,10 @@ TODO
 - Android lifetime management
 - Find a Free replacement for the Nulshock font
 
+IDEAS
+- Hexagonal grid
+- Other types of symmetry besides 2-fold: 4-fold on square grid, 3- or 6-fold on hexagonal grid
+- Each core indicates the type of symmetry it produces
+
 DONE
 * Publish to Play Store (Alpha)
