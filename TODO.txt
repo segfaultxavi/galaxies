@@ -1,7 +1,4 @@
 TODO
-- Handle keyboard events besides mouse events
-- ESC key (Android back button) to go back
-- Exit program
 - Mark completed levels
 - Save completed levels list
 - Save levels in progress
@@ -12,6 +9,3 @@ IDEAS
 - Hexagonal grid
 - Other types of symmetry besides 2-fold: 4-fold on square grid, 3- or 6-fold on hexagonal grid
 - Each core indicates the type of symmetry it produces
-
-DONE
-* Publish to Play Store (Alpha)
