@@ -52,7 +52,7 @@ static int GSpriteGalaxies_event (GSpriteGalaxies *spr, GEvent *event, int *dest
 }
 
 GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu, const char *level_description) {
-  int line = res->game_height / 16;
+  int line = res->game_height / 10;
   int mwidth = res->game_width - res->game_height;
   GSpriteGalaxies *spr = (GSpriteGalaxies *)GSprite_new (res, sizeof (GSpriteGalaxies),
       NULL, (GSpriteEvent)GSpriteGalaxies_event, NULL, NULL);
@@ -62,11 +62,11 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu, const char *l
   GSprite_add_child (margin,
     GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
       0xFF000000, 0xFFFFFFFF, "galaxies"));
-  spr->reset = GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-    res->font_small, 0xFF0000FF, "reset", GSpriteGalaxies_reset, spr);
+  spr->reset = GSpriteButton_new (res, mwidth / 2, 2 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+    res->font_small, 0xFF0000FF, "Reset", GSpriteGalaxies_reset, spr);
   GSprite_add_child (margin, spr->reset);
-  spr->solution = GSpriteButton_new (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-    res->font_small, 0xFF0000FF, "solution", GSpriteGalaxies_solution, spr);
+  spr->solution = GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+    res->font_small, 0xFF0000FF, "Solution", GSpriteGalaxies_solution, spr);
   GSprite_add_child (margin, spr->solution);
   spr->completed = GSpriteLabel_new_multiline (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
     res->font_med, 0xFFFFFFFF, 0xFFFF0000, "level\ncomplete");
@@ -74,7 +74,7 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu, const char *l
   spr->completed->visible = 0;
   GSprite_add_child (margin,
     GSpriteButton_new (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
-      res->font_small, 0xFF0000FF, "back", GSpriteGalaxies_back, spr));
+      res->font_small, 0xFF0000FF, "Back", GSpriteGalaxies_back, spr));
   GSprite_add_child ((GSprite *)spr, margin);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 0);
   GSpriteBoard_load (spr->board, level_description);

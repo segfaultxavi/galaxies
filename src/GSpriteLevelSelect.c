@@ -76,7 +76,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
   spr->main_menu = main_menu;
   GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
-      0xFF000000, 0xFFFFFFFF, "level selection"));
+      0xFF000000, 0xFFFFFFFF, "Level Selection"));
 
   spr->buttons = malloc (sizeof (GSpriteLevelSelectButtonData) * num_levels);
 
@@ -93,6 +93,6 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
   }
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
-      res->font_med, 0xFF0000FF, "back", GSpriteLevelSelect_back, spr));
+      res->font_med, 0xFF0000FF, "Back", GSpriteLevelSelect_back, spr));
   return (GSprite *)spr;
 }

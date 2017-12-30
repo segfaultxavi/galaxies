@@ -13,8 +13,8 @@ struct _GGame {
 
 extern unsigned const char ___BA_TTF[];
 extern unsigned int ___BA_TTF_len;
-extern unsigned const char nulshock_ttf[];
-extern unsigned int nulshock_ttf_len;
+extern unsigned const char audiowide_ttf[];
+extern unsigned int audiowide_ttf_len;
 
 GGame *GGame_new () {
   GGame *game = malloc (sizeof (GGame));
@@ -43,9 +43,9 @@ GGame *GGame_new () {
   res->font_title_big = TTF_OpenFontRW (font_rwops, 1, res->game_height / 5);
   font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
   res->font_title_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
-  font_rwops = SDL_RWFromConstMem (nulshock_ttf, nulshock_ttf_len);
+  font_rwops = SDL_RWFromConstMem (audiowide_ttf, audiowide_ttf_len);
   res->font_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
-  font_rwops = SDL_RWFromConstMem (nulshock_ttf, nulshock_ttf_len);
+  font_rwops = SDL_RWFromConstMem (audiowide_ttf, audiowide_ttf_len);
   res->font_small = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
   if (!res->font_title_big || !res->font_med || !res->font_small) {
     SDL_Log ("TTF_OpenFontRW: %s", SDL_GetError ());

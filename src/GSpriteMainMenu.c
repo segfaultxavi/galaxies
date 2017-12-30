@@ -49,7 +49,7 @@ static int GSpriteMainMenu_event (GSpriteMainMenu *spr, GEvent *event, int *dest
 }
 
 GSprite *GSpriteMainMenu_new (GResources *res) {
-  int line = res->game_height / 8;
+  int line = res->game_height / 6;
   GSpriteMainMenu *spr = (GSpriteMainMenu *)GSprite_new (res, sizeof (GSpriteMainMenu),
       NULL, (GSpriteEvent)GSpriteMainMenu_event, NULL, NULL);
   spr->base.w = spr->base.h = -1;
@@ -58,12 +58,12 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
       0xFF000000, 0xFFFFFFFF, "galaxies"));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 3 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFF0000FF, "play", GSpriteMainMenu_play, spr));
+      res->font_med, 0xFF0000FF, "Play", GSpriteMainMenu_play, spr));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 4 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFF0000FF, "editor", GSpriteMainMenu_editor, spr));
+      res->font_med, 0xFF0000FF, "Editor", GSpriteMainMenu_editor, spr));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 5 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFF0000FF, "credits", GSpriteMainMenu_credits, spr));
+      res->font_med, 0xFF0000FF, "Credits", GSpriteMainMenu_credits, spr));
   return (GSprite *)spr;
 }

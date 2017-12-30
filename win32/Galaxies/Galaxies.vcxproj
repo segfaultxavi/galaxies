@@ -187,6 +187,7 @@ xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\audiowide.c" />
     <ClCompile Include="..\..\src\bajoran_font.c" />
     <ClCompile Include="..\..\src\GGame.c" />
     <ClCompile Include="..\..\src\GGraphics.c" />
@@ -203,7 +204,6 @@ xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y</Command>
     <ClCompile Include="..\..\src\GSpriteButton.c" />
     <ClCompile Include="..\..\src\GSpriteTile.c" />
     <ClCompile Include="..\..\src\main.c" />
-    <ClCompile Include="..\..\src\nulshock.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\GEvent.h" />

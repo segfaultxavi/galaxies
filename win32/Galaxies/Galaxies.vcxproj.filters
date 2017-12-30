@@ -63,7 +63,7 @@
     <ClCompile Include="..\..\src\GSpriteLevelSelect.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\nulshock.c">
+    <ClCompile Include="..\..\src\audiowide.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

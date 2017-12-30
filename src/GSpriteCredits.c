@@ -34,12 +34,13 @@ static int GSpriteCredits_event (GSpriteCredits *spr, GEvent *event, int *destro
 }
 
 const char *credits[][2] = {
-  {"programming", "XAVI ARTIGAS"},
-  {"original idea", "TENTAI SHOW by nikoli"},
-  {"font", "BAJORAN by kiwi media"},
-  {"music", "?"},
-  {"sound", "?"},
-  {"libraries", "sdl, sdl_ttf"}
+  {"Programming", "XAVI ARTIGAS"},
+  {"Original idea", "TENTAI SHOW by nikoli"},
+  {"Fonts", "BAJORAN by kiwi media"},
+  {"", "AUDIOWIDE by astigmatic"}, 
+  {"Music", "?"},
+  {"Sound", "?"},
+  {"Libraries", "sdl, sdl_ttf"}
 };
 
 GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
@@ -63,6 +64,6 @@ GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
   }
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
-      res->font_med, 0xFF0000FF, "back", GSpriteCredits_back, spr));
+      res->font_med, 0xFF0000FF, "Back", GSpriteCredits_back, spr));
   return (GSprite *)spr;
 }
