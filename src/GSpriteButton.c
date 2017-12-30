@@ -41,18 +41,23 @@ static void GSpriteButton_render (GSpriteButton *spr, int offsx, int offsy) {
   }
 }
 
-static int GSpriteButton_event (GSpriteButton *spr, GEvent *event) {
+static int GSpriteButton_event (GSpriteButton *spr, GEvent *event, int *destroyed) {
   int ret = 0;
   switch (event->type) {
+    case GEVENT_TYPE_MOVE:
+      ret = 1;
+      break;
     case GEVENT_TYPE_SPRITE_IN:
       spr->state = GBUTTON_STATE_HOVER;
+      ret = 1;
       break;
     case GEVENT_TYPE_SPRITE_OUT:
       spr->state = GBUTTON_STATE_NORMAL;
+      ret = 1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
       spr->state = GBUTTON_STATE_ACTIVE;
-      ret = spr->callback (spr->userdata);
+      ret = spr->callback (spr->userdata, destroyed);
       break;
     default:
       break;

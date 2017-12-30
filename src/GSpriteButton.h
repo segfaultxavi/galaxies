@@ -8,7 +8,9 @@
 
 typedef struct _GSpriteButton GSpriteButton;
 
-typedef int (* GSpriteButtonCallback)(void *userdata);
+// Return 1 if the event has been handled
+// Set *destroyed to 1 if the sprite has been destroyed
+typedef int (* GSpriteButtonCallback)(void *userdata, int *destroyed);
 
 GSprite *GSpriteButton_new (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
     TTF_Font *font, Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata);

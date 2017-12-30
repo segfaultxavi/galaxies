@@ -27,21 +27,36 @@ static const char *levels[] = {
   "1hhggkdiemfcickagjkhmiiecgacc"
 };
 
-int GSpriteLevelSelect_back (void *userdata) {
+int GSpriteLevelSelect_back (void *userdata, int *destroyed) {
   GSpriteLevelSelect *spr = userdata;
   GSprite *main_menu = spr->main_menu;
   SDL_Log ("Back");
   GSprite_free ((GSprite *)spr);
   main_menu->visible = 1;
+  if (destroyed) *destroyed = 1;
   return 1;
 }
 
-static int GSpriteLevelSelect_selection (void *userdata) {
+static int GSpriteLevelSelect_selection (void *userdata, int *destroyed) {
   GSpriteLevelSelectButtonData *button = userdata;
   SDL_Log ("Level %d", button->level);
   button->spr->base.visible = 0;
   GSprite_add_child (button->spr->base.parent, GSpriteGalaxies_new (button->spr->base.res, (GSprite *)button->spr, levels[button->level]));
-  return 0;
+  return 1;
+}
+
+static int GSpriteLevelSelect_event (GSpriteLevelSelect *spr, GEvent *event, int *destroyed) {
+  int ret = 0;
+  switch (event->type) {
+    case GEVENT_TYPE_KEY:
+      if (event->keycode == SDLK_ESCAPE) {
+        ret = GSpriteLevelSelect_back (spr, destroyed);
+      }
+      break;
+    default:
+      break;
+  }
+  return ret;
 }
 
 static void GSpriteLevelSelect_free (GSpriteLevelSelect *spr) {
@@ -50,7 +65,7 @@ static void GSpriteLevelSelect_free (GSpriteLevelSelect *spr) {
 
 GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
   GSpriteLevelSelect *spr = (GSpriteLevelSelect *)GSprite_new (res, sizeof (GSpriteLevelSelect),
-      NULL, NULL, NULL, (GSpriteFree)GSpriteLevelSelect_free);
+      NULL, (GSpriteEvent)GSpriteLevelSelect_event, NULL, (GSpriteFree)GSpriteLevelSelect_free);
   int l;
   int num_levels = sizeof (levels) / sizeof (levels[0]);
   int line = res->game_height / 8;

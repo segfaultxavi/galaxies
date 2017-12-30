@@ -16,31 +16,46 @@ struct _GSpriteGalaxies {
   GSpriteBoard *board;
 };
 
-static int GSpriteGalaxies_reset (void *userdata) {
+static int GSpriteGalaxies_reset (void *userdata, int *destroyed) {
   GSpriteGalaxies *spr = userdata;
   SDL_Log ("Galaxies:Reset");
-  return 0;
+  return 1;
 }
 
-static int GSpriteGalaxies_solution (void *userdata) {
+static int GSpriteGalaxies_solution (void *userdata, int *destroyed) {
   GSpriteGalaxies *spr = userdata;
   SDL_Log ("Galaxies:Solution");
-  return 0;
+  return 1;
 }
 
-static int GSpriteGalaxies_back (void *userdata) {
+static int GSpriteGalaxies_back (void *userdata, int *destroyed) {
   GSpriteGalaxies *spr = userdata;
   SDL_Log ("Galaxies:Back");
   spr->main_menu->visible = 1;
   GSprite_free ((GSprite *)spr);
+  if (destroyed) *destroyed = 1;
   return 1;
+}
+
+static int GSpriteGalaxies_event (GSpriteGalaxies *spr, GEvent *event, int *destroyed) {
+  int ret = 0;
+  switch (event->type) {
+    case GEVENT_TYPE_KEY:
+      if (event->keycode == SDLK_ESCAPE) {
+        ret = GSpriteGalaxies_back (spr, destroyed);
+      }
+      break;
+    default:
+      break;
+  }
+  return ret;
 }
 
 GSprite *GSpriteGalaxies_new (GResources *res, GSprite *main_menu, const char *level_description) {
   int line = res->game_height / 16;
   int mwidth = res->game_width - res->game_height;
   GSpriteGalaxies *spr = (GSpriteGalaxies *)GSprite_new (res, sizeof (GSpriteGalaxies),
-      NULL, NULL, NULL, NULL);
+      NULL, (GSpriteEvent)GSpriteGalaxies_event, NULL, NULL);
   GSprite *margin = GSpriteNull_new (res, res->game_height, 0);
   spr->main_menu = main_menu;
   spr->base.w = spr->base.h = -1;

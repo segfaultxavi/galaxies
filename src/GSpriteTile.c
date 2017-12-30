@@ -25,7 +25,7 @@ static void GSpriteTile_render (GSpriteTile *spr, int offsx, int offsy) {
   SDL_RenderFillRect (renderer, &rect);
 }
 
-static int GSpriteTile_event (GSpriteTile *spr, GEvent *event) {
+static int GSpriteTile_event (GSpriteTile *spr, GEvent *event, int *destroyed) {
   int x = spr->base.x / spr->base.w;
   int y = spr->base.y / spr->base.h;
 

@@ -9,7 +9,7 @@ typedef struct _GSprite GSprite;
 #include "GResources.h"
 
 typedef void (*GSpriteRender)(GSprite *spr, int offsx, int offsy);
-typedef int (*GSpriteEvent)(GSprite *spr, GEvent *event);
+typedef int (*GSpriteEvent)(GSprite *spr, GEvent *event, int *destroyed);
 typedef int (*GSpriteIsInside)(GSprite *spr, int x, int y);
 typedef void (*GSpriteFree)(GSprite *spr);
 
@@ -55,12 +55,11 @@ void GSprite_unparent (GSprite *spr);
 void GSprite_add_child (GSprite *parent, GSprite *child);
 // Render sprite and then all its children (if any), using the given offset.
 void GSprite_render (GSprite *spr, int offsx, int offsy);
-// Finds the topmost child at the given position which is interested in events (has an event callback),
-// or the parent, or NULL.
-GSprite *GSprite_topmost_event_receiver (GSprite *parent, int x, int y);
 // Pass the event to the sprite
-// Returns 1 if the sprite is destroyed in the process, 0 otherwise.
-int GSprite_event (GSprite *spr, GEvent *event);
+// Returns the sprite that handled the event (or NULL of no one did).
+// Upon return, *destroyed will contain 1 if the sprite has been
+// destroyed in the process and is no longer available.
+GSprite *GSprite_event (GSprite *spr, GEvent *event, int *destroyed);
 // Returns 1 if the given position is over the sprite. By default (no is_inside method provided by the subclass)
 // the sprites are rectangular areas.
 int GSprite_is_inside (GSprite *spr, int x, int y);

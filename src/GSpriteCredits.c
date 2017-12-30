@@ -9,13 +9,28 @@ struct _GSpriteCredits {
   GSprite *main_menu;
 };
 
-int GSpriteCredits_back (void *userdata) {
+int GSpriteCredits_back (void *userdata, int *destroyed) {
   GSpriteCredits *spr = userdata;
   GSprite *main_menu = spr->main_menu;
   SDL_Log ("Back");
   GSprite_free ((GSprite *)spr);
   main_menu->visible = 1;
+  if (destroyed) *destroyed = 1;
   return 1;
+}
+
+static int GSpriteCredits_event (GSpriteCredits *spr, GEvent *event, int *destroyed) {
+  int ret = 0;
+  switch (event->type) {
+    case GEVENT_TYPE_KEY:
+      if (event->keycode == SDLK_ESCAPE) {
+        ret = GSpriteCredits_back (spr, destroyed);
+      }
+      break;
+    default:
+      break;
+  }
+  return ret;
 }
 
 const char *credits[][2] = {
@@ -29,7 +44,7 @@ const char *credits[][2] = {
 
 GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
   GSpriteCredits *spr = (GSpriteCredits *)GSprite_new (res, sizeof (GSpriteCredits),
-      NULL, NULL, NULL, NULL);
+      NULL, (GSpriteEvent)GSpriteCredits_event, NULL, NULL);
   int l;
   int line = res->game_height / 16;
   spr->base.w = spr->base.h = -1;

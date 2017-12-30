@@ -193,12 +193,17 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
   GSpriteBoard *spr = userdata;
   GSpriteTile *tile = GBOARD_TILE (spr, x, y);
   switch (event->type) {
+    case GEVENT_TYPE_MOVE:
+      res = 1;
+      break;
     case GEVENT_TYPE_SPRITE_IN:
       spr->currTileX = x;
       spr->currTileY = y;
+      res = 1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
       GSpriteBoard_handle_click (spr, x, y);
+      res = 1;
       break;
     default:
       break;
@@ -210,11 +215,16 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
   int res = 0;
   GSpriteBoard *spr = userdata;
   switch (event->type) {
+    case GEVENT_TYPE_MOVE:
+      res = 1;
+      break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
       if (spr->currCoreId != id)
         spr->currCoreId = id;
       else
         spr->currCoreId = -1;
+      res = 1;
+      break;
     default:
       break;
   }

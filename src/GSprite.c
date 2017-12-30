@@ -69,14 +69,21 @@ void GSprite_render (GSprite *spr, int offsx, int offsy) {
   }
 }
 
-GSprite *GSprite_topmost_event_receiver (GSprite *parent, int x, int y) {
+// Sends the event to the topmost (depth-first) sprite that is interested in it.
+// Returns that sprite or NULL if no one was interested.
+// *destroyed might be 1 if the sprite was destroyed in the process. In this case
+// the returned value is an invalid pointer, but it is returned because it is handy
+// to make comparisons.
+GSprite *GSprite_event (GSprite *parent, GEvent *event, int *destroyed) {
   GSprite *ptr = parent->children, *ptr_prev = NULL;
-  if (!parent->visible)
+  int oldx = parent->x, oldy = parent->y;
+
+  if (!parent || !parent->visible)
     return NULL;
-  if (!GSprite_is_inside (parent, x, y))
+  if (event->x >= 0 && !GSprite_is_inside (parent, event->x, event->y))
     return NULL;
-  x -= parent->x;
-  y -= parent->y;
+  event->x -= oldx;
+  event->y -= oldy;
   // Traverse children in reverse order
   while (ptr) {
     ptr_prev = ptr;
@@ -84,19 +91,22 @@ GSprite *GSprite_topmost_event_receiver (GSprite *parent, int x, int y) {
   }
   ptr = ptr_prev;
   while (ptr) {
-    GSprite *ret = GSprite_topmost_event_receiver (ptr, x, y);
-    if (ret != NULL) return ret;
+    GSprite *ret = GSprite_event (ptr, event, destroyed);
+    // ret might be invalid, if *destroyed == 1, do not dereference it!
+    if (ret != NULL) {
+      ptr = ret;
+      goto back;
+    }
     ptr = ptr->prev;
   }
-  if (parent->event)
-    return parent;
-  return NULL;
-}
-
-int GSprite_event (GSprite *spr, GEvent *event) {
-  if (spr && spr->event)
-    return spr->event (spr, event);
-  return 0;
+  if (parent->event && parent->event (parent, event, destroyed)) {
+    ptr = parent;
+  } else
+    ptr = NULL;
+back:
+  event->x += oldx;
+  event->y += oldy;
+  return ptr;
 }
 
 int GSprite_is_inside (GSprite *spr, int x, int y) {

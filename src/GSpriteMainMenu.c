@@ -11,32 +11,47 @@ struct _GSpriteMainMenu {
   GSprite base;
 };
 
-static int GSpriteMainMenu_play (void *userdata) {
+static int GSpriteMainMenu_play (void *userdata, int *destroyed) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Play");
   spr->base.visible = 0;
   GSprite_add_child (spr->base.parent, GSpriteLevelSelect_new (spr->base.res, (GSprite *)spr));
-  return 0;
+  return 1;
 }
 
-static int GSpriteMainMenu_editor (void *userdata) {
+static int GSpriteMainMenu_editor (void *userdata, int *destroyed) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Editor");
-  return 0;
+  return 1;
 }
 
-static int GSpriteMainMenu_credits (void *userdata) {
+static int GSpriteMainMenu_credits (void *userdata, int *destroyed) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Credits");
   spr->base.visible = 0;
   GSprite_add_child (spr->base.parent, GSpriteCredits_new (spr->base.res, (GSprite *)spr));
-  return 0;
+  return 1;
+}
+
+static int GSpriteMainMenu_event (GSpriteMainMenu *spr, GEvent *event, int *destroyed) {
+  int ret = 0;
+  switch (event->type) {
+    case GEVENT_TYPE_KEY:
+      if (event->keycode == SDLK_ESCAPE) {
+        SDL_Event event = { SDL_QUIT };
+        SDL_PushEvent (&event);
+      }
+      break;
+    default:
+      break;
+  }
+  return ret;
 }
 
 GSprite *GSpriteMainMenu_new (GResources *res) {
   int line = res->game_height / 8;
   GSpriteMainMenu *spr = (GSpriteMainMenu *)GSprite_new (res, sizeof (GSpriteMainMenu),
-      NULL, NULL, NULL, NULL);
+      NULL, (GSpriteEvent)GSpriteMainMenu_event, NULL, NULL);
   spr->base.w = spr->base.h = -1;
   GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_big,

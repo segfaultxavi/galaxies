@@ -34,7 +34,7 @@ static void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   }
 }
 
-static int GSpriteCore_event (GSpriteCore *spr, GEvent *event) {
+static int GSpriteCore_event (GSpriteCore *spr, GEvent *event, int *destroyed) {
   if (spr->callback)
     return spr->callback (spr->id, event, spr->userdata);
   return 0;

@@ -88,7 +88,7 @@ void GGame_run (GGame *game) {
 
   while (!quit) {
     SDL_Event event;
-    GEvent gevent;
+    GEvent gevent = { 0 };
     SDL_WaitEventTimeout (NULL, 40);
     while (SDL_PollEvent (&event)) {
       gevent.type = GEVENT_TYPE_NONE;
@@ -106,22 +106,33 @@ void GGame_run (GGame *game) {
         gevent.x = event.motion.x;
         gevent.y = event.motion.y;
         break;
+      case SDL_KEYDOWN:
+        gevent.type = GEVENT_TYPE_KEY;
+        gevent.x = gevent.y = -1;
+        gevent.keycode = event.key.keysym.sym;
+        break;
       default:
         break;
       }
       if (gevent.type != GEVENT_TYPE_NONE) {
-        GSprite *topmost = GSprite_topmost_event_receiver (game->resources.root, gevent.x, gevent.y);
-        if (topmost != focus) {
-          GEvent focus_out_event = { GEVENT_TYPE_SPRITE_OUT, gevent.x, gevent.y };
-          GEvent focus_in_event = { GEVENT_TYPE_SPRITE_IN, gevent.x, gevent.y };
-          GSprite_event (focus, &focus_out_event);
-          GSprite_event (topmost, &focus_in_event);
-          focus = topmost;
-        }
-        if (GSprite_event (topmost, &gevent) == 1) {
+        int spr_destroyed = 0;
+        GSprite *receiver = GSprite_event (game->resources.root, &gevent, &spr_destroyed);
+        if (gevent.x > -1 && focus && receiver != focus) {
+          GEvent focus_out_event = { GEVENT_TYPE_SPRITE_OUT, -1, -1 };
+          GSprite_event (focus, &focus_out_event, NULL);
           focus = NULL;
         }
-        SDL_SetCursor (topmost != NULL ? game->resources.hand_cur : game->resources.pointer_cur);
+        if (receiver) {
+          if (!spr_destroyed && receiver != focus) {
+            GEvent focus_in_event = { GEVENT_TYPE_SPRITE_IN, -1, -1 };
+            GSprite_event (receiver, &focus_in_event, NULL);
+            focus = receiver;
+          }
+        }
+        if (spr_destroyed) {
+          focus = NULL;
+        }
+        SDL_SetCursor (focus != NULL ? game->resources.hand_cur : game->resources.pointer_cur);
       }
     }
 
