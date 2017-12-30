@@ -49,7 +49,7 @@ static int GSpriteLevelSelect_event (GSpriteLevelSelect *spr, GEvent *event, int
   int ret = 0;
   switch (event->type) {
     case GEVENT_TYPE_KEY:
-      if (event->keycode == SDLK_ESCAPE) {
+      if (event->keycode == SDLK_ESCAPE || event->keycode == SDLK_AC_BACK) {
         ret = GSpriteLevelSelect_back (spr, destroyed);
       }
       break;

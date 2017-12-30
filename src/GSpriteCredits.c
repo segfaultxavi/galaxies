@@ -23,7 +23,7 @@ static int GSpriteCredits_event (GSpriteCredits *spr, GEvent *event, int *destro
   int ret = 0;
   switch (event->type) {
     case GEVENT_TYPE_KEY:
-      if (event->keycode == SDLK_ESCAPE) {
+      if (event->keycode == SDLK_ESCAPE || event->keycode == SDLK_AC_BACK) {
         ret = GSpriteCredits_back (spr, destroyed);
       }
       break;

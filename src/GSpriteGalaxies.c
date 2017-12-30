@@ -41,7 +41,7 @@ static int GSpriteGalaxies_event (GSpriteGalaxies *spr, GEvent *event, int *dest
   int ret = 0;
   switch (event->type) {
     case GEVENT_TYPE_KEY:
-      if (event->keycode == SDLK_ESCAPE) {
+      if (event->keycode == SDLK_ESCAPE || event->keycode == SDLK_AC_BACK) {
         ret = GSpriteGalaxies_back (spr, destroyed);
       }
       break;

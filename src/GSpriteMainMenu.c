@@ -37,7 +37,7 @@ static int GSpriteMainMenu_event (GSpriteMainMenu *spr, GEvent *event, int *dest
   int ret = 0;
   switch (event->type) {
     case GEVENT_TYPE_KEY:
-      if (event->keycode == SDLK_ESCAPE) {
+      if (event->keycode == SDLK_ESCAPE || event->keycode == SDLK_AC_BACK) {
         SDL_Event event = { SDL_QUIT };
         SDL_PushEvent (&event);
       }
