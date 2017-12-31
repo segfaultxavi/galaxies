@@ -80,7 +80,7 @@ GSprite *GSprite_event (GSprite *parent, GEvent *event, int *destroyed) {
 
   if (!parent || !parent->visible)
     return NULL;
-  if (event->x >= 0 && !GSprite_is_inside (parent, event->x, event->y))
+  if (event->x > GEVENT_POSITION_NONE && !GSprite_is_inside (parent, event->x, event->y))
     return NULL;
   event->x -= oldx;
   event->y -= oldy;

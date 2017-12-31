@@ -1,6 +1,8 @@
 #ifndef __GEVENT_H__
 #define __GEVENT_H__
 
+#define GEVENT_POSITION_NONE -1000000
+
 typedef enum _GEventType {
   GEVENT_TYPE_NONE,
   GEVENT_TYPE_MOVE,

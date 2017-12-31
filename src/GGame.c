@@ -108,7 +108,7 @@ void GGame_run (GGame *game) {
         break;
       case SDL_KEYDOWN:
         gevent.type = GEVENT_TYPE_KEY;
-        gevent.x = gevent.y = -1;
+        gevent.x = gevent.y = GEVENT_POSITION_NONE;
         gevent.keycode = event.key.keysym.sym;
         break;
       default:
@@ -117,14 +117,14 @@ void GGame_run (GGame *game) {
       if (gevent.type != GEVENT_TYPE_NONE) {
         int spr_destroyed = 0;
         GSprite *receiver = GSprite_event (game->resources.root, &gevent, &spr_destroyed);
-        if (gevent.x > -1 && focus && receiver != focus) {
-          GEvent focus_out_event = { GEVENT_TYPE_SPRITE_OUT, -1, -1 };
+        if (gevent.x > GEVENT_POSITION_NONE && focus && receiver != focus) {
+          GEvent focus_out_event = { GEVENT_TYPE_SPRITE_OUT, GEVENT_POSITION_NONE, GEVENT_POSITION_NONE };
           GSprite_event (focus, &focus_out_event, NULL);
           focus = NULL;
         }
         if (receiver) {
           if (!spr_destroyed && receiver != focus) {
-            GEvent focus_in_event = { GEVENT_TYPE_SPRITE_IN, -1, -1 };
+            GEvent focus_in_event = { GEVENT_TYPE_SPRITE_IN, GEVENT_POSITION_NONE, GEVENT_POSITION_NONE };
             GSprite_event (receiver, &focus_in_event, NULL);
             focus = receiver;
           }
