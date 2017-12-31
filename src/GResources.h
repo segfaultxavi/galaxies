@@ -7,6 +7,7 @@
 typedef struct _GResources GResources;
 
 #include "GSprite.h"
+#include "GPrefs.h"
 
 struct _GResources {
   // Owned by GGame
@@ -20,6 +21,8 @@ struct _GResources {
   // Owned by GSpriteBoard
   SDL_Texture *core_texture;
   SDL_Texture *core_highlight_texture;
+
+  GPrefs preferences;
 };
 
 #endif

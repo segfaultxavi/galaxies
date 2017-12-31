@@ -12,7 +12,6 @@ typedef struct _GSpriteLevelSelectButtonData {
   GSpriteLevelSelect *level_spr;
   GSpriteButton *button_spr;
   int level;
-  GSpriteLevelSelectLevelStatus status;
 } GSpriteLevelSelectButtonData;
 
 struct _GSpriteLevelSelect {
@@ -30,8 +29,9 @@ static const char *levels[] = {
 };
 
 static Uint32 GSpriteLevelSelect_get_button_color (GSpriteLevelSelectButtonData *button) {
+  GSpriteLevelSelect *spr = button->level_spr;
   Uint32 color = 0;
-  switch (button->status) {
+  switch (spr->base.res->preferences.levels[button->level]) {
     case GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED:
       color = 0xFFC0C0C0;
       break;
@@ -49,9 +49,12 @@ static Uint32 GSpriteLevelSelect_get_button_color (GSpriteLevelSelectButtonData 
 
 void GSpriteLevelSelect_update_level (void *userdata, GSpriteLevelSelectLevelStatus status) {
   GSpriteLevelSelectButtonData *button = userdata;
-  button->status = status;
+  GSpriteLevelSelect *spr = button->level_spr;
+  spr->base.res->preferences.levels[button->level] = status;
   GSpriteButton_set_color (button->button_spr, GSpriteLevelSelect_get_button_color (button));
-  SDL_Log ("Level %d set to status %d", button->level, button->status);
+  GPrefs_save (&button->level_spr->base.res->preferences);
+  SDL_Log ("Level %d set to status %d", button->level, status);
+  GPrefs_save (&button->level_spr->base.res->preferences);
 }
 
 static int GSpriteLevelSelect_back (void *userdata, int *destroyed) {
@@ -114,7 +117,6 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
     sprintf (text, "%d", 1 + l);
     spr->buttons[l].level_spr = spr;
     spr->buttons[l].level = l;
-    spr->buttons[l].status = GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED;
     spr->buttons[l].button_spr = (GSpriteButton *)
       GSpriteButton_new (res, x * bstride + bmargin / 2, 1 * line + y * bstride, bsize, bsize, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
         res->font_med, GSpriteLevelSelect_get_button_color (&spr->buttons[l]), 0xFFFFFFFF, text, GSpriteLevelSelect_selection, &spr->buttons[l]);
