@@ -3,6 +3,7 @@ TODO
 - Save completed levels list
 - Save levels in progress
 - Android lifetime management
+- Bring back the editor
 
 IDEAS
 - Hexagonal grid
