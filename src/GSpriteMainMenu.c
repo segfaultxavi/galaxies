@@ -33,13 +33,20 @@ static int GSpriteMainMenu_credits (void *userdata, int *destroyed) {
   return 1;
 }
 
+static int GSpriteMainMenu_quit (void *userdata, int *destroyed) {
+  GSpriteMainMenu *spr = userdata;
+  SDL_Log ("Quit");
+  SDL_Event event = { SDL_QUIT };
+  SDL_PushEvent (&event);
+  return 1;
+}
+
 static int GSpriteMainMenu_event (GSpriteMainMenu *spr, GEvent *event, int *destroyed) {
   int ret = 0;
   switch (event->type) {
     case GEVENT_TYPE_KEY:
       if (event->keycode == SDLK_ESCAPE || event->keycode == SDLK_AC_BACK) {
-        SDL_Event event = { SDL_QUIT };
-        SDL_PushEvent (&event);
+        GSpriteMainMenu_quit (spr, destroyed);
       }
       break;
     default:
@@ -57,13 +64,16 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_big,
       0xFF000000, 0xFFFFFFFF, "galaxies"));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (res, res->game_width / 2, 3 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+    GSpriteButton_new (res, res->game_width / 2, 2 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
       res->font_med, 0xFF0000FF, "Play", GSpriteMainMenu_play, spr));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (res, res->game_width / 2, 4 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+    GSpriteButton_new (res, res->game_width / 2, 3 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
       res->font_med, 0xFF0000FF, "Editor", GSpriteMainMenu_editor, spr));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (res, res->game_width / 2, 5 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+    GSpriteButton_new (res, res->game_width / 2, 4 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
       res->font_med, 0xFF0000FF, "Credits", GSpriteMainMenu_credits, spr));
+  GSprite_add_child ((GSprite *)spr,
+    GSpriteButton_new (res, res->game_width / 2, 5 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+      res->font_med, 0xFF0000FF, "Quit", GSpriteMainMenu_quit, spr));
   return (GSprite *)spr;
 }
