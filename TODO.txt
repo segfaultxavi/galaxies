@@ -3,7 +3,6 @@ TODO
 - Save completed levels list
 - Save levels in progress
 - Android lifetime management
-- Find a Free replacement for the Nulshock font
 
 IDEAS
 - Hexagonal grid

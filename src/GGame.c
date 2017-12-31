@@ -35,7 +35,7 @@ GGame *GGame_new () {
     SDL_Log ("SDL_CreateWindowAndRenderer: %s", SDL_GetError ());
     goto error;
   }
-  SDL_SetWindowTitle (game->sdl_window, "Galaxies");
+  SDL_SetWindowTitle (game->sdl_window, "tentai show");
   SDL_SetRenderDrawBlendMode (res->sdl_renderer, SDL_BLENDMODE_BLEND);
 
   // Font

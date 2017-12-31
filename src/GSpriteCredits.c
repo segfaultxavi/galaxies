@@ -37,7 +37,7 @@ const char *credits[][2] = {
   {"Programming", "XAVI ARTIGAS"},
   {"Original idea", "TENTAI SHOW by nikoli"},
   {"Fonts", "BAJORAN by kiwi media"},
-  {"", "AUDIOWIDE by astigmatic"}, 
+  {"", "ZORQUE by typodermic fonts"}, 
   {"Music", "?"},
   {"Sound", "?"},
   {"Libraries", "sdl, sdl_ttf"}
@@ -52,7 +52,7 @@ GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
   spr->main_menu = main_menu;
   GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_big,
-      0xFF000000, 0xFFFFFFFF, "galaxies"));
+      0xFF000000, 0xFFFFFFFF, "tentai show"));
   for (l = 0; l < sizeof (credits) / sizeof (credits[0]); l++) {
     if (credits[l][0][0] != '\0')
     GSprite_add_child ((GSprite *)spr,

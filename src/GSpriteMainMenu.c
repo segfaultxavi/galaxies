@@ -62,7 +62,7 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
   spr->base.w = spr->base.h = -1;
   GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_big,
-      0xFF000000, 0xFFFFFFFF, "galaxies"));
+      0xFF000000, 0xFFFFFFFF, "tentai show"));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 2 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
       res->font_med, 0xFF0000FF, "Play", GSpriteMainMenu_play, spr));
