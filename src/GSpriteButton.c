@@ -14,11 +14,8 @@ struct _GSpriteButton {
   GSpriteButtonCallback callback;
   void *userdata;
   GButtonState state;
+  Uint32 color;
 };
-
-static SDL_Color gcolor_button_normal = { 0x40, 0x40, 0x40, 0xFF };
-static SDL_Color gcolor_button_hover = { 0x80, 0x80, 0x80, 0xFF };
-static SDL_Color gcolor_button_active = { 0xC0, 0xC0, 0xC0, 0xFF };
 
 #define GBUTTON_MARGIN 10
 
@@ -30,10 +27,14 @@ static void GSpriteButton_render (GSpriteButton *spr, int offsx, int offsy) {
   rect.y = spr->base.y + offsy;
   rect.w = spr->base.w;
   rect.h = spr->base.h;
+  col.a = (spr->color >> 24) & 0xFF;
+  col.r = (spr->color >> 16) & 0xFF;
+  col.g = (spr->color >>  8) & 0xFF;
+  col.b = (spr->color >>  0) & 0xFF;
   switch (spr->state) {
-    case GBUTTON_STATE_NORMAL: col = gcolor_button_normal; break;
-    case GBUTTON_STATE_HOVER: col = gcolor_button_hover; break;
-    case GBUTTON_STATE_ACTIVE: col = gcolor_button_active; break;
+    case GBUTTON_STATE_NORMAL: col.r >>= 2; col.g >>= 2; col.b >>= 2; break;
+    case GBUTTON_STATE_HOVER: col.r >>= 1; col.g >>= 1; col.b >>= 1; break;
+    case GBUTTON_STATE_ACTIVE: col.r >>= 0; col.g >>= 0; col.b >>= 0; break;
   }
   SDL_SetRenderDrawColor (renderer, col.r, col.g, col.b, col.a);
   if (SDL_RenderFillRect (renderer, &rect) != 0) {
@@ -66,10 +67,10 @@ static int GSpriteButton_event (GSpriteButton *spr, GEvent *event, int *destroye
 }
 
 GSprite *GSpriteButton_new (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
-    TTF_Font *font, Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata) {
+    TTF_Font *font, Uint32 button_color, Uint32 label_color, const char *text, GSpriteButtonCallback callback, void *userdata) {
   GSprite *label;
   GSpriteButton *spr;
-  label = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, font, color, 0, text);
+  label = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, font, label_color, 0, text);
   if (w == -1) {
     label->x = GBUTTON_MARGIN;
     w = label->w + 2 * GBUTTON_MARGIN;
@@ -90,6 +91,11 @@ GSprite *GSpriteButton_new (GResources *res, int x, int y, int w, int h, GSprite
   spr->callback = callback;
   spr->userdata = userdata;
   spr->state = GBUTTON_STATE_NORMAL;
+  spr->color = button_color;
   GSprite_add_child ((GSprite *)spr, label);
   return (GSprite *)spr;
+}
+
+void GSpriteButton_set_color (GSpriteButton *spr, Uint32 color) {
+  spr->color = color;
 }

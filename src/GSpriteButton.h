@@ -13,6 +13,8 @@ typedef struct _GSpriteButton GSpriteButton;
 typedef int (* GSpriteButtonCallback)(void *userdata, int *destroyed);
 
 GSprite *GSpriteButton_new (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
-    TTF_Font *font, Uint32 color, const char *text, GSpriteButtonCallback callback, void *userdata);
+    TTF_Font *font, Uint32 button_color, Uint32 label_color, const char *text, GSpriteButtonCallback callback, void *userdata);
+
+void GSpriteButton_set_color (GSpriteButton *spr, Uint32 color);
 
 #endif
