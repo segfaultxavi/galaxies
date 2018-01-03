@@ -60,6 +60,10 @@ GGame *GGame_new () {
   // Content
   res->root = GSpriteNull_new (res, 0, 0);
   GSprite_add_child (res->root, GSpriteMainMenu_new (res));
+
+  // Load preferences
+  GPrefs_load (&res->preferences);
+
   return game;
 
 error:

@@ -54,7 +54,6 @@ void GSpriteLevelSelect_update_level (void *userdata, GSpriteLevelSelectLevelSta
   GSpriteButton_set_color (button->button_spr, GSpriteLevelSelect_get_button_color (button));
   GPrefs_save (&button->level_spr->base.res->preferences);
   SDL_Log ("Level %d set to status %d", button->level, status);
-  GPrefs_save (&button->level_spr->base.res->preferences);
 }
 
 static int GSpriteLevelSelect_back (void *userdata, int *destroyed) {
@@ -107,6 +106,14 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
   GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
       0xFF000000, 0xFFFFFFFF, "Level Selection"));
+
+  if (res->preferences.num_levels == 0) {
+    // Initialize preferences
+    res->preferences.num_levels = num_levels;
+    for (l = 0; l < num_levels; l++) {
+      res->preferences.levels[l] = GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED;
+    }
+  }
 
   spr->buttons = malloc (sizeof (GSpriteLevelSelectButtonData) * num_levels);
 
