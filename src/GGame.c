@@ -86,9 +86,33 @@ void GGame_free (GGame *game) {
   free (game);
 }
 
+// TODO: This might run from a thread different than the main one,
+// might need to add guards.
+int GGame_event_filter (void *userdata, SDL_Event *event) {
+  GGame *game = userdata;
+  switch (event->type) {
+    case SDL_APP_TERMINATING:
+      SDL_Log ("TERMINATING");
+      GPrefs_save (&game->resources.preferences);
+      break;
+    case SDL_APP_WILLENTERBACKGROUND:
+      SDL_Log ("WILLENTERBACKGROUND");
+      break;
+    case SDL_APP_WILLENTERFOREGROUND:
+      SDL_Log ("WILLENTERFOREGROUND");
+      break;
+    default:
+      break;
+  }
+  return 1;
+}
+
 void GGame_run (GGame *game) {
   int quit = 0;
   GSprite *focus = NULL;
+
+  // Some events must be handled as fast as possible
+  SDL_SetEventFilter (GGame_event_filter, game);
 
   while (!quit) {
     SDL_Event event;
