@@ -64,6 +64,6 @@ GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
   }
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
-      res->font_med, 0xFFFFFFFF, 0xFF0000FF, "Back", GSpriteCredits_back, spr));
+      res->font_med, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteCredits_back, spr));
   return (GSprite *)spr;
 }

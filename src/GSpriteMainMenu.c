@@ -65,15 +65,15 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
       0xFF000000, 0xFFFFFFFF, "tentai show"));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 2 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFFFFFFFF, 0xFF0000FF, "Play", GSpriteMainMenu_play, spr));
+      res->font_med, 0xFFFFFFFF, 0xFF000000, "Play", GSpriteMainMenu_play, spr));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 3 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFFFFFFFF, 0xFF0000FF, "Editor", GSpriteMainMenu_editor, spr));
+      res->font_med, 0xFFFFFFFF, 0xFF000000, "Editor", GSpriteMainMenu_editor, spr));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 4 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFFFFFFFF, 0xFF0000FF, "Credits", GSpriteMainMenu_credits, spr));
+      res->font_med, 0xFFFFFFFF, 0xFF000000, "Credits", GSpriteMainMenu_credits, spr));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 5 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFFFFFFFF, 0xFF0000FF, "Quit", GSpriteMainMenu_quit, spr));
+      res->font_med, 0xFFFFFFFF, 0xFF000000, "Quit", GSpriteMainMenu_quit, spr));
   return (GSprite *)spr;
 }

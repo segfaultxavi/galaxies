@@ -67,10 +67,10 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, const char
     GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
       0xFF000000, 0xFFFFFFFF, "tentai show"));
   spr->reset = GSpriteButton_new (res, mwidth / 2, 2 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-    res->font_small, 0xFFFFFFFF, 0xFF0000FF, "Reset", GSpriteGalaxies_reset, spr);
+    res->font_small, 0xFFFFFFFF, 0xFF000000, "Reset", GSpriteGalaxies_reset, spr);
   GSprite_add_child (margin, spr->reset);
   spr->solution = GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-    res->font_small, 0xFFFFFFFF, 0xFF0000FF, "Solution", GSpriteGalaxies_solution, spr);
+    res->font_small, 0xFFFFFFFF, 0xFF000000, "Solution", GSpriteGalaxies_solution, spr);
   GSprite_add_child (margin, spr->solution);
   spr->completed = GSpriteLabel_new_multiline (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
     res->font_med, 0xFFFFFFFF, 0xFFFF0000, "level\ncomplete");
@@ -78,7 +78,7 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, const char
   spr->completed->visible = 0;
   GSprite_add_child (margin,
     GSpriteButton_new (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
-      res->font_small, 0xFFFFFFFF, 0xFF0000FF, "Back", GSpriteGalaxies_back, spr));
+      res->font_small, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteGalaxies_back, spr));
   GSprite_add_child ((GSprite *)spr, margin);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 0);
   GSpriteBoard_load (spr->board, level_description);
