@@ -84,7 +84,9 @@ void GGraphics_add_glow (SDL_Surface **org_surf, int strength, Uint32 color) {
     int r = colors[x * 4 + 2];
     int g = colors[x * 4 + 1];
     int b = colors[x * 4 + 0];
-    colors[x * 4 + 3] = a + (255 - a) * alphas2[x] / 255;
+    int a2 = alphas2[x] * 1.5f;
+    a2 = a2 < 255 ? a2 : 255;
+    colors[x * 4 + 3] = a + (255 - a) * a2 / 255;
     colors[x * 4 + 2] = (a * r + (255 - a) * gr) / 255;
     colors[x * 4 + 1] = (a * g + (255 - a) * gg) / 255;
     colors[x * 4 + 0] = (a * b + (255 - a) * gb) / 255;
