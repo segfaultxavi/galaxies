@@ -50,6 +50,8 @@ static Uint32 GSpriteLevelSelect_get_button_color (GSpriteLevelSelectButtonData 
 void GSpriteLevelSelect_update_level (void *userdata, GSpriteLevelSelectLevelStatus status) {
   GSpriteLevelSelectButtonData *button = userdata;
   GSpriteLevelSelect *spr = button->level_spr;
+  if (spr->base.res->preferences.levels[button->level] >= status)
+    return;
   spr->base.res->preferences.levels[button->level] = status;
   GSpriteButton_set_color (button->button_spr, GSpriteLevelSelect_get_button_color (button));
   GPrefs_save (&button->level_spr->base.res->preferences);
