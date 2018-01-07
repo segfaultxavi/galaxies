@@ -1,4 +1,5 @@
 TODO
+- Save current level status
 - Bring back the editor
 
 IDEAS
