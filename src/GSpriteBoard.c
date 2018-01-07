@@ -273,7 +273,7 @@ static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, int 
   }
 }
 
-void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numInitialCores, float *initialCores) {
+void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numInitialCores, const float *initialCores, const char *initialTiles) {
   int x, y;
   spr->mapSizeX = mapSizeX;
   spr->mapSizeY = mapSizeY;
@@ -308,6 +308,17 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[x]);
   }
 
+  if (initialTiles) {
+    for (y = 0; y < mapSizeY; y++) {
+      for (x = 0; x < mapSizeX; x++) {
+        GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+        int id = initialTiles[y * mapSizeX + x];
+        GSpriteCore *core = spr->cores[id];
+        GSpriteTile_set_id (tile, id, GSpriteCore_get_color (core));
+      }
+    }
+  }
+
   spr->currCoreId = -1;
 }
 
@@ -318,6 +329,7 @@ static int GSpriteBoard_a2i (char a) {
 }
 
 static char GSpriteBoard_i2a (int i) {
+  if (i == -1) return '.';
   if (i < 26) return 'a' + i;
   return 'A' + i - 26;
 }
@@ -326,7 +338,8 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
   int desc_len;
   int size_x, size_y;
   int i, num_cores;
-  float *initial_cores;
+  float *initial_cores = NULL;
+  const char *initial_tiles = NULL;
 
   if (desc == NULL) return 0;
   desc_len = (int)strlen (desc);
@@ -335,17 +348,16 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
   if (spr->last_code != NULL && strcmp (desc, spr->last_code) == 0) return 1;
 
   // Check format
-  if (desc_len < 3) return 0; // Header
-  if (((desc_len - 3) & 2) == 1) return 0; // Extra characters
+  if (desc_len < 4) return 0; // Header
   if (desc[0] != '1') return 0; // Version number
   size_x = GSpriteBoard_a2i (desc[1]); // Board size
   size_y = GSpriteBoard_a2i (desc[2]);
   if (size_x < 3 || size_x > 20 || size_y < 3 || size_y > 20) return 0; // Invalid sizes
-  num_cores = (desc_len - 3) / 2;
+  num_cores = GSpriteBoard_a2i (desc[3]);
   initial_cores = malloc (num_cores * 2 * sizeof (float));
   for (i = 0; i < num_cores; i++) {
-    float x = (GSpriteBoard_a2i (desc[3 + i * 2 + 0]) + 1) / 2.f;
-    float y = (GSpriteBoard_a2i (desc[3 + i * 2 + 1]) + 1) / 2.f;
+    float x = (GSpriteBoard_a2i (desc[4 + i * 2 + 0]) + 1) / 2.f;
+    float y = (GSpriteBoard_a2i (desc[4 + i * 2 + 1]) + 1) / 2.f;
     if (x < 0 || x >= (size_x + 0.5f) || y < 0 || y >= (size_y + 0.5f)) {
       SDL_Log ("%g,%g outside %dx%d", x, y, size_x, size_y);
       free (initial_cores);
@@ -372,9 +384,17 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
       }
     }
   }
+  if (desc_len > 4 + num_cores * 2) {
+    if (desc_len != 4 + num_cores * 2 + size_x * size_y) {
+      SDL_Log ("Invalid code (code_len:%d sizex:%d sizey:%d num_cores:%d", desc_len, size_x, size_y, num_cores);
+      free (initial_cores);
+      return 0;
+    }
+    initial_tiles = desc + 4 + num_cores * 2;
+  }
 
   // Build board: Needs to rebuild whole board in case of size change
-  GSpriteBoard_start (spr, size_x, size_x, num_cores, initial_cores);
+  GSpriteBoard_start (spr, size_x, size_x, num_cores, initial_cores, initial_tiles);
   free (initial_cores);
   if (spr->last_code)
     free (spr->last_code);
@@ -383,24 +403,44 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
   return 1;
 }
 
-char *GSpriteBoard_save (GSpriteBoard *spr) {
-  char *code;
+char *GSpriteBoard_save (GSpriteBoard *spr, int includeTileColors) {
+  char *code, *ptr;
+  int code_len = 4 + spr->numCores * 2 + 1;
   int i;
+  
+  if (includeTileColors)
+    code_len += spr->mapSizeX * spr->mapSizeY;
 
-  code = malloc (3 + spr->numCores * 2 + 1);
+  code = malloc (code_len);
 
   // Version number and board size
   code[0] = '1';
   code[1] = GSpriteBoard_i2a (spr->mapSizeX);
   code[2] = GSpriteBoard_i2a (spr->mapSizeY);
+  code[3] = GSpriteBoard_i2a (spr->numCores);
+  ptr = code + 4;
 
   // Coords of all cores
   for (i = 0; i < spr->numCores; i++) {
     GSprite *core = (GSprite *)spr->cores[i];
-    code[3 + i * 2 + 0] = GSpriteBoard_i2a ((core->x * 2 / spr->tileSizeX) - 1);
-    code[3 + i * 2 + 1] = GSpriteBoard_i2a ((core->y * 2 / spr->tileSizeY) - 1);
+    ptr[0] = GSpriteBoard_i2a ((core->x * 2 / spr->tileSizeX) - 1);
+    ptr[1] = GSpriteBoard_i2a ((core->y * 2 / spr->tileSizeY) - 1);
+    ptr += 2;
   }
-  code[3 + i * 2] = '\0';
+
+  if (includeTileColors) {
+    // Core IDs for all tiles
+    int x, y;
+    for (y = 0; y < spr->mapSizeY; y++) {
+      for (x = 0; x < spr->mapSizeX; x++) {
+        GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+        ptr[0] = GSpriteBoard_i2a (GSpriteTile_get_id (tile));
+        ptr++;
+      }
+    }
+  }
+
+  ptr[0] = '\0';
 
   return code;
 }

@@ -21,11 +21,11 @@ struct _GSpriteLevelSelect {
 };
 
 static const char *levels[] = {
-  "1hheebfakekgckbkimgmmhmikcm",
-  "1hhggkakeljilceecafaldm",
-  "1hhhgcgillgkecmajabjafc",
-  "1mmhhphpphpiedjalcmeaedaescwdugusvwmupwkubtawguew",
-  "1hhggkdiemfcickagjkhmiiecgacc"
+  "1hhmeebfakekgckbkimgmmhmikcm",
+  "1hhkggkakeljilceecafaldm",
+  "1hhkhgcgillgkecmajabjafc",
+  "1mmxhhphpphpiedjalcmeaedaescwdugusvwmupwkubtawguew",
+  "1hhnggkdiemfcickagjkhmiiecgacc"
 };
 
 static Uint32 GSpriteLevelSelect_get_button_color (GSpriteLevelSelectButtonData *button) {
