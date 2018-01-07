@@ -11,6 +11,7 @@ typedef struct _GSpriteBoard GSpriteBoard;
 GSprite *GSpriteBoard_new (GResources *res, int editing);
 void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numInitialCores, float *initialCores);
 int GSpriteBoard_load (GSpriteBoard *spr, const char *desc);
+char *GSpriteBoard_save (GSpriteBoard *spr);
 GSpriteTile *GSpriteBoard_get_tile (GSpriteBoard *spr, int x, int y);
 GSpriteCore *GSpriteBoard_get_selected_core (GSpriteBoard *spr);
 int GSpriteBoard_is_tile_selectable (GSpriteBoard *spr, int x, int y);

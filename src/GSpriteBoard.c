@@ -383,6 +383,28 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
   return 1;
 }
 
+char *GSpriteBoard_save (GSpriteBoard *spr) {
+  char *code;
+  int i;
+
+  code = malloc (3 + spr->numCores * 2 + 1);
+
+  // Version number and board size
+  code[0] = '1';
+  code[1] = GSpriteBoard_i2a (spr->mapSizeX);
+  code[2] = GSpriteBoard_i2a (spr->mapSizeY);
+
+  // Coords of all cores
+  for (i = 0; i < spr->numCores; i++) {
+    GSprite *core = (GSprite *)spr->cores[i];
+    code[3 + i * 2 + 0] = GSpriteBoard_i2a ((core->x * 2 / spr->tileSizeX) - 1);
+    code[3 + i * 2 + 1] = GSpriteBoard_i2a ((core->y * 2 / spr->tileSizeY) - 1);
+  }
+  code[3 + i * 2] = '\0';
+
+  return code;
+}
+
 GSpriteTile *GSpriteBoard_get_tile (GSpriteBoard *spr, int x, int y) {
   if (x < 0 || x >= spr->mapSizeX || y < 0 || y >= spr->mapSizeY)
     return NULL;
