@@ -81,7 +81,7 @@ static int GSpriteLevelSelect_selection (void *userdata, int *destroyed) {
   desc = prefs->level_desc[button->level];
   if (!desc)
     desc = initial_level_descriptions[button->level];
-  GSprite_add_child (button->level_spr->base.parent, GSpriteGalaxies_new (button->level_spr->base.res, (GSprite *)button->level_spr, desc, button));
+  GSprite_add_child (button->level_spr->base.parent, GSpriteGalaxies_new (button->level_spr->base.res, (GSprite *)button->level_spr, button->level, desc, button));
   return 1;
 }
 

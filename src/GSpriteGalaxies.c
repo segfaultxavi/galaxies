@@ -54,22 +54,27 @@ static int GSpriteGalaxies_event (GSpriteGalaxies *spr, GEvent *event, int *dest
   return ret;
 }
 
-GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, const char *level_description, void *level_data) {
+GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, int level_number, const char *level_description, void *level_data) {
   int line = res->game_height / 10;
   int mwidth = res->game_width - res->game_height;
   GSpriteGalaxies *spr = (GSpriteGalaxies *)GSprite_new (res, sizeof (GSpriteGalaxies),
       NULL, (GSpriteEvent)GSpriteGalaxies_event, NULL, NULL);
   GSprite *margin = GSpriteNull_new (res, res->game_height, 0);
+  char str[16];
   spr->level_select = level_select;
   spr->level_data = level_data;
   spr->base.w = spr->base.h = -1;
   GSprite_add_child (margin,
     GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
       0xFF000000, 0xFFFFFFFF, "tentai show"));
-  spr->reset = GSpriteButton_new (res, mwidth / 2, 2 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+  SDL_snprintf (str, sizeof (str), "Level %d", level_number);
+  GSprite_add_child (margin,
+    GSpriteLabel_new (res, mwidth / 2, 1 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_small,
+      0xFFFFFFFF, 0x00000000, str));
+  spr->reset = GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
     res->font_small, 0xFFFFFFFF, 0xFF000000, "Reset", GSpriteGalaxies_reset, spr);
   GSprite_add_child (margin, spr->reset);
-  spr->solution = GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+  spr->solution = GSpriteButton_new (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
     res->font_small, 0xFFFFFFFF, 0xFF000000, "Solution", GSpriteGalaxies_solution, spr);
   GSprite_add_child (margin, spr->solution);
   spr->completed = GSpriteLabel_new_multiline (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
