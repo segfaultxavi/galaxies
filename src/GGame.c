@@ -80,6 +80,7 @@ void GGame_free (GGame *game) {
   TTF_CloseFont (game->resources.font_small);
   SDL_FreeCursor (game->resources.pointer_cur);
   SDL_FreeCursor (game->resources.hand_cur);
+  GPrefs_free (&game->resources.preferences);
   SDL_DestroyRenderer (game->resources.sdl_renderer);
   SDL_DestroyWindow (game->sdl_window);
 
@@ -169,4 +170,5 @@ void GGame_run (GGame *game) {
     GSprite_render (game->resources.root, 0, 0);
     SDL_RenderPresent (game->resources.sdl_renderer);
   }
+  GPrefs_save (&game->resources.preferences);
 }

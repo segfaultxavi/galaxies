@@ -20,7 +20,7 @@ struct _GSpriteLevelSelect {
   GSpriteLevelSelectButtonData *buttons;
 };
 
-static const char *levels[] = {
+static const char *initial_level_descriptions[] = {
   "1hhmeebfakekgckbkimgmmhmikcm",
   "1hhkggkakeljilceecafaldm",
   "1hhkhgcgillgkecmajabjafc",
@@ -31,7 +31,7 @@ static const char *levels[] = {
 static Uint32 GSpriteLevelSelect_get_button_color (GSpriteLevelSelectButtonData *button) {
   GSpriteLevelSelect *spr = button->level_spr;
   Uint32 color = 0;
-  switch (spr->base.res->preferences.levels[button->level]) {
+  switch (spr->base.res->preferences.level_status[button->level]) {
     case GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED:
       color = 0xFFC0C0C0;
       break;
@@ -47,14 +47,20 @@ static Uint32 GSpriteLevelSelect_get_button_color (GSpriteLevelSelectButtonData 
   return color;
 }
 
-void GSpriteLevelSelect_update_level (void *userdata, GSpriteLevelSelectLevelStatus status) {
+void GSpriteLevelSelect_update_level_status (void *userdata, GSpriteLevelSelectLevelStatus status, char *desc) {
   GSpriteLevelSelectButtonData *button = userdata;
   GSpriteLevelSelect *spr = button->level_spr;
-  if (spr->base.res->preferences.levels[button->level] >= status)
+  GPrefs *prefs = &spr->base.res->preferences;
+  if (prefs->level_status[button->level] > status)
     return;
-  spr->base.res->preferences.levels[button->level] = status;
+  prefs->level_status[button->level] = status;
+  if (desc) {
+    if (prefs->level_desc[button->level]) {
+      SDL_free (prefs->level_desc[button->level]);
+    }
+    prefs->level_desc[button->level] = desc;
+  }
   GSpriteButton_set_color (button->button_spr, GSpriteLevelSelect_get_button_color (button));
-  GPrefs_save (&button->level_spr->base.res->preferences);
   SDL_Log ("Level %d set to status %d", button->level, status);
 }
 
@@ -70,9 +76,14 @@ static int GSpriteLevelSelect_back (void *userdata, int *destroyed) {
 
 static int GSpriteLevelSelect_selection (void *userdata, int *destroyed) {
   GSpriteLevelSelectButtonData *button = userdata;
-  SDL_Log ("Level %d", button->level);
+  GPrefs *prefs = &button->level_spr->base.res->preferences;
+  const char *desc;
+  SDL_Log ("Start level %d", button->level);
   button->level_spr->base.visible = 0;
-  GSprite_add_child (button->level_spr->base.parent, GSpriteGalaxies_new (button->level_spr->base.res, (GSprite *)button->level_spr, levels[button->level], button));
+  desc = prefs->level_desc[button->level];
+  if (!desc)
+    desc = initial_level_descriptions[button->level];
+  GSprite_add_child (button->level_spr->base.parent, GSpriteGalaxies_new (button->level_spr->base.res, (GSprite *)button->level_spr, desc, button));
   return 1;
 }
 
@@ -98,7 +109,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
   GSpriteLevelSelect *spr = (GSpriteLevelSelect *)GSprite_new (res, sizeof (GSpriteLevelSelect),
       NULL, (GSpriteEvent)GSpriteLevelSelect_event, NULL, (GSpriteFree)GSpriteLevelSelect_free);
   int l;
-  int num_levels = sizeof (levels) / sizeof (levels[0]);
+  int num_levels = sizeof (initial_level_descriptions) / sizeof (initial_level_descriptions[0]);
   int line = res->game_height / 8;
   int bstride = res->game_width / GLEVEL_BUTTONS_PER_LINE;
   int bmargin = bstride / 10;
@@ -113,7 +124,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
     // Initialize preferences
     res->preferences.num_levels = num_levels;
     for (l = 0; l < num_levels; l++) {
-      res->preferences.levels[l] = GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED;
+      res->preferences.level_status[l] = GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED;
     }
   }
 

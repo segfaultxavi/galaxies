@@ -20,8 +20,12 @@ void GPrefs_save (GPrefs *prefs) {
   SDL_snprintf (buff, sizeof (buff), "num_levels %d\n", prefs->num_levels);
   SDL_RWwrite (rwops, buff, SDL_strlen (buff), 1);
   for (l = 0; l < prefs->num_levels; l++) {
-    SDL_snprintf (buff, sizeof (buff), "level%d.status %d\n", l, prefs->levels[l]);
+    SDL_snprintf (buff, sizeof (buff), "level%03d.status %d\n", l, prefs->level_status[l]);
     SDL_RWwrite (rwops, buff, SDL_strlen (buff), 1);
+    if (prefs->level_desc[l]) {
+      SDL_snprintf (buff, sizeof (buff), "level%03d.desc %s\n", l, prefs->level_desc[l]);
+      SDL_RWwrite (rwops, buff, SDL_strlen (buff), 1);
+    }
   }
 
   SDL_RWclose (rwops);
@@ -50,11 +54,10 @@ void GPrefs_load (GPrefs *prefs) {
   SDL_free (buff);
 
   size = SDL_RWsize (rwops);
-  buff = SDL_malloc (size);
+  buff = SDL_malloc (size + 1);
+  SDL_memset (buff, 0, size + 1);
   SDL_RWread (rwops, buff, size, 1);
   SDL_RWclose (rwops);
-
-  SDL_free (pfilepath);
 
   ptr = buff;
   if (SDL_sscanf (ptr, "preferences %d\n", &i) != 1) {
@@ -70,9 +73,15 @@ void GPrefs_load (GPrefs *prefs) {
   while (ptr < buff + size) {
     if (SDL_sscanf (ptr, " num_levels %d\n", &i) == 1) {
       prefs->num_levels = i;
-    } else
-    if (SDL_sscanf (ptr, " level%d.status %d\n", &l, &i) == 2) {
-      prefs->levels[l] = i;
+    } else if (SDL_sscanf (ptr, " level%d.status %d\n", &l, &i) == 2) {
+      prefs->level_status[l] = i;
+    } else if (SDL_sscanf (ptr, " level%d.desc ", &l) == 1) {
+      char *ptr_cr;
+      ptr += 14;
+      ptr_cr = ptr;
+      while (ptr_cr < buff + size && ptr_cr[0] != '\n') ptr_cr++;
+      prefs->level_desc[l] = SDL_malloc (ptr_cr - ptr + 1);
+      SDL_strlcpy (prefs->level_desc[l], ptr, ptr_cr - ptr + 1);
     } else {
       SDL_Log ("Could not understand line: %s\n", ptr);
       goto exit;
@@ -84,4 +93,13 @@ void GPrefs_load (GPrefs *prefs) {
 exit:
   SDL_free (pfilepath);
   SDL_free (buff);
+}
+
+void GPrefs_free (GPrefs *prefs) {
+  int l;
+
+  for (l = 0; l < prefs->num_levels; l++) {
+    if (prefs->level_desc[l])
+      SDL_free (prefs->level_desc[l]);
+  }
 }

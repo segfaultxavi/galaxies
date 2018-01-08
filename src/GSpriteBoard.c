@@ -183,6 +183,8 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y) {
   GSpriteTile_set_id (tile, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
   GSpriteTile_set_id (tile2, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
 
+  GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_IN_PROGRESS, GSpriteBoard_save (spr, 1));
+
   if (GSpriteBoard_check_completion (spr)) {
     GSpriteGalaxies_complete ((GSpriteGalaxies *)spr->base.parent);
   }
@@ -233,9 +235,9 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
 
 void GSpriteBoard_free (GSpriteBoard *spr) {
   if (spr->last_code)
-    free (spr->last_code);
-  free (spr->tiles);
-  free (spr->cores);
+    SDL_free (spr->last_code);
+  SDL_free (spr->tiles);
+  SDL_free (spr->cores);
   SDL_DestroyTexture (spr->base.res->core_texture);
   SDL_DestroyTexture (spr->base.res->core_highlight_texture);
 }
@@ -273,7 +275,7 @@ static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, int 
   }
 }
 
-void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numInitialCores, const float *initialCores, const char *initialTiles) {
+static void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numInitialCores, const float *initialCores, const int *initialTiles) {
   int x, y;
   spr->mapSizeX = mapSizeX;
   spr->mapSizeY = mapSizeY;
@@ -283,7 +285,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   spr->base.h = spr->tileSizeY * spr->mapSizeY;
   spr->base.x = (spr->base.res->game_height - spr->base.w) / 2;
   spr->base.y = (spr->base.res->game_height - spr->base.h) / 2;
-  spr->tiles = malloc (mapSizeX * mapSizeY * sizeof (GSpriteTile *));
+  spr->tiles = SDL_malloc (mapSizeX * mapSizeY * sizeof (GSpriteTile *));
 
   spr->base.res->core_texture = GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY);
   spr->base.res->core_highlight_texture = GSpriteCore_create_highlight_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY);
@@ -300,7 +302,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->grid);
 
   spr->numCores = numInitialCores;
-  spr->cores = malloc (spr->numCores * sizeof (GSpriteCore *));
+  spr->cores = SDL_malloc (spr->numCores * sizeof (GSpriteCore *));
   for (x = 0; x < numInitialCores; x++) {
     spr->cores[x] = (GSpriteCore *)GSpriteCore_new (spr->base.res, 0, 0, x,
       spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr);
@@ -313,8 +315,10 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
       for (x = 0; x < mapSizeX; x++) {
         GSpriteTile *tile = GBOARD_TILE (spr, x, y);
         int id = initialTiles[y * mapSizeX + x];
-        GSpriteCore *core = spr->cores[id];
-        GSpriteTile_set_id (tile, id, GSpriteCore_get_color (core));
+        if (id > -1) {
+          GSpriteCore *core = spr->cores[id];
+          GSpriteTile_set_id (tile, id, GSpriteCore_get_color (core));
+        }
       }
     }
   }
@@ -323,6 +327,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
 }
 
 static int GSpriteBoard_a2i (char a) {
+  if (a == '.') return -1;
   if (a >= 'a' && a <= 'z') return a - 'a';
   if (a >= 'A' && a <= 'Z') return a - 'A' + 26;
   return 0;
@@ -339,7 +344,7 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
   int size_x, size_y;
   int i, num_cores;
   float *initial_cores = NULL;
-  const char *initial_tiles = NULL;
+  int *initial_tiles = NULL;
 
   if (desc == NULL) return 0;
   desc_len = (int)strlen (desc);
@@ -354,13 +359,13 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
   size_y = GSpriteBoard_a2i (desc[2]);
   if (size_x < 3 || size_x > 20 || size_y < 3 || size_y > 20) return 0; // Invalid sizes
   num_cores = GSpriteBoard_a2i (desc[3]);
-  initial_cores = malloc (num_cores * 2 * sizeof (float));
+  initial_cores = SDL_malloc (num_cores * 2 * sizeof (float));
   for (i = 0; i < num_cores; i++) {
     float x = (GSpriteBoard_a2i (desc[4 + i * 2 + 0]) + 1) / 2.f;
     float y = (GSpriteBoard_a2i (desc[4 + i * 2 + 1]) + 1) / 2.f;
     if (x < 0 || x >= (size_x + 0.5f) || y < 0 || y >= (size_y + 0.5f)) {
       SDL_Log ("%g,%g outside %dx%d", x, y, size_x, size_y);
-      free (initial_cores);
+      SDL_free (initial_cores);
       return 0;
     }
     initial_cores[i * 2 + 0] = x;
@@ -379,7 +384,7 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
         SDL_Log ("Cores %d (%g,%g) and %d (%g,%g) overlap",
           i, initial_cores[i * 2 + 0], initial_cores[i * 2 + 1],
           j, initial_cores[j * 2 + 0], initial_cores[j * 2 + 1]);
-        free (initial_cores);
+        SDL_free (initial_cores);
         return 0;
       }
     }
@@ -387,18 +392,22 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
   if (desc_len > 4 + num_cores * 2) {
     if (desc_len != 4 + num_cores * 2 + size_x * size_y) {
       SDL_Log ("Invalid code (code_len:%d sizex:%d sizey:%d num_cores:%d", desc_len, size_x, size_y, num_cores);
-      free (initial_cores);
+      SDL_free (initial_cores);
       return 0;
     }
-    initial_tiles = desc + 4 + num_cores * 2;
+    initial_tiles = SDL_malloc (size_x * size_y * sizeof (int));
+    for (i = 0; i < size_x * size_y; i++)
+      initial_tiles[i] = GSpriteBoard_a2i (desc[4 + num_cores * 2 + i]);
   }
 
   // Build board: Needs to rebuild whole board in case of size change
   GSpriteBoard_start (spr, size_x, size_x, num_cores, initial_cores, initial_tiles);
-  free (initial_cores);
+  SDL_free (initial_cores);
+  if (initial_tiles)
+    SDL_free (initial_tiles);
   if (spr->last_code)
-    free (spr->last_code);
-  spr->last_code = strdup (desc);
+    SDL_free (spr->last_code);
+  spr->last_code = SDL_strdup (desc);
 
   return 1;
 }
@@ -411,7 +420,7 @@ char *GSpriteBoard_save (GSpriteBoard *spr, int includeTileColors) {
   if (includeTileColors)
     code_len += spr->mapSizeX * spr->mapSizeY;
 
-  code = malloc (code_len);
+  code = SDL_malloc (code_len);
 
   // Version number and board size
   code[0] = '1';

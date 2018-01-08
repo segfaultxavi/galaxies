@@ -16,6 +16,6 @@ typedef struct _GSpriteLevelSelect GSpriteLevelSelect;
 
 GSprite *GSpriteLevelSelect_new (GResources *resources, GSprite *main_menu);
 
-void GSpriteLevelSelect_update_level (void *userdata, GSpriteLevelSelectLevelStatus status);
+void GSpriteLevelSelect_update_level_status (void *userdata, GSpriteLevelSelectLevelStatus status, char *desc);
 
 #endif

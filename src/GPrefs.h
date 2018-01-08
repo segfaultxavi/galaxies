@@ -9,10 +9,12 @@ typedef struct _GPrefs GPrefs;
 
 struct _GPrefs {
   int num_levels;
-  int levels[GPREFS_MAX_LEVELS];
+  int level_status[GPREFS_MAX_LEVELS];
+  char *level_desc[GPREFS_MAX_LEVELS];
 };
 
 void GPrefs_save (GPrefs *prefs);
-void GPrefs_load (GPrefs *load);
+void GPrefs_load (GPrefs *prefs);
+void GPrefs_free (GPrefs *prefs);
 
 #endif

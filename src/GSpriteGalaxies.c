@@ -61,7 +61,6 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, const char
   GSprite *margin = GSpriteNull_new (res, res->game_height, 0);
   spr->level_select = level_select;
   spr->level_data = level_data;
-  GSpriteLevelSelect_update_level (spr->level_data, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_IN_PROGRESS);
   spr->base.w = spr->base.h = -1;
   GSprite_add_child (margin,
     GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
@@ -90,5 +89,9 @@ void GSpriteGalaxies_complete (GSpriteGalaxies *spr) {
   spr->reset->visible = 0;
   spr->solution->visible = 0;
   spr->completed->visible = 1;
-  GSpriteLevelSelect_update_level (spr->level_data, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_DONE);
+  GSpriteLevelSelect_update_level_status (spr->level_data, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_DONE, GSpriteBoard_save (spr->board, 1));
+}
+
+void GSpriteGalaxies_update_level_status (GSpriteGalaxies *spr, GSpriteLevelSelectLevelStatus status, char *desc) {
+  GSpriteLevelSelect_update_level_status (spr->level_data, status, desc);
 }
