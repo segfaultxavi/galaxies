@@ -183,10 +183,12 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y) {
   GSpriteTile_set_id (tile, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
   GSpriteTile_set_id (tile2, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
 
-  GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_IN_PROGRESS, GSpriteBoard_save (spr, 1));
+  if (!spr->editing) {
+    GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_IN_PROGRESS, GSpriteBoard_save (spr, 1));
 
-  if (GSpriteBoard_check_completion (spr)) {
-    GSpriteGalaxies_complete ((GSpriteGalaxies *)spr->base.parent);
+    if (GSpriteBoard_check_completion (spr)) {
+      GSpriteGalaxies_complete ((GSpriteGalaxies *)spr->base.parent);
+    }
   }
 }
 
@@ -275,7 +277,7 @@ static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, int 
   }
 }
 
-static void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numInitialCores, const float *initialCores, const int *initialTiles) {
+void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numInitialCores, const float *initialCores, const int *initialTiles) {
   int x, y;
   spr->mapSizeX = mapSizeX;
   spr->mapSizeY = mapSizeY;
@@ -477,5 +479,6 @@ void GSpriteBoard_reset (GSpriteBoard *spr) {
     }
   }
 
-  GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED, GSpriteBoard_save (spr, 0));
+  if (!spr->editing)
+    GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED, GSpriteBoard_save (spr, 0));
 }

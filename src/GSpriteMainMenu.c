@@ -5,6 +5,7 @@
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
 #include "GSpriteLevelSelect.h"
+#include "GSpriteEditor.h"
 #include "GSpriteCredits.h"
 
 struct _GSpriteMainMenu {
@@ -22,6 +23,8 @@ static int GSpriteMainMenu_play (void *userdata, int *destroyed) {
 static int GSpriteMainMenu_editor (void *userdata, int *destroyed) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Editor");
+  spr->base.visible = 0;
+  GSprite_add_child (spr->base.parent, GSpriteEditor_new (spr->base.res, (GSprite *)spr));
   return 1;
 }
 
