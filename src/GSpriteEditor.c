@@ -8,6 +8,8 @@
 #include "GSpriteNull.h"
 #include "GSpriteBoard.h"
 
+#define GEDITOR_DEFAULT_SIZE 7
+
 struct _GSpriteEditor {
   GSprite base;
   GSprite *main_menu;
@@ -24,6 +26,10 @@ static int GSpriteEditor_reset (void *userdata, int *destroyed) {
 static int GSpriteEditor_restart(void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
   SDL_Log ("Editor:Restart");
+  GSprite_free ((GSprite *)spr->board);
+  spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
+  GSpriteBoard_start (spr->board, GEDITOR_DEFAULT_SIZE, GEDITOR_DEFAULT_SIZE, 0, NULL, NULL);
+  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   return 1;
 }
 
@@ -38,27 +44,53 @@ static int GSpriteEditor_back (void *userdata, int *destroyed) {
 
 static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  SDL_Log ("Editor:Size+");
+  int mapSizeX = GSpriteBoard_get_map_size_x (spr->board);
+  int mapSizeY = GSpriteBoard_get_map_size_y (spr->board);
+  if (mapSizeX == 20)
+    return 1;
+  mapSizeX++;
+  mapSizeY++;
+  SDL_Log ("Editor:Set Size to %dx%d", mapSizeX, mapSizeY);
+  GSprite_free ((GSprite *)spr->board);
+  spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
+  GSpriteBoard_start (spr->board, mapSizeX, mapSizeY, 0, NULL, NULL);
+  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   return 1;
 }
 
 static int GSpriteEditor_size_minus (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  SDL_Log ("Editor:Size-");
+  int mapSizeX = GSpriteBoard_get_map_size_x (spr->board);
+  int mapSizeY = GSpriteBoard_get_map_size_y (spr->board);
+  if (mapSizeX == 5)
+    return 1;
+  mapSizeX--;
+  mapSizeY--;
+  SDL_Log ("Editor:Set Size to %dx%d", mapSizeX, mapSizeY);
+  GSprite_free ((GSprite *)spr->board);
+  spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
+  GSpriteBoard_start (spr->board, mapSizeX, mapSizeY, 0, NULL, NULL);
+  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   return 1;
 }
 
 static int GSpriteEditor_copy_from_clipboard (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  SDL_Log ("Editor:Copy from clipboard");
+  char *desc;
+  desc = SDL_GetClipboardText ();
+  SDL_Log ("Editor:Copy from clipboard %s", desc);
+  GSprite_free ((GSprite *)spr->board);
+  spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
+  GSpriteBoard_load (spr->board, desc);
+  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   return 1;
 }
 
 static int GSpriteEditor_copy_to_clipboard (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
   char *desc;
-  SDL_Log ("Editor:Copy to clipboard");
   desc = GSpriteBoard_save (spr->board, 0);
+  SDL_Log ("Editor:Copy to clipboard %s", desc);
   SDL_SetClipboardText (desc);
   SDL_free (desc);
   return 1;
@@ -111,7 +143,7 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
 
   GSprite_add_child ((GSprite *)spr, margin);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 1);
-  GSpriteBoard_start (spr->board, 7, 7, 0, NULL, NULL);
+  GSpriteBoard_start (spr->board, GEDITOR_DEFAULT_SIZE, GEDITOR_DEFAULT_SIZE, 0, NULL, NULL);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   return (GSprite *)spr;
 }

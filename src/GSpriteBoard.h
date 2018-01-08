@@ -16,5 +16,7 @@ GSpriteTile *GSpriteBoard_get_tile (GSpriteBoard *spr, int x, int y);
 GSpriteCore *GSpriteBoard_get_selected_core (GSpriteBoard *spr);
 int GSpriteBoard_is_tile_selectable (GSpriteBoard *spr, int x, int y);
 void GSpriteBoard_reset (GSpriteBoard *spr);
+int GSpriteBoard_get_map_size_x (GSpriteBoard *spr);
+int GSpriteBoard_get_map_size_y (GSpriteBoard *spr);
 
 #endif
