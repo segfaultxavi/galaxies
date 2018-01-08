@@ -38,7 +38,7 @@ void GGraphics_add_glow (SDL_Surface **org_surf, int strength, Uint32 color) {
   int gr = (color >> 16) & 0xFF;
   int gg = (color >>  8) & 0xFF;
   int gb = (color >>  0) & 0xFF;
-  int margin = 4;
+  int margin = 8;
 
   SDL_LockSurface (*org_surf);
   org_w = (*org_surf)->w;
