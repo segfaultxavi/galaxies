@@ -465,3 +465,17 @@ GSpriteCore *GSpriteBoard_get_selected_core (GSpriteBoard *spr) {
     return spr->cores[spr->currCoreId];
   return NULL;
 }
+
+void GSpriteBoard_reset (GSpriteBoard *spr) {
+  int x, y;
+  for (y = 0; y < spr->mapSizeY; y++) {
+    for (x = 0; x < spr->mapSizeX; x++) {
+      GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+      if ((GSpriteTile_get_flags (tile) & GTILE_FLAG_FIXED) == 0) {
+        GSpriteTile_set_id (tile, -1, 0x00000000);
+      }
+    }
+  }
+
+  GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED, GSpriteBoard_save (spr, 0));
+}

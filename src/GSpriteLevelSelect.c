@@ -51,8 +51,6 @@ void GSpriteLevelSelect_update_level_status (void *userdata, GSpriteLevelSelectL
   GSpriteLevelSelectButtonData *button = userdata;
   GSpriteLevelSelect *spr = button->level_spr;
   GPrefs *prefs = &spr->base.res->preferences;
-  if (prefs->level_status[button->level] > status)
-    return;
   prefs->level_status[button->level] = status;
   if (desc) {
     if (prefs->level_desc[button->level]) {

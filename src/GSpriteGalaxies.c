@@ -21,6 +21,7 @@ struct _GSpriteGalaxies {
 static int GSpriteGalaxies_reset (void *userdata, int *destroyed) {
   GSpriteGalaxies *spr = userdata;
   SDL_Log ("Galaxies:Reset");
+  GSpriteBoard_reset (spr->board);
   return 1;
 }
 
