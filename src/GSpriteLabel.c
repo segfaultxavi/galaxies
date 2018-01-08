@@ -54,7 +54,7 @@ GSprite *GSpriteLabel_new (GResources *res, int x, int y, GSpriteJustify justify
 GSprite *GSpriteLabel_new_multiline (GResources *res, int x, int y, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
     TTF_Font *font, Uint32 text_color, Uint32 glow_color, const char *text) {
   GSprite *spr;
-  char *split_text = strdup (text);
+  char *split_text = SDL_strdup (text);
   const char *ptr;
 
   spr = GSpriteNull_new (res, 0, 0);
@@ -68,6 +68,6 @@ GSprite *GSpriteLabel_new_multiline (GResources *res, int x, int y, GSpriteJusti
     ptr = strtok (NULL, "\n");
   }
 
-  free (split_text);
+  SDL_free (split_text);
   return spr;
 }

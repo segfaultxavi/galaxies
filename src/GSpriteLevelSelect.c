@@ -91,7 +91,7 @@ static int GSpriteLevelSelect_event (GSpriteLevelSelect *spr, GEvent *event, int
 }
 
 static void GSpriteLevelSelect_free (GSpriteLevelSelect *spr) {
-  free (spr->buttons);
+  SDL_free (spr->buttons);
 }
 
 GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
@@ -117,7 +117,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
     }
   }
 
-  spr->buttons = malloc (sizeof (GSpriteLevelSelectButtonData) * num_levels);
+  spr->buttons = SDL_malloc (sizeof (GSpriteLevelSelectButtonData) * num_levels);
 
   for (l = 0; l < num_levels; l++) {
     int x = l % GLEVEL_BUTTONS_PER_LINE;

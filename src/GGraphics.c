@@ -4,12 +4,12 @@
 
 void GGraphics_free_surface (SDL_Surface *surf) {
   if (surf->userdata)
-    free (surf->userdata);
+    SDL_free (surf->userdata);
   SDL_FreeSurface (surf);
 }
 
 SDL_Surface *GGraphics_circle (int w, int h, int R1, int R2) {
-  unsigned char *data = malloc (w * h * 4);
+  unsigned char *data = SDL_malloc (w * h * 4);
   Uint32 *colors = (Uint32 *)data;
   SDL_Surface *surf;
   int x, y;
@@ -50,8 +50,8 @@ void GGraphics_add_glow (SDL_Surface **org_surf, int strength, Uint32 color) {
   surf = SDL_CreateRGBSurface (0, w, h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
   SDL_LockSurface (surf);
   colors = (unsigned char *)surf->pixels;
-  alphas = (unsigned char *)malloc (w * h);
-  alphas2 = (unsigned char *)malloc (w * h);
+  alphas = (unsigned char *)SDL_malloc (w * h);
+  alphas2 = (unsigned char *)SDL_malloc (w * h);
   memset (alphas, 0, w * h);
   memset (alphas2, 0, w * h);
   // Copy Alpha values
@@ -91,8 +91,8 @@ void GGraphics_add_glow (SDL_Surface **org_surf, int strength, Uint32 color) {
     colors[x * 4 + 1] = (a * g + (255 - a) * gg) / 255;
     colors[x * 4 + 0] = (a * b + (255 - a) * gb) / 255;
   }
-  free (alphas);
-  free (alphas2);
+  SDL_free (alphas);
+  SDL_free (alphas2);
 
   SDL_UnlockSurface (surf);
   *org_surf = surf;

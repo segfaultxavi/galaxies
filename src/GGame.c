@@ -17,7 +17,7 @@ extern unsigned const char zorque_ttf[];
 extern unsigned int zorque_ttf_len;
 
 GGame *GGame_new () {
-  GGame *game = malloc (sizeof (GGame));
+  GGame *game = SDL_malloc (sizeof (GGame));
   GResources *res = &game->resources;
   SDL_DisplayMode sdpm;
   SDL_RWops *font_rwops;
@@ -83,7 +83,7 @@ void GGame_free (GGame *game) {
   SDL_DestroyRenderer (game->resources.sdl_renderer);
   SDL_DestroyWindow (game->sdl_window);
 
-  free (game);
+  SDL_free (game);
 }
 
 // TODO: This might run from a thread different than the main one,

@@ -4,7 +4,7 @@
 
 GSprite *GSprite_new (GResources *res, int size, GSpriteRender render, GSpriteEvent event, GSpriteIsInside is_inside, GSpriteFree _free)
 {
-  GSprite *spr = malloc (size);
+  GSprite *spr = SDL_malloc (size);
   memset (spr, 0, size);
 
   spr->res = res;
@@ -30,7 +30,7 @@ void GSprite_free (GSprite *spr) {
   }
   if (spr->free)
     spr->free (spr);
-  free (spr);
+  SDL_free (spr);
 }
 
 void GSprite_unparent (GSprite *spr) {
