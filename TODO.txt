@@ -1,6 +1,11 @@
 TODO
-- Save current level status
-- Bring back the editor
+- Popup system
+- Editor: confirmation popups for destructive operations
+- Editor: bring the rest in
+- Add more levels
+- Game collects stats (completion time)
+- Prepare server to receive stats
+- Game sends stats
 
 IDEAS
 - Hexagonal grid

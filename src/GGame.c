@@ -25,8 +25,8 @@ GGame *GGame_new () {
 
   // Window
   SDL_GetCurrentDisplayMode (0, &sdpm);
-  res->game_width = sdpm.w;
-  res->game_height = sdpm.h;
+  res->game_width = 1280; // sdpm.w;
+  res->game_height = 768; // sdpm.h;
   SDL_Log ("Screen size is %dx%d", res->game_width, res->game_height);
   SDL_GL_SetAttribute (SDL_GL_RED_SIZE, 8); // Workaround for Samsung Galaxy S3
   SDL_GL_SetAttribute (SDL_GL_GREEN_SIZE, 8);
