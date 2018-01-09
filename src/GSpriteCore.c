@@ -8,6 +8,7 @@ struct _GSpriteCore {
   GSprite base;
   int id;
   Uint32 color;
+  int solid;
   int highlighted;
   GSpriteCoreCallback callback;
   void *userdata;
@@ -23,12 +24,16 @@ static void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   dst.y = spr->base.y + offsy - spr->base.h / 2;
   dst.w = spr->base.w;
   dst.h = spr->base.h;
-  if (spr->highlighted == 0) {
-    SDL_SetTextureColorMod (res->core_texture, (0x40 + (spr->color >> 16)) & 0xFF, (0x40 + (spr->color >> 8)) & 0xFF, (0x40 + (spr->color >> 0)) & 0xFF);
-    SDL_RenderCopy (renderer, res->core_texture, NULL, &dst);
-  } else {
-    SDL_SetTextureColorMod (res->core_texture, 0xC0, 0xC0, 0x00);
-    SDL_RenderCopy (renderer, res->core_texture, NULL, &dst);
+  if (spr->solid) {
+    if (spr->highlighted == 0) {
+      SDL_SetTextureColorMod (res->core_texture, (0x40 + (spr->color >> 16)) & 0xFF, (0x40 + (spr->color >> 8)) & 0xFF, (0x40 + (spr->color >> 0)) & 0xFF);
+      SDL_RenderCopy (renderer, res->core_texture, NULL, &dst);
+    } else {
+      SDL_SetTextureColorMod (res->core_texture, 0xC0, 0xC0, 0x00);
+      SDL_RenderCopy (renderer, res->core_texture, NULL, &dst);
+    }
+  }
+  if (spr->highlighted) {
     SDL_SetTextureColorMod (res->core_highlight_texture, 0xFF, 0xFF, 0x00);
     SDL_RenderCopy (renderer, res->core_highlight_texture, NULL, &dst);
   }
@@ -68,7 +73,7 @@ SDL_Texture *GSpriteCore_create_highlight_texture (GResources *res, int w, int h
   return tex;
 }
 
-GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX, int radiusY, GSpriteCoreCallback callback, void *userdata) {
+GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX, int radiusY, int solid, GSpriteCoreCallback callback, void *userdata) {
   GSpriteCore *spr = (GSpriteCore *)GSprite_new (res, sizeof (GSpriteCore),
     (GSpriteRender)GSpriteCore_render, (GSpriteEvent)GSpriteCore_event, (GSpriteIsInside)GSpriteCore_is_inside, NULL);
   int r, g, b;
@@ -76,6 +81,7 @@ GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX
   spr->base.y = (int)(y * radiusY);
   spr->base.w = radiusX;
   spr->base.h = radiusY;
+  spr->solid = solid;
   r = rand () % 0x40 + 0x40;
   g = rand () % 0x40 + 0x40;
   b = rand () % 0x40 + 0x40;

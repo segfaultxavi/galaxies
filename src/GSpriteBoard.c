@@ -309,7 +309,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   spr->cores = SDL_malloc (spr->numCores * sizeof (GSpriteCore *));
   for (x = 0; x < numInitialCores; x++) {
     spr->cores[x] = (GSpriteCore *)GSpriteCore_new (spr->base.res, 0, 0, x,
-      spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr);
+      spr->tileSizeX, spr->tileSizeY, 1, GSpriteBoard_core_event, spr);
     GSpriteBoard_deploy_core (spr, initialCores[x * 2 + 0], initialCores[x * 2 + 1], x);
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[x]);
   }
