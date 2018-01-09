@@ -7,6 +7,7 @@
 #include "GSpriteButton.h"
 #include "GSpriteNull.h"
 #include "GSpriteBoard.h"
+#include "GSpritePopup.h"
 
 #define GEDITOR_DEFAULT_SIZE 7
 
@@ -23,13 +24,29 @@ static int GSpriteEditor_reset (void *userdata, int *destroyed) {
   return 1;
 }
 
-static int GSpriteEditor_restart(void *userdata, int *destroyed) {
+static void GSpriteEditor_restart_yes (void *userdata) {
   GSpriteEditor *spr = userdata;
-  SDL_Log ("Editor:Restart");
+  SDL_Log ("Editor:Restart:Yes");
   GSprite_free ((GSprite *)spr->board);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
   GSpriteBoard_start (spr->board, GEDITOR_DEFAULT_SIZE, GEDITOR_DEFAULT_SIZE, 0, NULL, NULL);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
+}
+
+static void GSpriteEditor_restart_no (void *userdata) {
+  GSpriteEditor *spr = userdata;
+  SDL_Log ("Editor:Restart:No");
+}
+
+static int GSpriteEditor_restart(void *userdata, int *destroyed) {
+  GSpriteEditor *spr = userdata;
+  GSprite *popup;
+  SDL_Log ("Editor:Restart");
+
+  popup = GSpritePopup_new (spr->base.res, "Restart",
+      "Are you sure?\nThis will remove everything.",
+      "YES", GSpriteEditor_restart_yes, "NO", GSpriteEditor_restart_no, spr);
+  GSprite_add_child ((GSprite *)spr, popup);
   return 1;
 }
 
