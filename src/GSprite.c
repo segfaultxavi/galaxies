@@ -69,12 +69,18 @@ void GSprite_render (GSprite *spr, int offsx, int offsy) {
   }
 }
 
+int GSprite_event (GSprite *spr, GEvent *event, int *destroyed) {
+  if (spr->event && spr->event (spr, event, destroyed))
+    return 1;
+  return 0;
+}
+
 // Sends the event to the topmost (depth-first) sprite that is interested in it.
 // Returns that sprite or NULL if no one was interested.
 // *destroyed might be 1 if the sprite was destroyed in the process. In this case
 // the returned value is an invalid pointer, but it is returned because it is handy
 // to make comparisons.
-GSprite *GSprite_event (GSprite *parent, GEvent *event, int *destroyed) {
+GSprite *GSprite_hierarchical_event (GSprite *parent, GEvent *event, int *destroyed) {
   GSprite *ptr = parent->children, *ptr_prev = NULL;
   int oldx = parent->x, oldy = parent->y;
 
@@ -91,7 +97,7 @@ GSprite *GSprite_event (GSprite *parent, GEvent *event, int *destroyed) {
   }
   ptr = ptr_prev;
   while (ptr) {
-    GSprite *ret = GSprite_event (ptr, event, destroyed);
+    GSprite *ret = GSprite_hierarchical_event (ptr, event, destroyed);
     // ret might be invalid, if *destroyed == 1, do not dereference it!
     if (ret != NULL) {
       ptr = ret;
@@ -99,7 +105,7 @@ GSprite *GSprite_event (GSprite *parent, GEvent *event, int *destroyed) {
     }
     ptr = ptr->prev;
   }
-  if (parent->event && parent->event (parent, event, destroyed)) {
+  if (GSprite_event (parent, event, destroyed)) {
     ptr = parent;
   } else
     ptr = NULL;

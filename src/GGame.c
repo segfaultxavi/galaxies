@@ -25,8 +25,8 @@ GGame *GGame_new () {
 
   // Window
   SDL_GetCurrentDisplayMode (0, &sdpm);
-  res->game_width = 1280; // sdpm.w;
-  res->game_height = 768; // sdpm.h;
+  res->game_width = sdpm.w;
+  res->game_height = sdpm.h;
   SDL_Log ("Screen size is %dx%d", res->game_width, res->game_height);
   SDL_GL_SetAttribute (SDL_GL_RED_SIZE, 8); // Workaround for Samsung Galaxy S3
   SDL_GL_SetAttribute (SDL_GL_GREEN_SIZE, 8);
@@ -145,7 +145,7 @@ void GGame_run (GGame *game) {
       }
       if (gevent.type != GEVENT_TYPE_NONE) {
         int spr_destroyed = 0;
-        GSprite *receiver = GSprite_event (game->resources.root, &gevent, &spr_destroyed);
+        GSprite *receiver = GSprite_hierarchical_event (game->resources.root, &gevent, &spr_destroyed);
         if (gevent.x > GEVENT_POSITION_NONE && focus && receiver != focus) {
           GEvent focus_out_event = { GEVENT_TYPE_SPRITE_OUT, GEVENT_POSITION_NONE, GEVENT_POSITION_NONE };
           GSprite_event (focus, &focus_out_event, NULL);

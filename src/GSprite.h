@@ -56,10 +56,15 @@ void GSprite_add_child (GSprite *parent, GSprite *child);
 // Render sprite and then all its children (if any), using the given offset.
 void GSprite_render (GSprite *spr, int offsx, int offsy);
 // Pass the event to the sprite
-// Returns the sprite that handled the event (or NULL of no one did).
+// Returns 1 if the event was processed
 // Upon return, *destroyed will contain 1 if the sprite has been
 // destroyed in the process and is no longer available.
-GSprite *GSprite_event (GSprite *spr, GEvent *event, int *destroyed);
+int GSprite_event (GSprite *spr, GEvent *event, int *destroyed);
+// Pass the event to the whole hierarchy of the sprite (depth-first)
+// Returns the sprite that handled the event (or NULL if no one did).
+// Upon return, *destroyed will contain 1 if the sprite has been
+// destroyed in the process and is no longer available.
+GSprite *GSprite_hierarchical_event (GSprite *spr, GEvent *event, int *destroyed);
 // Returns 1 if the given position is over the sprite. By default (no is_inside method provided by the subclass)
 // the sprites are rectangular areas.
 int GSprite_is_inside (GSprite *spr, int x, int y);
