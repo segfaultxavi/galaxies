@@ -99,6 +99,7 @@ static int GSpriteEditor_copy_from_clipboard (void *userdata, int *destroyed) {
   GSprite_free ((GSprite *)spr->board);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
   GSpriteBoard_load (spr->board, desc);
+  SDL_free (desc);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   return 1;
 }
