@@ -11,16 +11,44 @@
 
 #define GEDITOR_DEFAULT_SIZE 7
 
+typedef struct _GSpriteEditorSizeChange {
+  GSpriteEditor *spr;
+  int delta;
+} GSpriteEditorSizeChange;
+
 struct _GSpriteEditor {
   GSprite base;
   GSprite *main_menu;
   GSpriteBoard *board;
+  GSpriteEditorSizeChange size_change_plus;
+  GSpriteEditorSizeChange size_change_minus;
 };
+
+static void GSpriteEditor_reset_yes (void *userdata) {
+  GSpriteEditor *spr = userdata;
+  SDL_Log ("Editor:Reset:Yes");
+  GSpriteBoard_reset (spr->board);
+}
+
+static void GSpriteEditor_reset_no (void *userdata) {
+  GSpriteEditor *spr = userdata;
+  SDL_Log ("Editor:Reset:No");
+}
 
 static int GSpriteEditor_reset (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
+  GSprite *popup;
   SDL_Log ("Editor:Reset");
-  GSpriteBoard_reset (spr->board);
+
+  if (GSpriteBoard_is_empty (spr->board))
+    return 1;
+
+  popup = GSpritePopup_new (spr->base.res, "RESET",
+    "Are you sure?\n"
+    "This will remove all tile colors\n"
+    "and preserve cores.",
+    "YES", GSpriteEditor_reset_yes, "NO", GSpriteEditor_reset_no, spr);
+  GSprite_add_child ((GSprite *)spr, popup);
   return 1;
 }
 
@@ -43,9 +71,14 @@ static int GSpriteEditor_restart(void *userdata, int *destroyed) {
   GSprite *popup;
   SDL_Log ("Editor:Restart");
 
-  popup = GSpritePopup_new (spr->base.res, "Restart",
-      "Are you sure?\nThis will remove everything.",
-      "YES", GSpriteEditor_restart_yes, "NO", GSpriteEditor_restart_no, spr);
+  if (GSpriteBoard_is_empty (spr->board))
+    return 1;
+
+  popup = GSpritePopup_new (spr->base.res, "RESTART",
+    "Are you sure?\n"
+    "This will remove everything\n"
+    "from the map.",
+    "YES", GSpriteEditor_restart_yes, "NO", GSpriteEditor_restart_no, spr);
   GSprite_add_child ((GSprite *)spr, popup);
   return 1;
 }
@@ -59,35 +92,65 @@ static int GSpriteEditor_back (void *userdata, int *destroyed) {
   return 1;
 }
 
+static void GSpriteEditor_size_change_yes (void *userdata) {
+  GSpriteEditorSizeChange *sc = userdata;
+  SDL_Log ("Editor:Size change:Yes");
+
+  int mapSizeX = GSpriteBoard_get_map_size_x (sc->spr->board);
+  int mapSizeY = GSpriteBoard_get_map_size_y (sc->spr->board);
+  mapSizeX += sc->delta;
+  mapSizeY += sc->delta;
+  SDL_Log ("Editor:Set Size to %dx%d", mapSizeX, mapSizeY);
+  GSprite_free ((GSprite *)sc->spr->board);
+  sc->spr->board = (GSpriteBoard *)GSpriteBoard_new (sc->spr->base.res, 1);
+  GSpriteBoard_start (sc->spr->board, mapSizeX, mapSizeY, 0, NULL, NULL);
+  GSprite_add_child ((GSprite *)sc->spr, (GSprite *)sc->spr->board);
+}
+
+static void GSpriteEditor_size_change_no (void *userdata) {
+  GSpriteEditorSizeChange *sc = userdata;
+  SDL_Log ("Editor:Size change:No");
+}
+
 static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  int mapSizeX = GSpriteBoard_get_map_size_x (spr->board);
-  int mapSizeY = GSpriteBoard_get_map_size_y (spr->board);
-  if (mapSizeX == 20)
+  GSprite *popup;
+
+  if (GSpriteBoard_get_map_size_x (spr->board) == 20)
     return 1;
-  mapSizeX++;
-  mapSizeY++;
-  SDL_Log ("Editor:Set Size to %dx%d", mapSizeX, mapSizeY);
-  GSprite_free ((GSprite *)spr->board);
-  spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
-  GSpriteBoard_start (spr->board, mapSizeX, mapSizeY, 0, NULL, NULL);
-  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
+
+  if (GSpriteBoard_is_empty (spr->board)) {
+    GSpriteEditor_size_change_yes (&spr->size_change_plus);
+    return 1;
+  }
+
+  popup = GSpritePopup_new (spr->base.res, "SIZE CHANGE",
+    "Are you sure?\n"
+    "This will remove everything\n"
+    "from the map.",
+    "YES", GSpriteEditor_size_change_yes, "NO", GSpriteEditor_size_change_no, &spr->size_change_plus);
+  GSprite_add_child ((GSprite *)spr, popup);
   return 1;
 }
 
 static int GSpriteEditor_size_minus (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  int mapSizeX = GSpriteBoard_get_map_size_x (spr->board);
-  int mapSizeY = GSpriteBoard_get_map_size_y (spr->board);
-  if (mapSizeX == 5)
+  GSprite *popup;
+
+  if (GSpriteBoard_get_map_size_x (spr->board) == 5)
     return 1;
-  mapSizeX--;
-  mapSizeY--;
-  SDL_Log ("Editor:Set Size to %dx%d", mapSizeX, mapSizeY);
-  GSprite_free ((GSprite *)spr->board);
-  spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
-  GSpriteBoard_start (spr->board, mapSizeX, mapSizeY, 0, NULL, NULL);
-  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
+
+  if (GSpriteBoard_is_empty (spr->board)) {
+    GSpriteEditor_size_change_yes (&spr->size_change_minus);
+    return 1;
+  }
+
+  popup = GSpritePopup_new (spr->base.res, "SIZE CHANGE",
+    "Are you sure?\n"
+    "This will remove everything\n"
+    "from the map.",
+    "YES", GSpriteEditor_size_change_yes, "NO", GSpriteEditor_size_change_no, &spr->size_change_minus);
+  GSprite_add_child ((GSprite *)spr, popup);
   return 1;
 }
 
@@ -141,6 +204,10 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
   GSprite *margin = GSpriteNull_new (res, res->game_height, 0);
   spr->main_menu = main_menu;
   spr->base.w = spr->base.h = -1;
+  spr->size_change_plus.spr = spr;
+  spr->size_change_plus.delta = 1;
+  spr->size_change_minus.spr = spr;
+  spr->size_change_minus.delta = -1;
   GSprite_add_child (margin,
     GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
       0xFF000000, 0xFFFFFFFF, "tentai show"));
