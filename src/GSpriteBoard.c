@@ -25,6 +25,8 @@ struct _GSpriteBoard {
 
 #define GBOARD_TILE(spr,x,y) spr->tiles[(y) * spr->mapSizeX + (x)]
 
+static void GSpriteBoard_deploy_core (GSpriteBoard *spr, float sx, float sy, int id);
+
 static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
   int i;
   SDL_Renderer *renderer = spr->base.res->sdl_renderer;
@@ -37,6 +39,28 @@ static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
   for (i = 0; i <= spr->mapSizeX; i++) {
     SDL_RenderDrawLine (renderer, offsx + i * spr->tileSizeX, offsy, offsx + i * spr->tileSizeX, offsy + spr->tileSizeY * spr->mapSizeY);
   }
+}
+
+static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
+  int res = 0;
+  GSpriteBoard *spr = userdata;
+  switch (event->type) {
+    case GEVENT_TYPE_MOVE:
+      res = 1;
+      break;
+    case GEVENT_TYPE_SPRITE_ACTIVATE:
+      if (spr->currCoreId != id)
+        spr->currCoreId = id;
+      else
+        spr->currCoreId = -1;
+      spr->currTileX = -1;
+      spr->currTileY = -1;
+      res = 1;
+      break;
+    default:
+      break;
+  }
+  return res;
 }
 
 static int GSpriteBoard_check_completion (GSpriteBoard *spr) {
@@ -70,6 +94,21 @@ static int GSpriteBoard_valid_tile_position (GSpriteBoard *spr, int x, int y, in
   if (y < spr->mapSizeY - 1 && GSpriteTile_get_id (GBOARD_TILE (spr, x, y + 1)) == id) return 1;
 
   return 0;
+}
+
+static int GSpriteBoard_valid_core_position (GSpriteBoard *spr, float sx, float sy) {
+  if (sx <= 0 || sx >= spr->mapSizeX || sy <= 0 || sy >= spr->mapSizeY) return 0;
+
+  int lenx = (int)sx != sx ? 1 : 2;
+  int leny = (int)sy != sy ? 1 : 2;
+  int x, y;
+  for (x = (int)(sx - 0.5f); x <(int)(sx - 0.5) + lenx; x++) {
+    for (y = (int)(sy - 0.5f); y <(int)(sy - 0.5) + leny; y++) {
+      if (GSpriteTile_get_flags (GBOARD_TILE (spr, x, y)) & GTILE_FLAG_FIXED) return 0;
+    }
+  }
+
+  return 1;
 }
 
 int GSpriteBoard_is_tile_selectable (GSpriteBoard *spr, int x, int y) {
@@ -124,7 +163,18 @@ static void GSpriteBoard_check_core (GSpriteBoard *spr, int id) {
     }
 }
 
-static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y) {
+static void GSpriteBoard_get_core_coords (GSpriteBoard *spr, int x, int y, int sx, int sy, float *outx, float *outy) {
+  float cx = x + ((sx + spr->tileSizeX / 4) * 2 / spr->tileSizeX) / 2.f;
+  float cy = y + ((sy + spr->tileSizeX / 4) * 2 / spr->tileSizeY) / 2.f;
+  cx = SDL_max (0.5f, cx);
+  cx = SDL_min (cx, spr->mapSizeX - 0.5f);
+  cy = SDL_max (0.5f, cy);
+  cy = SDL_min (cy, spr->mapSizeY - 0.5f);
+  *outx = cx;
+  *outy = cy;
+}
+
+static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, int sy) {
   GSpriteTile *tile = GBOARD_TILE (spr, x, y);
   int tile_id = GSpriteTile_get_id (tile);
   int x2, y2;
@@ -132,8 +182,25 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y) {
   int tile_id2;
 
   if (spr->currCoreId == -1) {
-    // Without selected core, clicked on an owned tile 
-    spr->currCoreId = tile_id;
+    float cx, cy;
+    int id;
+    if (!spr->editing) {
+      // Without selected core, clicked on an owned tile 
+      spr->currCoreId = tile_id;
+      return;
+    }
+    GSpriteBoard_get_core_coords (spr, x, y, sx, sy, &cx, &cy);
+    if (!GSpriteBoard_valid_core_position (spr, cx, cy)) return;
+    // Add new core
+    id = spr->numCores;
+    spr->numCores++;
+    spr->cores = SDL_realloc (spr->cores, spr->numCores * sizeof (GSpriteCore *));
+
+    spr->cores[id] = (GSpriteCore *)GSpriteCore_new (spr->base.res, 0, 0, id,
+      spr->tileSizeX, spr->tileSizeY, 1, GSpriteBoard_core_event, spr);
+    GSpriteBoard_deploy_core (spr, cx, cy, id);
+    GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[id]);
+    spr->currCoreId = id;
     return;
   } else if (spr->currCoreId == tile_id) {
     // Clicked on tile already owned: deselect core
@@ -193,21 +260,6 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y) {
   }
 }
 
-static int GSpriteBoard_valid_core_position (GSpriteBoard *spr, float sx, float sy) {
-  if (sx <= 0 || sx >= spr->mapSizeX || sy <= 0 || sy >= spr->mapSizeY) return 0;
-
-  int lenx = (int)sx != sx ? 1 : 2;
-  int leny = (int)sy != sy ? 1 : 2;
-  int x, y;
-  for (x =(int)(sx - 0.5f); x <(int)(sx - 0.5) + lenx; x++) {
-    for (y = (int)(sy - 0.5f); y <(int)(sy - 0.5) + leny; y++) {
-      if (GSpriteTile_get_flags (GBOARD_TILE (spr, x, y)) & GTILE_FLAG_FIXED) return 0;
-    }
-  }
-
-  return 1;
-}
-
 static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
   int res = 0;
   GSpriteBoard *spr = userdata;
@@ -216,15 +268,10 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
     case GEVENT_TYPE_MOVE:
       if (spr->currCoreId == -1 && spr->editing) {
         // Core placement mode
-        float cx = x + ((event->x + spr->tileSizeX / 4) * 2 / spr->tileSizeX) / 2.f;
-        float cy = y + ((event->y + spr->tileSizeX / 4) * 2 / spr->tileSizeY) / 2.f;
-        cx = SDL_max (0.5f, cx);
-        cx = SDL_min (cx, spr->mapSizeX - 0.5f);
-        cy = SDL_max (0.5f, cy);
-        cy = SDL_min (cy, spr->mapSizeY - 0.5f);
+        float cx, cy;
+        GSpriteBoard_get_core_coords (spr, x, y, event->x, event->y, &cx, &cy);
         ((GSprite*)spr->coreCursor)->x = (int)(cx * spr->tileSizeX);
         ((GSprite*)spr->coreCursor)->y = (int)(cy * spr->tileSizeY);
-
         ((GSprite*)spr->coreCursor)->visible = GSpriteBoard_valid_core_position (spr, cx, cy);
       }
       res = 1;
@@ -235,29 +282,7 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
       res = 1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
-      GSpriteBoard_handle_click (spr, x, y);
-      res = 1;
-      break;
-    default:
-      break;
-  }
-  return res;
-}
-
-static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
-  int res = 0;
-  GSpriteBoard *spr = userdata;
-  switch (event->type) {
-    case GEVENT_TYPE_MOVE:
-      res = 1;
-      break;
-    case GEVENT_TYPE_SPRITE_ACTIVATE:
-      if (spr->currCoreId != id)
-        spr->currCoreId = id;
-      else
-        spr->currCoreId = -1;
-      spr->currTileX = -1;
-      spr->currTileY = -1;
+      GSpriteBoard_handle_click (spr, x, y, event->x, event->y);
       res = 1;
       break;
     default:
@@ -360,6 +385,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   if (spr->editing) {
     spr->coreCursor = (GSpriteCore *)GSpriteCore_new (spr->base.res, 0, 0, -1, spr->tileSizeX, spr->tileSizeY, 0, NULL, spr);
     GSpriteCore_set_highlight (spr->coreCursor, 1);
+    ((GSprite *)spr->coreCursor)->visible = 0;
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->coreCursor);
   }
 
