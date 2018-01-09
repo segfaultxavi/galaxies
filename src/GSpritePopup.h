@@ -14,4 +14,7 @@ GSprite *GSpritePopup_new (GResources *res, const char *title, const char *text,
   const char *button2, GSpritePopupCallback callback2,
   void *userdata);
 
+// You can use this as a NOP callback
+void GSpritePopup_dismiss (void *userdata);
+
 #endif

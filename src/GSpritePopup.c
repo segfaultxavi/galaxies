@@ -63,20 +63,21 @@ static int GSpritePopup_callback2 (void *userdata, int *destroyed) {
   return 1;
 }
 
-static int GSpritePopup_event (GSpriteButton *spr, GEvent *event, int *destroyed) {
-  int ret = 0;
+static int GSpritePopup_event (GSpritePopup *spr, GEvent *event, int *destroyed) {
+  // By default we say we handle all events, since this is a modal popup
+  int ret = 1;
   switch (event->type) {
     case GEVENT_TYPE_KEY:
       if (event->keycode == SDLK_ESCAPE || event->keycode == SDLK_AC_BACK) {
-        ret = GSpritePopup_callback2 (spr, destroyed);
+        if (spr->callback2)
+          ret = GSpritePopup_callback2 (spr, destroyed);
       }
       if (event->keycode == SDLK_RETURN || event->keycode == SDLK_KP_ENTER) {
-        ret = GSpritePopup_callback1 (spr, destroyed);
+        if (spr->callback1)
+          ret = GSpritePopup_callback1 (spr, destroyed);
       }
       break;
     default:
-      // By default we say we handle all events, since this is a modal popup
-      ret = 1;
       break;
   }
   return ret;
@@ -128,4 +129,8 @@ GSprite *GSpritePopup_new (GResources *res, const char *title_text, const char *
   spr->callback2 = callback2;
   spr->userdata = userdata;
   return (GSprite *)spr;
+}
+
+void GSpritePopup_dismiss (void *userdata) {
+  SDL_Log ("Dismissed");
 }
