@@ -58,11 +58,14 @@ GSprite *GSpriteLabel_new_multiline (GResources *res, int x, int y, GSpriteJusti
   const char *ptr;
 
   spr = GSpriteNull_new (res, 0, 0);
+  spr->w = spr->h = 0;
 
   strcpy (split_text, text);
   ptr = strtok (split_text, "\n");
   while (ptr != NULL) {
     GSprite *line = GSpriteLabel_new (res, x, y, justify_hor, justify_ver, font, text_color, glow_color, ptr);
+    spr->w = SDL_max (spr->w, line->w);
+    spr->h += line->h;
     GSprite_add_child (spr, line);
     y += line->h;
     ptr = strtok (NULL, "\n");
