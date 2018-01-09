@@ -343,18 +343,19 @@ static char GSpriteBoard_i2a (int i) {
   return 'A' + i - 26;
 }
 
-int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
-  int desc_len;
+static int GSpriteBoard_preload (const char *desc, int *p_size_x, int *p_size_y, int *p_num_cores, float **p_initial_cores, int **p_initial_tiles) {
   int size_x, size_y;
   int i, num_cores;
   float *initial_cores = NULL;
   int *initial_tiles = NULL;
+  int desc_len;
+
+  *p_size_x = *p_size_y = *p_num_cores = 0;
+  *p_initial_cores = NULL;
+  *p_initial_tiles = NULL;
 
   if (desc == NULL) return 0;
-  desc_len = (int)strlen (desc);
-
-  // Check if anything has changed
-  if (spr->last_code != NULL && strcmp (desc, spr->last_code) == 0) return 1;
+  desc_len = (int)SDL_strlen (desc);
 
   // Check format
   if (desc_len < 4) return 0; // Header
@@ -384,7 +385,7 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
     int j;
     for (j = i + 1; j < num_cores; j++) {
       if ((initial_cores[j * 2 + 0] >= minx) && (initial_cores[j * 2 + 0] <= maxx) &&
-          (initial_cores[j * 2 + 1] >= miny) && (initial_cores[j * 2 + 1] <= maxy)) {
+        (initial_cores[j * 2 + 1] >= miny) && (initial_cores[j * 2 + 1] <= maxy)) {
         SDL_Log ("Cores %d (%g,%g) and %d (%g,%g) overlap",
           i, initial_cores[i * 2 + 0], initial_cores[i * 2 + 1],
           j, initial_cores[j * 2 + 0], initial_cores[j * 2 + 1]);
@@ -404,6 +405,27 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
       initial_tiles[i] = GSpriteBoard_a2i (desc[4 + num_cores * 2 + i]);
   }
 
+  *p_size_x = size_x;
+  *p_size_y = size_y;
+  *p_num_cores = num_cores;
+  *p_initial_cores = initial_cores;
+  *p_initial_tiles = initial_tiles;
+
+  return 1;
+}
+
+int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
+  int size_x, size_y, num_cores;
+  float *initial_cores = NULL;
+  int *initial_tiles = NULL;
+
+  // Check if anything has changed
+  if (spr->last_code != NULL && strcmp (desc, spr->last_code) == 0) return 1;
+
+  if (!GSpriteBoard_preload (desc, &size_x, &size_y, &num_cores, &initial_cores, &initial_tiles)) {
+    return 0;
+  }
+
   // Build board: Needs to rebuild whole board in case of size change
   GSpriteBoard_start (spr, size_x, size_x, num_cores, initial_cores, initial_tiles);
   SDL_free (initial_cores);
@@ -413,6 +435,20 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
     SDL_free (spr->last_code);
   spr->last_code = SDL_strdup (desc);
 
+  return 1;
+}
+
+// Returns 1 if the string is a valid map description
+int GSpriteBoard_check (const char *desc) {
+  int size_x, size_y, num_cores;
+  float *initial_cores = NULL;
+  int *initial_tiles = NULL;
+
+  if (!GSpriteBoard_preload (desc, &size_x, &size_y, &num_cores, &initial_cores, &initial_tiles)) {
+    return 0;
+  }
+  SDL_free (initial_cores);
+  SDL_free (initial_tiles);
   return 1;
 }
 
