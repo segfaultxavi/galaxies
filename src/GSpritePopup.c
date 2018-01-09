@@ -98,13 +98,13 @@ GSprite *GSpritePopup_new (GResources *res, const char *title_text, const char *
       (GSpriteRender)GSpritePopup_render, (GSpriteEvent)GSpritePopup_event, GSpritePopup_is_inside, NULL);
 
   // Title
-  title = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, res->font_small, 0xFF000000, 0xFFFFFFFF, title_text);
+  title = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, res->font_med, 0xFF000000, 0xFFFFFFFF, title_text);
   title->x = GPOPUP_MARGIN;
   title->y = GPOPUP_MARGIN;
   GSprite_add_child ((GSprite *)spr, title);
 
   // Text
-  label = GSpriteLabel_new_multiline (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, res->font_small, 0xFFFFFFFF, 0x00000000, body_text);
+  label = GSpriteLabel_new_multiline (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, res->font_text, 0xFFFFFFFF, 0x00000000, body_text);
   label->x = GPOPUP_MARGIN;
   label->y = 2 * GPOPUP_MARGIN + title->h;
   GSprite_add_child ((GSprite *)spr, label);
@@ -112,12 +112,12 @@ GSprite *GSpritePopup_new (GResources *res, const char *title_text, const char *
   // Buttons
   if (callback1) {
     but = GSpriteButton_new (res, GPOPUP_MARGIN, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
-      res->font_small, 0xFFFFFFFF, 0xFF000000, button1_text, GSpritePopup_callback1, spr);
+      res->font_med, 0xFFFFFFFF, 0xFF000000, button1_text, GSpritePopup_callback1, spr);
     GSprite_add_child ((GSprite *)spr, but);
   }
   if (callback2) {
     but = GSpriteButton_new (res, label->w + GPOPUP_MARGIN, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_BEGIN,
-      res->font_small, 0xFFFFFFFF, 0xFF000000, button2_text, GSpritePopup_callback2, spr);
+      res->font_med, 0xFFFFFFFF, 0xFF000000, button2_text, GSpritePopup_callback2, spr);
     GSprite_add_child ((GSprite *)spr, but);
   }
 

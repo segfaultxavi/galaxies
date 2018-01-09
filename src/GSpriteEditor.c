@@ -147,12 +147,12 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
     GSpriteLabel_new (res, mwidth / 2, 1 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
       0xFF000000, 0xFFFFFFFF, "EDITOR"));
 
-  BUTTON (1, 3, "Reset", GSpriteEditor_reset);
-  BUTTON (3, 3, "Restart", GSpriteEditor_restart);
-  BUTTON (1, 4, "Size +", GSpriteEditor_size_plus);
-  BUTTON (3, 4, "Size -", GSpriteEditor_size_minus);
-  BUTTON (1, 5, "From clpbrd", GSpriteEditor_copy_from_clipboard);
-  BUTTON (3, 5, "To clpbrd", GSpriteEditor_copy_to_clipboard);
+  BUTTON (1, 3, "RESET", GSpriteEditor_reset);
+  BUTTON (3, 3, "RESTART", GSpriteEditor_restart);
+  BUTTON (1, 4, "SIZE +", GSpriteEditor_size_plus);
+  BUTTON (3, 4, "SIZE -", GSpriteEditor_size_minus);
+  BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard);
+  BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard);
 
   GSprite_add_child (margin,
     GSpriteButton_new (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,

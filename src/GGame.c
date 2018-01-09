@@ -13,8 +13,10 @@ struct _GGame {
 
 extern unsigned const char ___BA_TTF[];
 extern unsigned int ___BA_TTF_len;
-extern unsigned const char zorque_ttf[];
-extern unsigned int zorque_ttf_len;
+extern unsigned const char spincycle_otf[];
+extern unsigned int spincycle_otf_len;
+extern unsigned const char days_otf[];
+extern unsigned int days_otf_len;
 
 GGame *GGame_new () {
   GGame *game = SDL_malloc (sizeof (GGame));
@@ -38,16 +40,18 @@ GGame *GGame_new () {
   SDL_SetWindowTitle (game->sdl_window, "tentai show");
   SDL_SetRenderDrawBlendMode (res->sdl_renderer, SDL_BLENDMODE_BLEND);
 
-  // Font
+  // Fonts
   font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
   res->font_title_big = TTF_OpenFontRW (font_rwops, 1, res->game_height / 5);
   font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
   res->font_title_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
-  font_rwops = SDL_RWFromConstMem (zorque_ttf, zorque_ttf_len);
+  font_rwops = SDL_RWFromConstMem (spincycle_otf, spincycle_otf_len);
   res->font_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
-  font_rwops = SDL_RWFromConstMem (zorque_ttf, zorque_ttf_len);
+  font_rwops = SDL_RWFromConstMem (spincycle_otf, spincycle_otf_len);
   res->font_small = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
-  if (!res->font_title_big || !res->font_med || !res->font_small) {
+  font_rwops = SDL_RWFromConstMem (days_otf, days_otf_len);
+  res->font_text = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
+  if (!res->font_title_big || !res->font_title_med || !res->font_med || !res->font_small || !res->font_text) {
     SDL_Log ("TTF_OpenFontRW: %s", SDL_GetError ());
     goto error;
   }
@@ -78,6 +82,7 @@ void GGame_free (GGame *game) {
   TTF_CloseFont (game->resources.font_title_med);
   TTF_CloseFont (game->resources.font_med);
   TTF_CloseFont (game->resources.font_small);
+  TTF_CloseFont (game->resources.font_text);
   SDL_FreeCursor (game->resources.pointer_cur);
   SDL_FreeCursor (game->resources.hand_cur);
   GPrefs_free (&game->resources.preferences);
