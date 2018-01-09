@@ -16,12 +16,18 @@ typedef struct _GSpriteEditorSizeChange {
   int delta;
 } GSpriteEditorSizeChange;
 
+typedef struct _GSpriteEditorCopyFromClipboard {
+  GSpriteEditor *spr;
+  char *new_desc;
+} GSpriteEditorCopyFromClipboard;
+
 struct _GSpriteEditor {
   GSprite base;
   GSprite *main_menu;
   GSpriteBoard *board;
   GSpriteEditorSizeChange size_change_plus;
   GSpriteEditorSizeChange size_change_minus;
+  GSpriteEditorCopyFromClipboard copy_from_clipboard;
 };
 
 static void GSpriteEditor_reset_yes (void *userdata) {
@@ -154,26 +160,72 @@ static int GSpriteEditor_size_minus (void *userdata, int *destroyed) {
   return 1;
 }
 
+static void GSpriteEditor_copy_from_clipboard_yes (void *userdata) {
+  GSpriteEditorCopyFromClipboard *cfc = userdata;
+  GSpriteEditor *spr = cfc->spr;
+  SDL_Log ("Editor:Copy from clipboard:Yes");
+  GSprite_free ((GSprite *)spr->board);
+  spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
+  GSpriteBoard_load (spr->board, cfc->new_desc);
+  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
+  SDL_free (cfc->new_desc);
+  cfc->new_desc = NULL;
+}
+
+static void GSpriteEditor_copy_from_clipboard_no (void *userdata) {
+  GSpriteEditorCopyFromClipboard *cfc = userdata;
+  SDL_Log ("Editor:Copy from clipboard:No");
+  SDL_free (cfc->new_desc);
+  cfc->new_desc = NULL;
+}
+
 static int GSpriteEditor_copy_from_clipboard (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
+  GSprite *popup;
   char *desc;
   desc = SDL_GetClipboardText ();
   SDL_Log ("Editor:Copy from clipboard %s", desc);
-  GSprite_free ((GSprite *)spr->board);
-  spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
-  GSpriteBoard_load (spr->board, desc);
-  SDL_free (desc);
-  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
+  if (GSpriteBoard_check (desc) == 0) {
+    popup = GSpritePopup_new (spr->base.res, "IMPORT FAILED",
+      "The content of the clipboard is\n"
+      "not a valid Tentai Show map.",
+      "OK", GSpritePopup_dismiss, NULL, NULL, NULL);
+    GSprite_add_child ((GSprite *)spr, popup);
+    SDL_free (desc);
+    return 1;
+  }
+
+  spr->copy_from_clipboard.spr = spr;
+  spr->copy_from_clipboard.new_desc = desc;
+  if (GSpriteBoard_is_empty (spr->board)) {
+    GSpriteEditor_copy_from_clipboard_yes (&spr->copy_from_clipboard);
+    return 1;
+  }
+
+  popup = GSpritePopup_new (spr->base.res, "IMPORT",
+    "Are you sure?\n"
+    "The current map will be replaced\n"
+    "by the content of the clipboard.",
+    "YES", GSpriteEditor_copy_from_clipboard_yes, "NO", GSpriteEditor_copy_from_clipboard_no, &spr->copy_from_clipboard);
+  GSprite_add_child ((GSprite *)spr, popup);
+
   return 1;
 }
 
 static int GSpriteEditor_copy_to_clipboard (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
+  GSprite *popup;
   char *desc;
   desc = GSpriteBoard_save (spr->board, 0);
   SDL_Log ("Editor:Copy to clipboard %s", desc);
   SDL_SetClipboardText (desc);
   SDL_free (desc);
+
+  popup = GSpritePopup_new (spr->base.res, "EXPORTED",
+    "The current map has been copied\n"
+    "to the clipboard.",
+    "OK", GSpritePopup_dismiss, NULL, NULL, NULL);
+  GSprite_add_child ((GSprite *)spr, popup);
   return 1;
 }
 
