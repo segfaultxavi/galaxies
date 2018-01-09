@@ -227,6 +227,8 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
         spr->currCoreId = id;
       else
         spr->currCoreId = -1;
+      spr->currTileX = -1;
+      spr->currTileY = -1;
       res = 1;
       break;
     default:
