@@ -1,13 +1,11 @@
 TODO
-- Popup system
-- Editor: confirmation popups for destructive operations
-- Editor: bring the rest in
+- Editor: bring back the solver
 - Add more levels
 - Game collects stats (completion time)
 - Prepare server to receive stats
 - Game sends stats
 
 IDEAS
-- Hexagonal grid
-- Other types of symmetry besides 2-fold: 4-fold on square grid, 2-, 3- or 6-fold on hexagonal grid
+- Triangular and Hexagonal grids
+- Other types of symmetry besides 2-fold: 4-fold on square grid, 2-, 3- or 6-fold on hexagonal grid, 3-fold on triangular grid.
 - Each core indicates the type of symmetry it produces
