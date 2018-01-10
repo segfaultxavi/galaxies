@@ -36,25 +36,19 @@ static void GSpriteEditor_reset_yes (void *userdata) {
   GSpriteBoard_reset (spr->board);
 }
 
-static void GSpriteEditor_reset_no (void *userdata) {
-  GSpriteEditor *spr = userdata;
-  SDL_Log ("Editor:Reset:No");
-}
-
 static int GSpriteEditor_reset (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  GSprite *popup;
   SDL_Log ("Editor:Reset");
 
-  if (GSpriteBoard_is_empty (spr->board))
+  if (GSpriteBoard_has_no_manual_tiles (spr->board))
     return 1;
 
-  popup = GSpritePopup_new (spr->base.res, "RESET",
-    "Are you sure?\n"
-    "This will remove all tile colors\n"
-    "and preserve cores.",
-    "YES", GSpriteEditor_reset_yes, "NO", GSpriteEditor_reset_no, spr);
-  GSprite_add_child ((GSprite *)spr, popup);
+  GSprite_add_child ((GSprite *)spr,
+    GSpritePopup_new (spr->base.res, "RESET",
+      "Are you sure?\n"
+      "This will remove all tile colors\n"
+      "and preserve cores.",
+      "YES", GSpriteEditor_reset_yes, "NO", GSpritePopup_dismiss, spr));
   return 1;
 }
 
@@ -67,25 +61,19 @@ static void GSpriteEditor_restart_yes (void *userdata) {
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
 }
 
-static void GSpriteEditor_restart_no (void *userdata) {
-  GSpriteEditor *spr = userdata;
-  SDL_Log ("Editor:Restart:No");
-}
-
 static int GSpriteEditor_restart(void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  GSprite *popup;
   SDL_Log ("Editor:Restart");
 
   if (GSpriteBoard_is_empty (spr->board))
     return 1;
 
-  popup = GSpritePopup_new (spr->base.res, "RESTART",
-    "Are you sure?\n"
-    "This will remove everything\n"
-    "from the map.",
-    "YES", GSpriteEditor_restart_yes, "NO", GSpriteEditor_restart_no, spr);
-  GSprite_add_child ((GSprite *)spr, popup);
+  GSprite_add_child ((GSprite *)spr,
+    GSpritePopup_new (spr->base.res, "RESTART",
+      "Are you sure?\n"
+      "This will remove everything\n"
+      "from the map.",
+      "YES", GSpriteEditor_restart_yes, "NO", GSpritePopup_dismiss, spr));
   return 1;
 }
 
@@ -113,14 +101,8 @@ static void GSpriteEditor_size_change_yes (void *userdata) {
   GSprite_add_child ((GSprite *)sc->spr, (GSprite *)sc->spr->board);
 }
 
-static void GSpriteEditor_size_change_no (void *userdata) {
-  GSpriteEditorSizeChange *sc = userdata;
-  SDL_Log ("Editor:Size change:No");
-}
-
 static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  GSprite *popup;
 
   if (GSpriteBoard_get_map_size_x (spr->board) == 20)
     return 1;
@@ -130,18 +112,17 @@ static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
     return 1;
   }
 
-  popup = GSpritePopup_new (spr->base.res, "SIZE CHANGE",
-    "Are you sure?\n"
-    "This will remove everything\n"
-    "from the map.",
-    "YES", GSpriteEditor_size_change_yes, "NO", GSpriteEditor_size_change_no, &spr->size_change_plus);
-  GSprite_add_child ((GSprite *)spr, popup);
+  GSprite_add_child ((GSprite *)spr,
+    GSpritePopup_new (spr->base.res, "SIZE CHANGE",
+      "Are you sure?\n"
+      "This will remove everything\n"
+      "from the map.",
+      "YES", GSpriteEditor_size_change_yes, "NO", GSpritePopup_dismiss, &spr->size_change_plus));
   return 1;
 }
 
 static int GSpriteEditor_size_minus (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  GSprite *popup;
 
   if (GSpriteBoard_get_map_size_x (spr->board) == 5)
     return 1;
@@ -151,12 +132,12 @@ static int GSpriteEditor_size_minus (void *userdata, int *destroyed) {
     return 1;
   }
 
-  popup = GSpritePopup_new (spr->base.res, "SIZE CHANGE",
-    "Are you sure?\n"
-    "This will remove everything\n"
-    "from the map.",
-    "YES", GSpriteEditor_size_change_yes, "NO", GSpriteEditor_size_change_no, &spr->size_change_minus);
-  GSprite_add_child ((GSprite *)spr, popup);
+  GSprite_add_child ((GSprite *)spr,
+    GSpritePopup_new (spr->base.res, "SIZE CHANGE",
+      "Are you sure?\n"
+      "This will remove everything\n"
+      "from the map.",
+      "YES", GSpriteEditor_size_change_yes, "NO", GSpritePopup_dismiss, &spr->size_change_plus));
   return 1;
 }
 
@@ -181,16 +162,15 @@ static void GSpriteEditor_copy_from_clipboard_no (void *userdata) {
 
 static int GSpriteEditor_copy_from_clipboard (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  GSprite *popup;
   char *desc;
   desc = SDL_GetClipboardText ();
   SDL_Log ("Editor:Copy from clipboard %s", desc);
   if (GSpriteBoard_check (desc) == 0) {
-    popup = GSpritePopup_new (spr->base.res, "IMPORT FAILED",
-      "The content of the clipboard is\n"
-      "not a valid Tentai Show map.",
-      "OK", GSpritePopup_dismiss, NULL, NULL, NULL);
-    GSprite_add_child ((GSprite *)spr, popup);
+    GSprite_add_child ((GSprite *)spr,
+      GSpritePopup_new (spr->base.res, "IMPORT FAILED",
+        "The content of the clipboard is\n"
+        "not a valid Tentai Show map.",
+        "OK", GSpritePopup_dismiss, NULL, NULL, NULL));
     SDL_free (desc);
     return 1;
   }
@@ -202,30 +182,29 @@ static int GSpriteEditor_copy_from_clipboard (void *userdata, int *destroyed) {
     return 1;
   }
 
-  popup = GSpritePopup_new (spr->base.res, "IMPORT",
-    "Are you sure?\n"
-    "The current map will be replaced\n"
-    "by the content of the clipboard.",
-    "YES", GSpriteEditor_copy_from_clipboard_yes, "NO", GSpriteEditor_copy_from_clipboard_no, &spr->copy_from_clipboard);
-  GSprite_add_child ((GSprite *)spr, popup);
+  GSprite_add_child ((GSprite *)spr,
+    GSpritePopup_new (spr->base.res, "IMPORT",
+      "Are you sure?\n"
+      "The current map will be replaced\n"
+      "by the content of the clipboard.",
+      "YES", GSpriteEditor_copy_from_clipboard_yes, "NO", GSpriteEditor_copy_from_clipboard_no, &spr->copy_from_clipboard));
 
   return 1;
 }
 
 static int GSpriteEditor_copy_to_clipboard (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
-  GSprite *popup;
   char *desc;
   desc = GSpriteBoard_save (spr->board, 0);
   SDL_Log ("Editor:Copy to clipboard %s", desc);
   SDL_SetClipboardText (desc);
   SDL_free (desc);
 
-  popup = GSpritePopup_new (spr->base.res, "EXPORTED",
-    "The current map has been copied\n"
-    "to the clipboard.",
-    "OK", GSpritePopup_dismiss, NULL, NULL, NULL);
-  GSprite_add_child ((GSprite *)spr, popup);
+  GSprite_add_child ((GSprite *)spr,
+    GSpritePopup_new (spr->base.res, "EXPORTED",
+      "The current map has been copied\n"
+      "to the clipboard.",
+      "OK", GSpritePopup_dismiss, NULL, NULL, NULL));
   return 1;
 }
 
