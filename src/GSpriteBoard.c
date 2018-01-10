@@ -578,6 +578,8 @@ void GSpriteBoard_reset (GSpriteBoard *spr) {
       }
     }
   }
+  spr->currTileX = spr->currTileY = -1;
+  spr->currCoreId = -1;
 
   if (!spr->editing)
     GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED, GSpriteBoard_save (spr, 0));
@@ -593,4 +595,18 @@ int GSpriteBoard_get_map_size_y (GSpriteBoard *spr) {
 
 int GSpriteBoard_is_empty (GSpriteBoard *spr) {
   return spr->numCores == 0;
+}
+
+int GSpriteBoard_has_no_manual_tiles (GSpriteBoard *spr) {
+  int x, y;
+  for (y = 0; y < spr->mapSizeY; y++) {
+    for (x = 0; x < spr->mapSizeX; x++) {
+      GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+      if ((GSpriteTile_get_flags (tile) & GTILE_FLAG_FIXED) == 0 &&
+          GSpriteTile_get_id (tile) != -1) {
+        return 0;
+      }
+    }
+  }
+  return 1;
 }

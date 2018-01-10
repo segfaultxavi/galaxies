@@ -7,27 +7,37 @@
 #include "GSpriteButton.h"
 #include "GSpriteNull.h"
 #include "GSpriteBoard.h"
+#include "GSpritePopup.h"
 
 struct _GSpriteGalaxies {
   GSprite base;
   GSprite *level_select;
   void *level_data;
   GSprite *reset;
-  GSprite *solution;
   GSprite *completed;
   GSpriteBoard *board;
 };
 
+static void GSpriteGalaxies_reset_yes (void *userdata) {
+  GSpriteGalaxies *spr = userdata;
+
+  SDL_Log ("Galaxies:Reset:Yes");
+  GSpriteBoard_reset (spr->board);
+}
+
 static int GSpriteGalaxies_reset (void *userdata, int *destroyed) {
   GSpriteGalaxies *spr = userdata;
   SDL_Log ("Galaxies:Reset");
-  GSpriteBoard_reset (spr->board);
-  return 1;
-}
 
-static int GSpriteGalaxies_solution (void *userdata, int *destroyed) {
-  GSpriteGalaxies *spr = userdata;
-  SDL_Log ("Galaxies:Solution");
+  if (GSpriteBoard_has_no_manual_tiles (spr->board))
+    return 1;
+
+  GSprite_add_child ((GSprite *)spr,
+    GSpritePopup_new (spr->base.res, "RESET",
+      "Are you sure?\n"
+      "This will remove all tile colors.",
+      "YES", GSpriteGalaxies_reset_yes, "NO", GSpritePopup_dismiss, spr));
+
   return 1;
 }
 
@@ -74,9 +84,6 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, int level_
   spr->reset = GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
     res->font_small, 0xFFFFFFFF, 0xFF000000, "Reset", GSpriteGalaxies_reset, spr);
   GSprite_add_child (margin, spr->reset);
-  spr->solution = GSpriteButton_new (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-    res->font_small, 0xFFFFFFFF, 0xFF000000, "Solution", GSpriteGalaxies_solution, spr);
-  GSprite_add_child (margin, spr->solution);
   spr->completed = GSpriteLabel_new_multiline (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
     res->font_med, 0xFFFFFFFF, 0xFFFF0000, "level\ncomplete");
   GSprite_add_child (margin, spr->completed);
@@ -93,7 +100,6 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, int level_
 
 void GSpriteGalaxies_complete (GSpriteGalaxies *spr) {
   spr->reset->visible = 0;
-  spr->solution->visible = 0;
   spr->completed->visible = 1;
   GSpriteLevelSelect_update_level_status (spr->level_data, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_DONE, GSpriteBoard_save (spr->board, 1));
 }
