@@ -8,6 +8,7 @@
 #include "GSpriteNull.h"
 #include "GSpriteBoard.h"
 #include "GSpritePopup.h"
+#include "GSolver.h"
 
 #define GEDITOR_DEFAULT_SIZE 7
 
@@ -35,6 +36,12 @@ struct _GSpriteEditor {
   GSprite *margin;
   int margin_width;
   int line_height;
+
+  // Solver
+  GSolver *solver;
+  int num_solutions;
+  int current_solution;
+  SDL_TimerID solver_timer_id;
 };
 
 static void GSpriteEditor_reset_yes (void *userdata) {
@@ -215,6 +222,36 @@ static int GSpriteEditor_copy_to_clipboard (void *userdata, int *destroyed) {
   return 1;
 }
 
+static void GSpriteEditor_free (GSpriteEditor *spr) {
+  SDL_RemoveTimer (spr->solver_timer_id);
+  if (spr->solver)
+    GSolver_free (spr->solver);
+}
+
+static void GSpriteEditor_update_solution_labels (GSpriteEditor *spr) {
+  char text[16];
+  if (spr->num_sols_spr) GSprite_free (spr->num_sols_spr);
+  SDL_snprintf (text, sizeof (text), "%d", spr->num_solutions);
+  spr->num_sols_spr = GSpriteLabel_new (spr->base.res, spr->margin_width / 2, 8 * spr->line_height, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+    spr->base.res->font_text, 0xFFFFFFFF, 0x00000000, text);
+  GSprite_add_child (spr->margin, spr->num_sols_spr);
+
+
+  if (spr->curr_sol_spr) GSprite_free (spr->curr_sol_spr);
+  SDL_snprintf (text, sizeof (text), "#%d", spr->current_solution);
+  spr->curr_sol_spr = GSpriteLabel_new (spr->base.res, spr->margin_width / 2, 8 * spr->line_height, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
+    spr->base.res->font_text, 0xFFFFFFFF, 0x00000000, text);
+  GSprite_add_child (spr->margin, spr->curr_sol_spr);
+}
+
+void GSpriteEditor_board_changed (GSpriteEditor *spr) {
+  if (spr->solver)
+    GSolver_free (spr->solver);
+  spr->solver = GSolver_new (spr->board);
+  spr->num_solutions = spr->current_solution = 0;
+  GSpriteEditor_update_solution_labels (spr);
+}
+
 static int GSpriteEditor_event (GSpriteEditor *spr, GEvent *event, int *destroyed) {
   int ret = 0;
   switch (event->type) {
@@ -223,26 +260,34 @@ static int GSpriteEditor_event (GSpriteEditor *spr, GEvent *event, int *destroye
         ret = GSpriteEditor_back (spr, destroyed);
       }
       break;
+    case GEVENT_TYPE_TIMER:
+      if (event->userdata == spr && spr->solver) {
+        spr->num_solutions = GSolver_get_num_solutions (spr->solver);
+        GSpriteEditor_update_solution_labels (spr);
+      }
+      break;
     default:
       break;
   }
   return ret;
 }
 
-static void GSpriteEditor_update_solution_labels (GSpriteEditor *spr, int num_sols, int current_sol) {
-  char text[16];
-  if (spr->num_sols_spr) GSprite_free (spr->num_sols_spr);
-  SDL_snprintf (text, sizeof (text), "%d", num_sols);
-  spr->num_sols_spr = GSpriteLabel_new (spr->base.res,spr->margin_width / 2, 8 * spr->line_height, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
-    spr->base.res->font_text, 0xFFFFFFFF, 0x00000000, text);
-  GSprite_add_child (spr->margin, spr->num_sols_spr);
+// We don't know on which thread this is running, so push an event that will be processed
+// from the main thread, where we can safely use SDL.
+Uint32 GSpriteEditor_solver_timer (Uint32 interval, void *param) {
+  GSpriteEditor *spr = param;
+  SDL_Event event;
+  SDL_UserEvent user_event;
 
+  user_event.type = SDL_USEREVENT;
+  user_event.code = GEVENT_TYPE_TIMER;
+  user_event.data1 = spr;
+  user_event.data2 = NULL;
+  event.type = SDL_USEREVENT;
+  event.user = user_event;
+  SDL_PushEvent (&event);
 
-  if (spr->curr_sol_spr) GSprite_free (spr->curr_sol_spr);
-  SDL_snprintf (text, sizeof (text), "#%d", current_sol);
-  spr->curr_sol_spr = GSpriteLabel_new (spr->base.res, spr->margin_width / 2, 8 * spr->line_height, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
-    spr->base.res->font_text, 0xFFFFFFFF, 0x00000000, text);
-  GSprite_add_child (spr->margin, spr->curr_sol_spr);
+  return interval;
 }
 
 #define BUTTON(x,y,name, callback) \
@@ -254,7 +299,7 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
   int line = res->game_height / 10;
   int mwidth = res->game_width - res->game_height;
   GSpriteEditor *spr = (GSpriteEditor *)GSprite_new (res, sizeof (GSpriteEditor),
-      NULL, (GSpriteEvent)GSpriteEditor_event, NULL, NULL);
+      NULL, (GSpriteEvent)GSpriteEditor_event, NULL, (GSpriteFree)GSpriteEditor_free);
   GSprite *margin = GSpriteNull_new (res, res->game_height, 0);
   spr->main_menu = main_menu;
   spr->base.w = spr->base.h = -1;
@@ -280,7 +325,8 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
   BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard);
 
   spr->num_sols_spr = spr->curr_sol_spr = NULL;
-  GSpriteEditor_update_solution_labels (spr, 0, 0);
+  spr->num_solutions = spr->current_solution = 0;
+  GSpriteEditor_update_solution_labels (spr);
 
   GSprite_add_child (margin, \
     GSpriteButton_new (res, 0, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
@@ -297,5 +343,7 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 1);
   GSpriteBoard_start (spr->board, GEDITOR_DEFAULT_SIZE, GEDITOR_DEFAULT_SIZE, 0, NULL, NULL);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
+
+  spr->solver_timer_id = SDL_AddTimer (500, GSpriteEditor_solver_timer, spr);
   return (GSprite *)spr;
 }

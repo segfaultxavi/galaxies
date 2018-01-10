@@ -5,7 +5,7 @@
 
 int main (int argc, char *argv[]) {
   GGame *game;
-  if (SDL_Init (SDL_INIT_VIDEO) != 0) {
+  if (SDL_Init (SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
     fprintf (stderr, "SDL_Init: %s\n", SDL_GetError());
     return -1;
   }

@@ -151,6 +151,11 @@ void GGame_run (GGame *game) {
         gevent.x = gevent.y = GEVENT_POSITION_NONE;
         gevent.keycode = event.key.keysym.sym;
         break;
+      case SDL_USEREVENT:
+        // Galaxies events carried through SDL events
+        gevent.type = event.user.code;
+        gevent.userdata = event.user.data1;
+        break;
       default:
         break;
       }

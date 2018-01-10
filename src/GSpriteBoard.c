@@ -2,6 +2,7 @@
 #include "GGame.h"
 #include "GResources.h"
 #include "GSpriteGalaxies.h"
+#include "GSpriteEditor.h"
 #include "GSpriteBoard.h"
 #include "GSpriteTile.h"
 #include "GSpriteBoardGrid.h"
@@ -64,6 +65,8 @@ static void GSpriteBoard_remove_core (GSpriteBoard *spr, int id) {
   }
 
   spr->currCoreId = -1;
+
+  GSpriteEditor_board_changed ((GSpriteEditor *)spr->base.parent);
 }
 
 static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata, int *destroyed) {
@@ -105,6 +108,8 @@ static void GSpriteBoard_add_core (GSpriteBoard *spr, float cx, float cy) {
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[id]);
   spr->currCoreId = id;
   ((GSprite*)spr->coreCursor)->visible = 0;
+
+  GSpriteEditor_board_changed ((GSpriteEditor *)spr->base.parent);
 }
 
 static int GSpriteBoard_check_completion (GSpriteBoard *spr) {

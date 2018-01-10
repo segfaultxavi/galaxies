@@ -10,5 +10,6 @@
 typedef struct _GSpriteEditor GSpriteEditor;
 
 GSprite *GSpriteEditor_new (GResources *resources, GSprite *main_menu);
+void GSpriteEditor_board_changed (GSpriteEditor *editor);
 
 #endif
