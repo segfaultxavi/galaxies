@@ -25,9 +25,16 @@ struct _GSpriteEditor {
   GSprite base;
   GSprite *main_menu;
   GSpriteBoard *board;
+  GSprite *num_sols_spr;
+  GSprite *curr_sol_spr;
   GSpriteEditorSizeChange size_change_plus;
   GSpriteEditorSizeChange size_change_minus;
   GSpriteEditorCopyFromClipboard copy_from_clipboard;
+
+  // Menu construction
+  GSprite *margin;
+  int margin_width;
+  int line_height;
 };
 
 static void GSpriteEditor_reset_yes (void *userdata) {
@@ -222,6 +229,22 @@ static int GSpriteEditor_event (GSpriteEditor *spr, GEvent *event, int *destroye
   return ret;
 }
 
+static void GSpriteEditor_update_solution_labels (GSpriteEditor *spr, int num_sols, int current_sol) {
+  char text[16];
+  if (spr->num_sols_spr) GSprite_free (spr->num_sols_spr);
+  SDL_snprintf (text, sizeof (text), "%d", num_sols);
+  spr->num_sols_spr = GSpriteLabel_new (spr->base.res,spr->margin_width / 2, 8 * spr->line_height, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+    spr->base.res->font_text, 0xFFFFFFFF, 0x00000000, text);
+  GSprite_add_child (spr->margin, spr->num_sols_spr);
+
+
+  if (spr->curr_sol_spr) GSprite_free (spr->curr_sol_spr);
+  SDL_snprintf (text, sizeof (text), "#%d", current_sol);
+  spr->curr_sol_spr = GSpriteLabel_new (spr->base.res, spr->margin_width / 2, 8 * spr->line_height, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
+    spr->base.res->font_text, 0xFFFFFFFF, 0x00000000, text);
+  GSprite_add_child (spr->margin, spr->curr_sol_spr);
+}
+
 #define BUTTON(x,y,name, callback) \
   GSprite_add_child (margin, \
     GSpriteButton_new (res, x * mwidth / 4, y * line, mwidth / 2 - 2, line - 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, \
@@ -239,6 +262,9 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
   spr->size_change_plus.delta = 1;
   spr->size_change_minus.spr = spr;
   spr->size_change_minus.delta = -1;
+  spr->margin = margin;
+  spr->margin_width = mwidth;
+  spr->line_height = line;
   GSprite_add_child (margin,
     GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
       0xFF000000, 0xFFFFFFFF, "tentai show"));
@@ -248,10 +274,20 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
 
   BUTTON (1, 3, "RESET", GSpriteEditor_reset);
   BUTTON (3, 3, "RESTART", GSpriteEditor_restart);
-  BUTTON (1, 4, "SIZE +", GSpriteEditor_size_plus);
-  BUTTON (3, 4, "SIZE -", GSpriteEditor_size_minus);
+  BUTTON (1, 4, "SIZE -", GSpriteEditor_size_minus);
+  BUTTON (3, 4, "SIZE +", GSpriteEditor_size_plus);
   BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard);
   BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard);
+
+  spr->num_sols_spr = spr->curr_sol_spr = NULL;
+  GSpriteEditor_update_solution_labels (spr, 0, 0);
+
+  GSprite_add_child (margin, \
+    GSpriteButton_new (res, 0, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+      res->font_small, 0xFFFFFFFF, 0xFF000000, "PREV", GSpriteEditor_copy_to_clipboard, spr));
+  GSprite_add_child (margin, \
+    GSpriteButton_new (res, 3 * mwidth / 5, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+      res->font_small, 0xFFFFFFFF, 0xFF000000, "NEXT", GSpriteEditor_copy_to_clipboard, spr));
 
   GSprite_add_child (margin,
     GSpriteButton_new (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
