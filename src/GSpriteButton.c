@@ -57,6 +57,7 @@ static int GSpriteButton_event (GSpriteButton *spr, GEvent *event, int *destroye
       ret = 1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
+    case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
       spr->state = GBUTTON_STATE_ACTIVE;
       ret = spr->callback (spr->userdata, destroyed);
       break;
