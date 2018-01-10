@@ -1,22 +1,24 @@
 #include <SDL.h>
 #include "GSpriteTile.h"
+#include "GSpriteBoard.h"
+#include "GSpriteCore.h"
 
 struct _GSpriteTile {
   GSprite base;
   int id;
   Uint32 color;
   int flags;
-  int highlighted;
   GSpriteTileCallback callback;
-  void *userdata;
+  GSpriteBoard *board;
 };
 
 static void GSpriteTile_render (GSpriteTile *spr, int offsx, int offsy) {
   SDL_Rect rect;
   SDL_Renderer *renderer = spr->base.res->sdl_renderer;
   Uint32 color = spr->color;
-  if (spr->highlighted != 0)
-    color = 0xFFFFFF00;
+  GSpriteCore *curr_core = GSpriteBoard_get_selected_core (spr->board);
+  if (curr_core && GSpriteCore_get_id (curr_core) == spr->id)
+    color = 0x80FFFF00;
   SDL_SetRenderDrawColor (renderer, (color >> 16) & 0xFF, (color >> 8) & 0xFF, (color >> 0) & 0xFF, (color >> 24) & 0xFF);
   rect.x = offsx + spr->base.x;
   rect.y = offsy + spr->base.y;
@@ -30,11 +32,11 @@ static int GSpriteTile_event (GSpriteTile *spr, GEvent *event, int *destroyed) {
   int y = spr->base.y / spr->base.h;
 
   if (spr->callback)
-    return spr->callback (x, y, event, spr->userdata);
+    return spr->callback (x, y, event, spr->board);
   return 0;
 }
 
-GSprite *GSpriteTile_new (GResources *res, int x, int y, int tileSizeX, int tileSizeY, GSpriteTileCallback callback, void *userdata) {
+GSprite *GSpriteTile_new (GResources *res, int x, int y, int tileSizeX, int tileSizeY, GSpriteTileCallback callback, void *board) {
   GSpriteTile *spr = (GSpriteTile *)GSprite_new (res, sizeof (GSpriteTile),
     (GSpriteRender)GSpriteTile_render, (GSpriteEvent)GSpriteTile_event, NULL, NULL);
   spr->base.x = x * tileSizeX;
@@ -43,9 +45,8 @@ GSprite *GSpriteTile_new (GResources *res, int x, int y, int tileSizeX, int tile
   spr->base.h = tileSizeY;
   spr->color = 0xFFFFFFFF; // Unused color
   spr->flags = 0;
-  spr->highlighted = 0;
   spr->callback = callback;
-  spr->userdata = userdata;
+  spr->board = board;
   return (GSprite *)spr;
 }
 

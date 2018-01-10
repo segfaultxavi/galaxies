@@ -190,7 +190,10 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
       return;
     }
     GSpriteBoard_get_core_coords (spr, x, y, sx, sy, &cx, &cy);
-    if (!GSpriteBoard_valid_core_position (spr, cx, cy)) return;
+    if (!GSpriteBoard_valid_core_position (spr, cx, cy)) {
+      spr->currCoreId = tile_id;
+      return;
+    }
     // Add new core
     id = spr->numCores;
     spr->numCores++;
@@ -201,6 +204,7 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
     GSpriteBoard_deploy_core (spr, cx, cy, id);
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[id]);
     spr->currCoreId = id;
+    ((GSprite*)spr->coreCursor)->visible = 0;
     return;
   } else if (spr->currCoreId == tile_id) {
     // Clicked on tile already owned: deselect core
@@ -384,7 +388,6 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
 
   if (spr->editing) {
     spr->coreCursor = (GSpriteCore *)GSpriteCore_new (spr->base.res, 0, 0, -1, spr->tileSizeX, spr->tileSizeY, 0, NULL, spr);
-    GSpriteCore_set_highlight (spr->coreCursor, 1);
     ((GSprite *)spr->coreCursor)->visible = 0;
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->coreCursor);
   }

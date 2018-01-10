@@ -2,6 +2,7 @@
 #include "GSpriteCore.h"
 #include "GResources.h"
 #include "GGraphics.h"
+#include "GSpriteBoard.h"
 #include <stdlib.h>
 
 struct _GSpriteCore {
@@ -9,9 +10,8 @@ struct _GSpriteCore {
   int id;
   Uint32 color;
   int solid;
-  int highlighted;
   GSpriteCoreCallback callback;
-  void *userdata;
+  GSpriteBoard *board;
 };
 
 #define GSPRITECORE_RADIUS 0.75f
@@ -25,15 +25,14 @@ static void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   dst.w = spr->base.w;
   dst.h = spr->base.h;
   if (spr->solid) {
-    if (spr->highlighted == 0) {
+    if (GSpriteBoard_get_selected_core (spr->board) != spr) {
       SDL_SetTextureColorMod (res->core_texture, (0x40 + (spr->color >> 16)) & 0xFF, (0x40 + (spr->color >> 8)) & 0xFF, (0x40 + (spr->color >> 0)) & 0xFF);
       SDL_RenderCopy (renderer, res->core_texture, NULL, &dst);
     } else {
       SDL_SetTextureColorMod (res->core_texture, 0xC0, 0xC0, 0x00);
       SDL_RenderCopy (renderer, res->core_texture, NULL, &dst);
     }
-  }
-  if (spr->highlighted) {
+  } else {
     SDL_SetTextureColorMod (res->core_highlight_texture, 0xFF, 0xFF, 0x00);
     SDL_RenderCopy (renderer, res->core_highlight_texture, NULL, &dst);
   }
@@ -41,7 +40,7 @@ static void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
 
 static int GSpriteCore_event (GSpriteCore *spr, GEvent *event, int *destroyed) {
   if (spr->callback)
-    return spr->callback (spr->id, event, spr->userdata);
+    return spr->callback (spr->id, event, spr->board);
   return 0;
 }
 
@@ -73,7 +72,7 @@ SDL_Texture *GSpriteCore_create_highlight_texture (GResources *res, int w, int h
   return tex;
 }
 
-GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX, int radiusY, int solid, GSpriteCoreCallback callback, void *userdata) {
+GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX, int radiusY, int solid, GSpriteCoreCallback callback, void *board) {
   GSpriteCore *spr = (GSpriteCore *)GSprite_new (res, sizeof (GSpriteCore),
     (GSpriteRender)GSpriteCore_render, (GSpriteEvent)GSpriteCore_event, (GSpriteIsInside)GSpriteCore_is_inside, NULL);
   int r, g, b;
@@ -88,13 +87,12 @@ GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX
   spr->id = id;
   spr->color = 0x80000000 | (r << 16) + (g << 8) + b;
   spr->callback = callback;
-  spr->userdata = userdata;
-  spr->highlighted = 0;
+  spr->board = board;
   return (GSprite *)spr;
 }
 
-void GSpriteCore_set_highlight (GSpriteCore *spr, int highlighted) {
-  spr->highlighted = highlighted;
+int GSpriteCore_get_id (GSpriteCore *spr) {
+  return spr->id;
 }
 
 Uint32 GSpriteCore_get_color (GSpriteCore *spr) {
