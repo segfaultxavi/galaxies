@@ -41,7 +41,32 @@ static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
   }
 }
 
-static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
+static void GSpriteBoard_remove_core (GSpriteBoard *spr, int id) {
+  int i, x, y;
+  GSprite_free ((GSprite *)spr->cores[id]);
+  for (i = id; i < spr->numCores - 1; i++) {
+    spr->cores[i] = spr->cores[i + 1];
+    GSpriteCore_set_id (spr->cores[i], i);
+  }
+  spr->numCores--;
+  spr->cores = SDL_realloc (spr->cores, spr->numCores * sizeof (GSpriteCore *));
+
+  for (y = 0; y < spr->mapSizeY; y++) {
+    for (x = 0; x < spr->mapSizeX; x++) {
+      GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+      int tile_id = GSpriteTile_get_id (tile);
+      if (tile_id == id) {
+        GSpriteTile_set_id (tile, -1, 0x00000000);
+        GSpriteTile_set_flags (tile, 0);
+      } else if (tile_id > id)
+        GSpriteTile_set_id (tile, tile_id - 1, GSpriteCore_get_color (spr->cores[tile_id - 1]));
+    }
+  }
+
+  spr->currCoreId = -1;
+}
+
+static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata, int *destroyed) {
   int res = 0;
   GSpriteBoard *spr = userdata;
   switch (event->type) {
@@ -57,10 +82,29 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata) {
       spr->currTileY = -1;
       res = 1;
       break;
+    case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
+      if (!spr->editing) break;
+      GSpriteBoard_remove_core (spr, id);
+      if (destroyed) *destroyed = 1;
+      res = 1;
+      break;
     default:
       break;
   }
   return res;
+}
+
+static void GSpriteBoard_add_core (GSpriteBoard *spr, float cx, float cy) {
+  int id = spr->numCores;
+  spr->numCores++;
+  spr->cores = SDL_realloc (spr->cores, spr->numCores * sizeof (GSpriteCore *));
+
+  spr->cores[id] = (GSpriteCore *)GSpriteCore_new (spr->base.res, 0, 0, id,
+    spr->tileSizeX, spr->tileSizeY, 1, GSpriteBoard_core_event, spr);
+  GSpriteBoard_deploy_core (spr, cx, cy, id);
+  GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[id]);
+  spr->currCoreId = id;
+  ((GSprite*)spr->coreCursor)->visible = 0;
 }
 
 static int GSpriteBoard_check_completion (GSpriteBoard *spr) {
@@ -183,7 +227,6 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
 
   if (spr->currCoreId == -1) {
     float cx, cy;
-    int id;
     if (!spr->editing) {
       // Without selected core, clicked on an owned tile 
       spr->currCoreId = tile_id;
@@ -195,16 +238,7 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
       return;
     }
     // Add new core
-    id = spr->numCores;
-    spr->numCores++;
-    spr->cores = SDL_realloc (spr->cores, spr->numCores * sizeof (GSpriteCore *));
-
-    spr->cores[id] = (GSpriteCore *)GSpriteCore_new (spr->base.res, 0, 0, id,
-      spr->tileSizeX, spr->tileSizeY, 1, GSpriteBoard_core_event, spr);
-    GSpriteBoard_deploy_core (spr, cx, cy, id);
-    GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[id]);
-    spr->currCoreId = id;
-    ((GSprite*)spr->coreCursor)->visible = 0;
+    GSpriteBoard_add_core (spr, cx, cy);
     return;
   } else if (spr->currCoreId == tile_id) {
     // Clicked on tile already owned: deselect core

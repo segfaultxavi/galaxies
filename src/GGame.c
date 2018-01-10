@@ -131,7 +131,7 @@ void GGame_run (GGame *game) {
         quit = 1;
         break;
       case SDL_MOUSEBUTTONDOWN:
-        gevent.type = GEVENT_TYPE_SPRITE_ACTIVATE;
+        gevent.type = event.button.clicks == 1 ? GEVENT_TYPE_SPRITE_ACTIVATE : GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY;
         gevent.x = event.button.x;
         gevent.y = event.button.y;
         break;

@@ -40,7 +40,7 @@ static void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
 
 static int GSpriteCore_event (GSpriteCore *spr, GEvent *event, int *destroyed) {
   if (spr->callback)
-    return spr->callback (spr->id, event, spr->board);
+    return spr->callback (spr->id, event, spr->board, destroyed);
   return 0;
 }
 
@@ -93,6 +93,10 @@ GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX
 
 int GSpriteCore_get_id (GSpriteCore *spr) {
   return spr->id;
+}
+
+void GSpriteCore_set_id (GSpriteCore *spr, int id) {
+  spr->id = id;
 }
 
 Uint32 GSpriteCore_get_color (GSpriteCore *spr) {
