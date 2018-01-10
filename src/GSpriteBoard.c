@@ -652,3 +652,11 @@ int GSpriteBoard_has_no_manual_tiles (GSpriteBoard *spr) {
   }
   return 1;
 }
+
+GSpriteCore *GSpriteBoard_get_core (GSpriteBoard *spr, int id) {
+  return spr->cores[id];
+}
+
+int GSpriteBoard_get_num_cores (GSpriteBoard *spr) {
+  return spr->numCores;
+}

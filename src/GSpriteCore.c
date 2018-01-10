@@ -109,3 +109,16 @@ void GSpriteCore_get_opposite (GSpriteCore *spr, int x, int y, int *x2, int *y2)
   *x2 = cx - x - 1;
   *y2 = cy - y - 1;
 }
+
+GSpriteCore *GSpriteCore_clone (GSpriteCore *spr) {
+  GSpriteCore *clone = (GSpriteCore *)GSprite_new (spr->base.res, sizeof (GSpriteCore),
+    NULL, NULL, NULL, NULL);
+  clone->base.x = spr->base.x;
+  clone->base.y = spr->base.y;
+  clone->base.w = spr->base.w;
+  clone->base.h = spr->base.h;
+  clone->id = spr->id;
+  clone->callback = NULL;
+  clone->board = NULL;
+  return clone;
+}
