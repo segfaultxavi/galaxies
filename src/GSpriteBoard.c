@@ -671,8 +671,12 @@ void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles) {
     for (x = 0; x < spr->mapSizeX; x++) {
       int id = tiles[y * spr->mapSizeX + x];
       GSpriteTile *tile = GBOARD_TILE (spr, x, y);
-      GSpriteCore *core = spr->cores[id];
-      GSpriteTile_set_id (tile, id, GSpriteCore_get_color (core));
+      if (id > -1) {
+        GSpriteCore *core = spr->cores[id];
+        GSpriteTile_set_id (tile, id, GSpriteCore_get_color (core));
+      } else {
+        GSpriteTile_set_id (tile, id, 0x00000000);
+      }
     }
   }
 }
