@@ -44,6 +44,8 @@ struct _GSpriteEditor {
   SDL_TimerID solver_timer_id;
 };
 
+void GSpriteEditor_board_changed (GSpriteEditor *spr);
+
 static void GSpriteEditor_reset_yes (void *userdata) {
   GSpriteEditor *spr = userdata;
   SDL_Log ("Editor:Reset:Yes");
@@ -73,6 +75,7 @@ static void GSpriteEditor_restart_yes (void *userdata) {
   spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
   GSpriteBoard_start (spr->board, GEDITOR_DEFAULT_SIZE, GEDITOR_DEFAULT_SIZE, 0, NULL, NULL);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
+  GSpriteEditor_board_changed (spr);
 }
 
 static int GSpriteEditor_restart(void *userdata, int *destroyed) {
@@ -113,6 +116,7 @@ static void GSpriteEditor_size_change_yes (void *userdata) {
   sc->spr->board = (GSpriteBoard *)GSpriteBoard_new (sc->spr->base.res, 1);
   GSpriteBoard_start (sc->spr->board, mapSizeX, mapSizeY, 0, NULL, NULL);
   GSprite_add_child ((GSprite *)sc->spr, (GSprite *)sc->spr->board);
+  GSpriteEditor_board_changed (sc->spr);
 }
 
 static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
@@ -138,7 +142,7 @@ static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
 static int GSpriteEditor_size_minus (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
 
-  if (GSpriteBoard_get_map_size_x (spr->board) == 5)
+  if (GSpriteBoard_get_map_size_x (spr->board) == 3)
     return 1;
 
   if (GSpriteBoard_is_empty (spr->board)) {
@@ -165,6 +169,7 @@ static void GSpriteEditor_copy_from_clipboard_yes (void *userdata) {
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   SDL_free (cfc->new_desc);
   cfc->new_desc = NULL;
+  GSpriteEditor_board_changed (spr);
 }
 
 static void GSpriteEditor_copy_from_clipboard_no (void *userdata) {
@@ -238,10 +243,13 @@ static void GSpriteEditor_update_solution_labels (GSpriteEditor *spr) {
 
 
   if (spr->curr_sol_spr) GSprite_free (spr->curr_sol_spr);
-  SDL_snprintf (text, sizeof (text), "#%d", spr->current_solution);
-  spr->curr_sol_spr = GSpriteLabel_new (spr->base.res, spr->margin_width / 2, 8 * spr->line_height, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
-    spr->base.res->font_text, 0xFFFFFFFF, 0x00000000, text);
-  GSprite_add_child (spr->margin, spr->curr_sol_spr);
+  spr->curr_sol_spr = NULL;
+  if (spr->num_solutions > 0) {
+    SDL_snprintf (text, sizeof (text), "#%d", spr->current_solution);
+    spr->curr_sol_spr = GSpriteLabel_new (spr->base.res, spr->margin_width / 2, 8 * spr->line_height, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
+      spr->base.res->font_text, 0xFFFFFFFF, 0x00000000, text);
+    GSprite_add_child (spr->margin, spr->curr_sol_spr);
+  }
 }
 
 static int GSpriteEditor_prev_solution (void *userdata, int *destroyed) {
