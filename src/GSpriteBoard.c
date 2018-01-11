@@ -325,6 +325,7 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
       res = 1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
+    case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
       GSpriteBoard_handle_click (spr, x, y, event->x, event->y);
       res = 1;
       break;
