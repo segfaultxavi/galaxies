@@ -11,6 +11,8 @@ typedef enum _GEventType {
   GEVENT_TYPE_SPRITE_IN,
   GEVENT_TYPE_SPRITE_OUT,
   GEVENT_TYPE_KEY,
+  GEVENT_TYPE_FOCUS_MARKER, // This is not an event, just a marker
+  // All events which might change the focus appear above
   GEVENT_TYPE_TIMER
 } GEventType;
 
