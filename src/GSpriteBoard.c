@@ -679,4 +679,5 @@ void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles) {
       }
     }
   }
+  spr->currCoreId = -1;
 }
