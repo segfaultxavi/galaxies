@@ -366,6 +366,7 @@ static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, int 
       
       if (tile_id != -1) {
         int x2, y2;
+        GSpriteTile_set_id (GBOARD_TILE (spr, x, y), -1, 0x00000000);
         GSpriteCore_get_opposite (spr->cores[tile_id], x, y, &x2, &y2);
         GSpriteTile_set_id (GBOARD_TILE(spr, x2, y2), -1, 0x00000000);
         GSpriteBoard_check_core (spr, tile_id);
