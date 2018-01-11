@@ -103,6 +103,11 @@ Uint32 GSpriteCore_get_color (GSpriteCore *spr) {
   return spr->color;
 }
 
+void GSpriteCore_get_corner (GSpriteCore *spr, int *x, int *y) {
+  *x = (int)(spr->base.x / spr->base.w);
+  *y = (int)(spr->base.y / spr->base.h);
+}
+
 void GSpriteCore_get_opposite (GSpriteCore *spr, int x, int y, int *x2, int *y2) {
   int cx = (int)(spr->base.x * 2 / spr->base.w);
   int cy = (int)(spr->base.y * 2 / spr->base.h);

@@ -16,6 +16,7 @@ GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX
 int GSpriteCore_get_id (GSpriteCore *spr);
 void GSpriteCore_set_id (GSpriteCore *spr, int id);
 Uint32 GSpriteCore_get_color (GSpriteCore *spr);
+void GSpriteCore_get_corner (GSpriteCore *spr, int *x, int *y);
 void GSpriteCore_get_opposite (GSpriteCore *spr, int x, int y, int *x2, int *y2);
 GSpriteCore *GSpriteCore_clone (GSpriteCore *spr);
 
