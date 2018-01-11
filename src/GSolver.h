@@ -5,11 +5,15 @@
 #include "GSpriteBoard.h"
 
 typedef struct _GSolver GSolver;
-typedef struct _GSolverSolution GSolverSolution;
 
 GSolver *GSolver_new (GSpriteBoard *board);
 void GSolver_free (GSolver *solver);
+
+// From 0 to 1
+float GSolver_get_progress (GSolver *solver);
 int GSolver_get_num_solutions (GSolver *solver);
-GSolverSolution *GSolver_get_solution (GSolver *solver, int ndx);
+// Solution is a map_size_x * map_size_y array of core IDs
+// Do not free
+char *GSolver_get_solution (GSolver *solver, int ndx);
 
 #endif

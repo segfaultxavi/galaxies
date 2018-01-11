@@ -662,3 +662,17 @@ GSpriteCore *GSpriteBoard_get_core (GSpriteBoard *spr, int id) {
 int GSpriteBoard_get_num_cores (GSpriteBoard *spr) {
   return spr->numCores;
 }
+
+void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles) {
+  int x, y;
+
+  if (!tiles) return;
+  for (y = 0; y < spr->mapSizeY; y++) {
+    for (x = 0; x < spr->mapSizeX; x++) {
+      int id = tiles[y * spr->mapSizeX + x];
+      GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+      GSpriteCore *core = spr->cores[id];
+      GSpriteTile_set_id (tile, id, GSpriteCore_get_color (core));
+    }
+  }
+}

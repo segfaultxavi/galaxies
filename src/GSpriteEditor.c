@@ -244,6 +244,38 @@ static void GSpriteEditor_update_solution_labels (GSpriteEditor *spr) {
   GSprite_add_child (spr->margin, spr->curr_sol_spr);
 }
 
+static int GSpriteEditor_prev_solution (void *userdata, int *destroyed) {
+  GSpriteEditor *spr = userdata;
+
+  if (!spr->solver) return 1;
+  if (spr->num_solutions == 0) return 1;
+  if (spr->current_solution == 0)
+    spr->current_solution = spr->num_solutions - 1;
+  else
+    spr->current_solution--;
+
+  GSpriteBoard_set_tiles (spr->board, GSolver_get_solution (spr->solver, spr->current_solution));
+  GSpriteEditor_update_solution_labels (spr);
+
+  return 1;
+}
+
+static int GSpriteEditor_next_solution (void *userdata, int *destroyed) {
+  GSpriteEditor *spr = userdata;
+
+  if (!spr->solver) return 1;
+  if (spr->num_solutions == 0) return 1;
+  if (spr->current_solution == spr->num_solutions - 1)
+    spr->current_solution = 0;
+  else
+    spr->current_solution++;
+
+  GSpriteBoard_set_tiles (spr->board, GSolver_get_solution (spr->solver, spr->current_solution));
+  GSpriteEditor_update_solution_labels (spr);
+
+  return 1;
+}
+
 void GSpriteEditor_board_changed (GSpriteEditor *spr) {
   if (spr->solver)
     GSolver_free (spr->solver);
@@ -330,10 +362,10 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
 
   GSprite_add_child (margin, \
     GSpriteButton_new (res, 0, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
-      res->font_small, 0xFFFFFFFF, 0xFF000000, "PREV", GSpriteEditor_copy_to_clipboard, spr));
+      res->font_small, 0xFFFFFFFF, 0xFF000000, "PREV", GSpriteEditor_prev_solution, spr));
   GSprite_add_child (margin, \
     GSpriteButton_new (res, 3 * mwidth / 5, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
-      res->font_small, 0xFFFFFFFF, 0xFF000000, "NEXT", GSpriteEditor_copy_to_clipboard, spr));
+      res->font_small, 0xFFFFFFFF, 0xFF000000, "NEXT", GSpriteEditor_next_solution, spr));
 
   GSprite_add_child (margin,
     GSpriteButton_new (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
