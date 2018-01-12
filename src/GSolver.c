@@ -9,8 +9,8 @@ struct _GSolver {
   int map_size_x, map_size_y;
   char *tile_flags;
   char *initial_candidates;
-  char *state;
-  char *current_option;
+  signed char *state;
+  signed char *current_option;
   Uint64 total_options;
   Uint64 explored_options;
   int num_solutions;
@@ -18,6 +18,36 @@ struct _GSolver {
   SDL_Thread *worker_thread;
   int quit;
 };
+
+/*
+ * Summary, for when I have to come back here again in 10 years.
+ * Candidates: list of core IDs which might be used in a given tile, after an initial screening.
+ *   A core ID is a candidate for a tile if the opposite tile is not out-of-bounds or over another core.
+ * Configuration: an array of tiles, with a core ID assigned to each tile.
+ * Option: an array of tiles, with a core ID assigned to each tile, chosen from their candidates list.
+ *   this must be further checked for correcteness to be a solution.
+ * Solution: an Option with proven correcteness, this is, all tiles with the same core ID are connected.
+ *
+ * Algorithm:
+ * 1. Build candidates list. If any tile has an empty list, this map has no solution.
+ * 2. Count options. Just in order to give some progress feedback, all possible options are counted.
+ *      Starting top-left, each tile is assigned every core ID from its candidate list. Assigning a core
+ *      ID to a tile also assigns it to the opposite tile and LOCKS it, so it is not changed until we
+ *      change the core ID assigned to first tile.
+ *      This phase should be quick.
+ * 3. Verify solutions: Go again through all the options and check every one for correctness.
+ *      This can be slow, but we know the total amount of options to check, so we can give feedback.
+ *      The amount of options can be extremely large and overflow the counter.
+ *
+ * Implementation:
+ * We copy initial data from board, so we run independently from the rest of the game.
+ * TILE_FLAG(x,y) contains tile flags FIXED (tiles under cores) and VISITED (for floodfill algorithm).
+ * CANDIDATE(x,y,c) is the list of candidates for each tile.
+ * CANDIDATE_LEN(x,y) is the length of the above list.
+ * CURRENT_OPTION(x,y) is the option being built or checked. Each entry is a core ID or -1 is not set yet.
+ * STATE(x,y) is an index into the CANDIDATE array, indicating which candidate we are currently investigating
+ *   or -1 if it is LOCKED.
+ */
 
 #define GSOLVER_TILE_FLAG(solver,x,y) solver->tile_flags[(y) * solver->map_size_x + (x)]
 #define GSOLVER_STATE(solver,x,y) solver->state[(y) * solver->map_size_x + (x)]
@@ -50,7 +80,8 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
   int old_id = GSOLVER_CURRENT_OPTION (solver, x, y);
 
   // If this tile is not fixed, set it to this core id
-  if ((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) {
+  if (((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) &&
+      (GSOLVER_CANDIDATE_LEN (solver, x, y) > 1)) {
     GSpriteCore *core = solver->cores[id];
     int oppx, oppy;
     if (old_id > -1) {
@@ -58,11 +89,17 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
       GSpriteCore *old_core = solver->cores[old_id];
       int old_oppx, old_oppy;
       GSpriteCore_get_opposite (old_core, x, y, &old_oppx, &old_oppy);
-      if (GSOLVER_CURRENT_OPTION (solver, old_oppx, old_oppy) == old_id) {
-        GSOLVER_STATE (solver, old_oppx, old_oppy) = 0; // This tile is now unlocked
-      } // FIXME: else? assert?
+      if (old_oppy > y || (old_oppy == y && old_oppx > x)) {
+        if (GSOLVER_CURRENT_OPTION (solver, old_oppx, old_oppy) == old_id) {
+          GSOLVER_STATE (solver, old_oppx, old_oppy) = 0; // This tile is now unlocked
+        }
+      }
     }
     GSpriteCore_get_opposite (core, x, y, &oppx, &oppy);
+    if (oppy < y || (oppy == y && oppx < x)) {
+      // Cannot go back
+      return 0;
+    }
     if (GSOLVER_STATE (solver, oppx, oppy) == -1) {
       // This candidate core cannot be used: the opposite tile is locked
       return 0;
@@ -93,9 +130,9 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
 static void GSolver_output_current_solution (GSolver *solver) {
   int x, y;
   for (y = 0; y < solver->map_size_y; y++) {
-    char buff[128];
+    char buff[1024];
     for (x = 0; x < solver->map_size_x; x++) {
-      buff[x] = '0' + GSOLVER_CURRENT_OPTION (solver, x, y);
+      buff[x] = 'a' + GSOLVER_CURRENT_OPTION (solver, x, y);
     }
     buff[x] = '\0';
     SDL_Log ("Solver:Option %3ld:%s", solver->total_options, buff);
@@ -105,7 +142,7 @@ static void GSolver_output_current_solution (GSolver *solver) {
 static void GSolver_output_state (GSolver *solver) {
   int x, y;
   for (y = 0; y < solver->map_size_y; y++) {
-    char buff[128];
+    char buff[1024];
     for (x = 0; x < solver->map_size_x; x++) {
       buff[x] = '0' + GSOLVER_STATE (solver, x, y);
     }
@@ -117,11 +154,11 @@ static void GSolver_output_state (GSolver *solver) {
 static void GSolver_output_initial_candidates (GSolver *solver) {
   int x, y, i;
   for (y = 0; y < solver->map_size_y; y++) {
-    char buff[128];
+    char buff[1024];
     SDL_memset (buff, '.', sizeof (buff));
     for (x = 0; x < solver->map_size_x; x++) {
       for (i = 0; i < GSOLVER_CANDIDATE_LEN (solver, x, y); i++) {
-        buff[x * solver->num_cores + i] = '0' + GSOLVER_CANDIDATE (solver, x, y, i);
+        buff[x * solver->num_cores + i] = 'a' + GSOLVER_CANDIDATE (solver, x, y, i);
       }
     }
     buff[x * solver->num_cores] = '\0';
@@ -134,11 +171,26 @@ static int GSolver_next_configuration (GSolver *solver) {
   int curr_x = solver->map_size_x - 1;
   int curr_y = solver->map_size_y - 1;
 
-  GSolver_output_state (solver);
   do {
     // Search backwards for the first unlocked tile with untried candidates (if there is one)
     while ((GSOLVER_STATE (solver, curr_x, curr_y) == -1) ||
-      (GSOLVER_STATE (solver, curr_x, curr_y) == GSOLVER_CANDIDATE_LEN (solver, curr_x, curr_y) - 1)) {
+        (GSOLVER_STATE (solver, curr_x, curr_y) == GSOLVER_CANDIDATE_LEN (solver, curr_x, curr_y) - 1)) {
+
+      if (GSOLVER_STATE (solver, curr_x, curr_y) != -1) {
+        int old_id = GSOLVER_CURRENT_OPTION (solver, curr_x, curr_y);
+        // Remove previous opposite, if there was one
+        if (old_id > -1) {
+          GSpriteCore *old_core = solver->cores[old_id];
+          int old_oppx, old_oppy;
+          GSpriteCore_get_opposite (old_core, curr_x, curr_y, &old_oppx, &old_oppy);
+          if (old_oppy > curr_y || (old_oppy == curr_y && old_oppx > curr_x)) {
+            if (GSOLVER_CURRENT_OPTION (solver, old_oppx, old_oppy) == old_id) {
+              GSOLVER_STATE (solver, old_oppx, old_oppy) = 0; // This tile is now unlocked
+            }
+          }
+        }
+      }
+
       curr_x--;
       if (curr_x < 0) {
         curr_x = solver->map_size_x - 1;
@@ -168,6 +220,15 @@ static void GSolver_check_current_configuration (GSolver *solver) {
   int i, x, y;
   char *sol;
   solver->explored_options++;
+
+  // FIXME: This should not be needed...
+  for (y = 0; y < solver->map_size_y; y++) {
+    for (x = 0; x < solver->map_size_x; x++) {
+      if (GSOLVER_CURRENT_OPTION (solver, x, y) == -1) {
+        SDL_assert (0);
+      }
+    }
+  }
 
   for (i = 0; i < solver->num_cores; i++) {
     int sx, sy;
@@ -209,8 +270,9 @@ static void GSolver_reset_state (GSolver *solver) {
   int x, y;
   for (y = 0; y < solver->map_size_y; y++) {
     for (x = 0; x < solver->map_size_x; x++) {
-      GSOLVER_STATE (solver, x, y) = 0;
-      if ((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) {
+      if (((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) &&
+          (GSOLVER_CANDIDATE_LEN (solver, x, y) > 1)) {
+        GSOLVER_STATE (solver, x, y) = 0;
         GSOLVER_CURRENT_OPTION (solver, x, y) = -1;
       }
     }
@@ -221,12 +283,19 @@ static int GSolver_worker_thread (GSolver *solver) {
 
   Uint32 timestamp = SDL_GetTicks ();
 
+  if (!GSolver_set_candidate (solver, 0, 0, 0)) {
+    SDL_Log ("Solver:No solution:Unable to set initial candidate list");
+    GSolver_output_initial_candidates (solver);
+    GSolver_output_state (solver);
+    GSolver_output_current_solution (solver);
+    solver->quit = 1;
+    return 0;
+  }
+
   // Phase 1: Count number of options
-  GSolver_set_candidate (solver, 0, 0, 0);
   solver->total_options = 0;
   SDL_Log ("Solver:Counting options");
   while (!solver->quit) {
-    GSolver_output_current_solution (solver);
     solver->total_options++;
     if (!GSolver_next_configuration (solver))
       break;
@@ -279,31 +348,57 @@ GSolver *GSolver_new (GSpriteBoard *board) {
   solver->tile_flags = SDL_malloc (solver->map_size_x * solver->map_size_y);
   solver->initial_candidates = SDL_malloc (solver->map_size_x * solver->map_size_y * (solver->num_cores + 1));
   solver->state = SDL_malloc (solver->map_size_x * solver->map_size_y);
+  SDL_memset (solver->state, 0, solver->map_size_x * solver->map_size_y);
   solver->current_option = SDL_malloc (solver->map_size_x * solver->map_size_y);
   for (y = 0; y < solver->map_size_y; y++) {
     for (x = 0; x < solver->map_size_x; x++) {
       GSpriteTile *tile = GSpriteBoard_get_tile (board, x, y);
       GSOLVER_TILE_FLAG (solver, x, y) = GSpriteTile_get_flags (tile);
-      GSOLVER_STATE (solver, x, y) = 0;
+      if (GSOLVER_STATE (solver, x, y) != 0) {
+        // Some other tile has already fixed this one
+        continue;
+      }
       GSOLVER_CANDIDATE_LEN (solver, x, y) = 0;
       if (GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) {
         GSolver_push_candidate (solver, x, y, GSpriteTile_get_id (tile));
         GSOLVER_CURRENT_OPTION (solver, x, y) = GSpriteTile_get_id (tile);
+        GSOLVER_STATE (solver, x, y) = -1;
       } else {
+        int oppx, oppy;
         for (i = 0; i < solver->num_cores; i++) {
-          int oppx, oppy;
           GSpriteCore_get_opposite (solver->cores[i], x, y, &oppx, &oppy);
           if (oppx < 0 || oppx >= solver->map_size_x || oppy < 0 || oppy >= solver->map_size_y) continue;
           if (GSpriteTile_get_flags (GSpriteBoard_get_tile (board, oppx, oppy)) & GTILE_FLAG_FIXED) continue;
           GSolver_push_candidate (solver, x, y, i);
         }
-        if (GSOLVER_CANDIDATE_LEN (solver, x, y) == 0) goto no_solution;
-        GSOLVER_CURRENT_OPTION (solver, x, y) = -1;
+        switch (GSOLVER_CANDIDATE_LEN (solver, x, y)) {
+          case 0:
+            SDL_Log ("Solver:No solution:Tiles with no valid candidates");
+            goto no_solution;
+          case 1:
+            // If there is only one candidate, fix both this tile and the opposite one
+            i = GSOLVER_CANDIDATE (solver, x, y, 0);
+            GSOLVER_CURRENT_OPTION (solver, x, y) = i;
+            GSOLVER_STATE (solver, x, y) = -1;
+            GSpriteCore_get_opposite (solver->cores[i], x, y, &oppx, &oppy);
+            if (GSOLVER_STATE (solver, oppx, oppy) != 0) {
+              // Some other tile has already fixed our opposite: no solution
+              SDL_Log ("Solver:No solution:Incompatible opposites");
+              goto no_solution;
+            }
+            GSOLVER_CURRENT_OPTION (solver, oppx, oppy) = i;
+            GSOLVER_STATE (solver, oppx, oppy) = -1;
+            GSOLVER_CANDIDATE_LEN (solver, oppx, oppy) = 1;
+            GSOLVER_CANDIDATE(solver, oppx, oppy, 0) = i;
+            break;
+          default:
+            GSOLVER_CURRENT_OPTION (solver, x, y) = -1;
+            GSOLVER_STATE (solver, x, y) = 0;
+            break;
+        }
       }
     }
   }
-
-  GSolver_output_initial_candidates (solver);
 
   solver->num_solutions = 0;
   solver->solutions = NULL;
