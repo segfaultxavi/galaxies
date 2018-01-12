@@ -7,6 +7,7 @@
 #include "GSpriteLevelSelect.h"
 #include "GSpriteEditor.h"
 #include "GSpriteCredits.h"
+#include "GSpritePopup.h"
 
 struct _GSpriteMainMenu {
   GSprite base;
@@ -20,11 +21,21 @@ static int GSpriteMainMenu_play (void *userdata, int *destroyed) {
   return 1;
 }
 
-static int GSpriteMainMenu_editor (void *userdata, int *destroyed) {
+static void GSpriteMainMenu_editor_yes (void *userdata) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Editor");
   spr->base.visible = 0;
   GSprite_add_child (spr->base.parent, GSpriteEditor_new (spr->base.res, (GSprite *)spr));
+}
+
+static int GSpriteMainMenu_editor (void *userdata, int *destroyed) {
+  GSpriteMainMenu *spr = userdata;
+
+  GSprite_add_child (spr->base.parent,
+    GSpritePopup_new (spr->base.res, "EDITOR",
+        "This is Work In progress.\n"
+        "I accept no complains.",
+        "OK", GSpriteMainMenu_editor_yes, NULL, NULL, spr));
   return 1;
 }
 
@@ -66,6 +77,9 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
   GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_big,
       0xFF000000, 0xFFFFFFFF, "tentai show"));
+  GSprite_add_child ((GSprite *)spr,
+    GSpriteLabel_new (res, 3 * res->game_width / 4, 3 * line / 4, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
+      0xFFFFFFFF, 0xFFFFFFFF, "BETA"));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 2 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
       res->font_med, 0xFFFFFFFF, 0xFF000000, "PLAY", GSpriteMainMenu_play, spr));
