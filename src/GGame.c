@@ -132,7 +132,7 @@ void GGame_run (GGame *game) {
         quit = 1;
         break;
       case SDL_MOUSEBUTTONDOWN:
-        if (event.button.timestamp - click_timestamp < 500) // ms
+        if (event.button.timestamp - click_timestamp < 250) // ms
           // Manual detection of double-click for Android
           gevent.type = GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY;
         else
