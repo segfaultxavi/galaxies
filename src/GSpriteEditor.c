@@ -155,7 +155,7 @@ static int GSpriteEditor_size_minus (void *userdata, int *destroyed) {
       "Are you sure?\n"
       "This will remove everything\n"
       "from the map.",
-      "YES", GSpriteEditor_size_change_yes, "NO", GSpritePopup_dismiss, &spr->size_change_plus));
+      "YES", GSpriteEditor_size_change_yes, "NO", GSpritePopup_dismiss, &spr->size_change_minus));
   return 1;
 }
 
