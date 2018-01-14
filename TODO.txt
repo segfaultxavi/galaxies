@@ -1,11 +1,16 @@
 TODO
-- Editor: bring back the solver
+- Solver progress indicator in editor (progress bar: Finding solutions)
+- Save editor work (as if it was another level)
+- Use highlight to indicate possible moves, instead of hover, which does not work on Android
+- Double click involves NO mouse movement, doh!
+- When adding new levels, keep previous ones status (only save levels with status != UNTRIED, and init from initial_level_desc when there's no level desc in the preferences)
 - Add more levels
 - Game collects stats (completion time)
 - Prepare server to receive stats
 - Game sends stats
 
 IDEAS
-- Triangular and Hexagonal grids
+- Triangular and Hexagonal grids (add to save format)
 - Other types of symmetry besides 2-fold: 4-fold on square grid, 2-, 3- or 6-fold on hexagonal grid, 3-fold on triangular grid.
+  Each core can have its own symmetry, indicated in the save format with uppercase letters (aa, aA, Aa, AA = types 0, 1, 2, 3, for the same coords).
 - Each core indicates the type of symmetry it produces
