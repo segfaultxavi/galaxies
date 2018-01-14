@@ -4,8 +4,8 @@
 #include "GResources.h"
 
 #define GPROGRESS_MARGIN 10
-#define GPROGRESS_DEFAULT_BG_COLOR 0xFF404040
-#define GPROGRESS_DEFAULT_FG_COLOR 0xFFC0C0C0
+#define GPROGRESS_DEFAULT_BG_COLOR 0xFF000040
+#define GPROGRESS_DEFAULT_FG_COLOR 0xFF808000
 
 struct _GSpriteProgress {
   GSprite base;
@@ -54,8 +54,7 @@ GSprite *GSpriteProgress_new (GResources *res, int x, int y, int w, int h, const
       (GSpriteRender)GSpriteProgress_render, NULL, NULL, NULL);
 
   // Text
-  label = GSpriteLabel_new (res, 0, h  / 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, font, text_color, glow_color, text);
-  label->x = GPROGRESS_MARGIN;
+  label = GSpriteLabel_new (res, w / 2, h  / 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, font, text_color, glow_color, text);
   GSprite_add_child ((GSprite *)spr, label);
 
   spr->base.x = x;

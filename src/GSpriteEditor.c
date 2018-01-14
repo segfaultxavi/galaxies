@@ -378,7 +378,7 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
   BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard);
 
   spr->progress_spr = (GSpriteProgress *)GSpriteProgress_new (res, 0, 7 * line, mwidth, line / 2,
-      "Finding solutions...", res->font_small, 0xFFFFFFFF, 0x00000000, 0.f);
+      "Finding solutions", res->font_small, 0xFFFFFFFF, 0xFFFFFFFF, 0.f);
   GSprite_add_child (margin, (GSprite *)spr->progress_spr);
   ((GSprite *)spr->progress_spr)->visible = 0;
 
