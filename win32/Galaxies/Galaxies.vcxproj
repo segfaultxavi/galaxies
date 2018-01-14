@@ -206,6 +206,7 @@ xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y</Command>
     <ClCompile Include="..\..\src\GSpriteNull.c" />
     <ClCompile Include="..\..\src\GSpriteButton.c" />
     <ClCompile Include="..\..\src\GSpritePopup.c" />
+    <ClCompile Include="..\..\src\GSpriteProgress.c" />
     <ClCompile Include="..\..\src\GSpriteTile.c" />
     <ClCompile Include="..\..\src\main.c" />
     <ClCompile Include="..\..\src\spincycle_font.c" />
@@ -230,6 +231,7 @@ xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y</Command>
     <ClInclude Include="..\..\src\GSpriteNull.h" />
     <ClInclude Include="..\..\src\GSpriteButton.h" />
     <ClInclude Include="..\..\src\GSpritePopup.h" />
+    <ClInclude Include="..\..\src\GSpriteProgress.h" />
     <ClInclude Include="..\..\src\GSpriteTile.h" />
   </ItemGroup>
   <ItemGroup>

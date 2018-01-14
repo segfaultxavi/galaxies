@@ -8,6 +8,7 @@
 #include "GSpriteNull.h"
 #include "GSpriteBoard.h"
 #include "GSpritePopup.h"
+#include "GSpriteProgress.h"
 #include "GSolver.h"
 
 #define GEDITOR_DEFAULT_SIZE 7
@@ -28,6 +29,7 @@ struct _GSpriteEditor {
   GSpriteBoard *board;
   GSprite *num_sols_spr;
   GSprite *curr_sol_spr;
+  GSpriteProgress *progress_spr;
   GSpriteEditorSizeChange size_change_plus;
   GSpriteEditorSizeChange size_change_minus;
   GSpriteEditorCopyFromClipboard copy_from_clipboard;
@@ -241,7 +243,6 @@ static void GSpriteEditor_update_solution_labels (GSpriteEditor *spr) {
     spr->base.res->font_text, 0xFFFFFFFF, 0x00000000, text);
   GSprite_add_child (spr->margin, spr->num_sols_spr);
 
-
   if (spr->curr_sol_spr) GSprite_free (spr->curr_sol_spr);
   spr->curr_sol_spr = NULL;
   if (spr->num_solutions > 0) {
@@ -249,6 +250,18 @@ static void GSpriteEditor_update_solution_labels (GSpriteEditor *spr) {
     spr->curr_sol_spr = GSpriteLabel_new (spr->base.res, spr->margin_width / 2, 8 * spr->line_height, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
       spr->base.res->font_text, 0xFFFFFFFF, 0x00000000, text);
     GSprite_add_child (spr->margin, spr->curr_sol_spr);
+  }
+
+  if (spr->solver) {
+    float progress = GSolver_get_progress (spr->solver);
+    if (progress < 1.f) {
+      ((GSprite *)spr->progress_spr)->visible = 1;
+      GSpriteProgress_set_progress (spr->progress_spr, progress);
+    } else {
+      ((GSprite *)spr->progress_spr)->visible = 0;
+    }
+  } else {
+    ((GSprite *)spr->progress_spr)->visible = 0;
   }
 }
 
@@ -364,16 +377,21 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
   BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard);
   BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard);
 
+  spr->progress_spr = (GSpriteProgress *)GSpriteProgress_new (res, 0, 7 * line, mwidth, line / 2,
+      "Finding solutions...", res->font_small, 0xFFFFFFFF, 0x00000000, 0.f);
+  GSprite_add_child (margin, (GSprite *)spr->progress_spr);
+  ((GSprite *)spr->progress_spr)->visible = 0;
+
+  GSprite_add_child (margin,
+    GSpriteButton_new (res, 0, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+      res->font_small, 0xFFFFFFFF, 0xFF000000, "PREV", GSpriteEditor_prev_solution, spr));
+  GSprite_add_child (margin,
+    GSpriteButton_new (res, 3 * mwidth / 5, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+      res->font_small, 0xFFFFFFFF, 0xFF000000, "NEXT", GSpriteEditor_next_solution, spr));
+
   spr->num_sols_spr = spr->curr_sol_spr = NULL;
   spr->num_solutions = spr->current_solution = 0;
   GSpriteEditor_update_solution_labels (spr);
-
-  GSprite_add_child (margin, \
-    GSpriteButton_new (res, 0, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
-      res->font_small, 0xFFFFFFFF, 0xFF000000, "PREV", GSpriteEditor_prev_solution, spr));
-  GSprite_add_child (margin, \
-    GSpriteButton_new (res, 3 * mwidth / 5, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
-      res->font_small, 0xFFFFFFFF, 0xFF000000, "NEXT", GSpriteEditor_next_solution, spr));
 
   GSprite_add_child (margin,
     GSpriteButton_new (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
@@ -384,6 +402,6 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
   GSpriteBoard_start (spr->board, GEDITOR_DEFAULT_SIZE, GEDITOR_DEFAULT_SIZE, 0, NULL, NULL);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
 
-  spr->solver_timer_id = SDL_AddTimer (500, GSpriteEditor_solver_timer, spr);
+  spr->solver_timer_id = SDL_AddTimer (100, GSpriteEditor_solver_timer, spr);
   return (GSprite *)spr;
 }
