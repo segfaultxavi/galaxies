@@ -78,12 +78,12 @@ void GSolver_free (GSolver *solver) {
 int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
   int id = GSOLVER_CANDIDATE (solver, x, y, c);
   int old_id = GSOLVER_CURRENT_OPTION (solver, x, y);
+  int oppx, oppy;
 
   // If this tile is not fixed, set it to this core id
   if (((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) &&
       (GSOLVER_CANDIDATE_LEN (solver, x, y) > 1)) {
     GSpriteCore *core = solver->cores[id];
-    int oppx, oppy;
     if (old_id > -1) {
       // Remove previous opposite, if there was one
       GSpriteCore *old_core = solver->cores[old_id];
@@ -122,6 +122,15 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
     // If we found one, keep iterating
     int i = 0;
     while ((i < GSOLVER_CANDIDATE_LEN (solver, x, y)) && (GSolver_set_candidate (solver, x, y, i) == 0)) i++;
+    if (i == GSOLVER_CANDIDATE_LEN (solver, x, y)) {
+      if (((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) &&
+          (GSOLVER_CANDIDATE_LEN (solver, x, y) > 1)) {
+        GSOLVER_CURRENT_OPTION (solver, x, y) = -1;
+        GSOLVER_STATE (solver, x, y) = 0;
+        GSOLVER_CURRENT_OPTION (solver, oppx, oppy) = -1;
+        GSOLVER_STATE (solver, oppx, oppy) = 0;
+      }
+    }
     return i < GSOLVER_CANDIDATE_LEN (solver, x, y);
   }
   return 1;
