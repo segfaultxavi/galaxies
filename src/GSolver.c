@@ -79,6 +79,7 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
   int id = GSOLVER_CANDIDATE (solver, x, y, c);
   int old_id = GSOLVER_CURRENT_OPTION (solver, x, y);
   int oppx, oppy;
+  int moved = 0;
 
   // If this tile is not fixed, set it to this core id
   if (((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) &&
@@ -108,6 +109,7 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
     GSOLVER_STATE (solver, x, y) = c;
     GSOLVER_CURRENT_OPTION (solver, oppx, oppy) = id;
     GSOLVER_STATE (solver, oppx, oppy) = -1; // The opposite tile is locked until we detach this tile from this code
+    moved = 1;
   }
 
   // Find next movable tile (= unlocked)
@@ -123,8 +125,7 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
     int i = 0;
     while ((i < GSOLVER_CANDIDATE_LEN (solver, x, y)) && (GSolver_set_candidate (solver, x, y, i) == 0)) i++;
     if (i == GSOLVER_CANDIDATE_LEN (solver, x, y)) {
-      if (((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) &&
-          (GSOLVER_CANDIDATE_LEN (solver, x, y) > 1)) {
+      if (moved) {
         GSOLVER_CURRENT_OPTION (solver, x, y) = -1;
         GSOLVER_STATE (solver, x, y) = 0;
         GSOLVER_CURRENT_OPTION (solver, oppx, oppy) = -1;
@@ -437,5 +438,5 @@ float GSolver_get_progress (GSolver *solver) {
   if (solver->quit) return 1.f;
   if (solver->total_options == 0)
     return 0.f;
-  return (float)(solver->explored_options / solver->total_options);
+  return (float)solver->explored_options / solver->total_options;
 }
