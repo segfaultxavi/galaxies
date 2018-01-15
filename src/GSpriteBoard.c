@@ -164,10 +164,16 @@ int GSpriteBoard_is_tile_selectable (GSpriteBoard *spr, int x, int y) {
   if (x < 0 || y < 0 || x >= spr->mapSizeX || y >= spr->mapSizeY) return 0;
   if (GSpriteTile_get_id (GBOARD_TILE (spr, x, y)) == spr->currCoreId) return 1;
   if (GSpriteBoard_valid_tile_position (spr, x, y, spr->currCoreId)) {
+#ifdef __ANDROID__
+    // On touch devices there is no hovering, so we use the galaxy outline to indicate
+    // valid moves instead of the tile opposite to the one currently hovered.
+    return 1;
+#else
     int x2, y2;
     if (x == spr->currTileX && y == spr->currTileY) return 1;
     GSpriteCore_get_opposite (spr->cores[spr->currCoreId], spr->currTileX, spr->currTileY, &x2, &y2);
     if (x == x2 && y == y2) return 1;
+#endif
   }
   return 0;
 }
