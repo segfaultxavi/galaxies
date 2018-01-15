@@ -39,6 +39,7 @@ const char *credits[][2] = {
   {"Fonts", "BAJORAN by Kiwi media"},
   {"", "SPIN CYCLE by Blue Vinyl fonts"},
   {"", "DAYS by Alexander Kalachev" },
+  {"", "TELEGRAMA by YOFonts"},
   {"Music", "?"},
   {"Sound", "?"},
   {"Libraries", "sdl, sdl_ttf"}
