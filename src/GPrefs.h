@@ -11,6 +11,7 @@ struct _GPrefs {
   int num_levels;
   int level_status[GPREFS_MAX_LEVELS];
   char *level_desc[GPREFS_MAX_LEVELS];
+  char *editor_desc;
 };
 
 void GPrefs_save (GPrefs *prefs);

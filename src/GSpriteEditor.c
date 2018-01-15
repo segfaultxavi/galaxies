@@ -47,7 +47,7 @@ struct _GSpriteEditor {
   Uint32 solver_start_timestamp;
 };
 
-void GSpriteEditor_board_changed (GSpriteEditor *spr);
+void GSpriteEditor_cores_changed (GSpriteEditor *spr);
 
 static void GSpriteEditor_reset_yes (void *userdata) {
   GSpriteEditor *spr = userdata;
@@ -78,7 +78,7 @@ static void GSpriteEditor_restart_yes (void *userdata) {
   spr->board = (GSpriteBoard *)GSpriteBoard_new (spr->base.res, 1);
   GSpriteBoard_start (spr->board, GEDITOR_DEFAULT_SIZE, GEDITOR_DEFAULT_SIZE, 0, NULL, NULL);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
-  GSpriteEditor_board_changed (spr);
+  GSpriteEditor_cores_changed (spr);
 }
 
 static int GSpriteEditor_restart(void *userdata, int *destroyed) {
@@ -119,7 +119,7 @@ static void GSpriteEditor_size_change_yes (void *userdata) {
   sc->spr->board = (GSpriteBoard *)GSpriteBoard_new (sc->spr->base.res, 1);
   GSpriteBoard_start (sc->spr->board, mapSizeX, mapSizeY, 0, NULL, NULL);
   GSprite_add_child ((GSprite *)sc->spr, (GSprite *)sc->spr->board);
-  GSpriteEditor_board_changed (sc->spr);
+  GSpriteEditor_cores_changed (sc->spr);
 }
 
 static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
@@ -172,7 +172,7 @@ static void GSpriteEditor_copy_from_clipboard_yes (void *userdata) {
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   SDL_free (cfc->new_desc);
   cfc->new_desc = NULL;
-  GSpriteEditor_board_changed (spr);
+  GSpriteEditor_cores_changed (spr);
 }
 
 static void GSpriteEditor_copy_from_clipboard_no (void *userdata) {
@@ -281,6 +281,16 @@ static void GSpriteEditor_update_solution_labels (GSpriteEditor *spr) {
   }
 }
 
+void GSpriteEditor_tiles_changed (GSpriteEditor *spr, char *desc) {
+  GPrefs *prefs = &spr->base.res->preferences;
+  if (desc) {
+    if (prefs->editor_desc) {
+      SDL_free (prefs->editor_desc);
+    }
+    prefs->editor_desc = desc;
+  }
+}
+
 static int GSpriteEditor_prev_solution (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
 
@@ -293,6 +303,7 @@ static int GSpriteEditor_prev_solution (void *userdata, int *destroyed) {
 
   GSpriteBoard_set_tiles (spr->board, GSolver_get_solution (spr->solver, spr->current_solution));
   GSpriteEditor_update_solution_labels (spr);
+  GSpriteEditor_tiles_changed (spr, GSpriteBoard_save (spr->board, 1));
 
   return 1;
 }
@@ -309,17 +320,20 @@ static int GSpriteEditor_next_solution (void *userdata, int *destroyed) {
 
   GSpriteBoard_set_tiles (spr->board, GSolver_get_solution (spr->solver, spr->current_solution));
   GSpriteEditor_update_solution_labels (spr);
+  GSpriteEditor_tiles_changed (spr, GSpriteBoard_save (spr->board, 1));
 
   return 1;
 }
 
-void GSpriteEditor_board_changed (GSpriteEditor *spr) {
+void GSpriteEditor_cores_changed (GSpriteEditor *spr) {
   if (spr->solver)
     GSolver_free (spr->solver);
   spr->solver = GSolver_new (spr->board);
   spr->solver_start_timestamp = SDL_GetTicks ();
   spr->num_solutions = spr->current_solution = 0;
   GSpriteEditor_update_solution_labels (spr);
+
+  GSpriteEditor_tiles_changed (spr, GSpriteBoard_save (spr->board, 1));
 }
 
 static int GSpriteEditor_event (GSpriteEditor *spr, GEvent *event, int *destroyed) {
@@ -365,7 +379,7 @@ Uint32 GSpriteEditor_solver_timer (Uint32 interval, void *param) {
     GSpriteButton_new (res, x * mwidth / 4, y * line, mwidth / 2 - 2, line - 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, \
       res->font_small, 0xFFFFFFFF, 0xFF000000, name, callback, spr))
 
-GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
+GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *desc) {
   int line = res->game_height / 10;
   int mwidth = res->game_width - res->game_height;
   GSpriteEditor *spr = (GSpriteEditor *)GSprite_new (res, sizeof (GSpriteEditor),
@@ -416,7 +430,10 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
 
   GSprite_add_child ((GSprite *)spr, margin);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 1);
-  GSpriteBoard_start (spr->board, GEDITOR_DEFAULT_SIZE, GEDITOR_DEFAULT_SIZE, 0, NULL, NULL);
+  if (!desc)
+    GSpriteBoard_start (spr->board, GEDITOR_DEFAULT_SIZE, GEDITOR_DEFAULT_SIZE, 0, NULL, NULL);
+  else
+    GSpriteBoard_load (spr->board, desc);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
 
   spr->solver_timer_id = SDL_AddTimer (100, GSpriteEditor_solver_timer, spr);

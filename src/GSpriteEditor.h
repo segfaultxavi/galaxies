@@ -9,7 +9,8 @@
 
 typedef struct _GSpriteEditor GSpriteEditor;
 
-GSprite *GSpriteEditor_new (GResources *resources, GSprite *main_menu);
-void GSpriteEditor_board_changed (GSpriteEditor *editor);
+GSprite *GSpriteEditor_new (GResources *resources, GSprite *main_menu, const char *desc);
+void GSpriteEditor_cores_changed (GSpriteEditor *spr);
+void GSpriteEditor_tiles_changed (GSpriteEditor *spr, char *desc);
 
 #endif

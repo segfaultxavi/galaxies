@@ -66,7 +66,7 @@ static void GSpriteBoard_remove_core (GSpriteBoard *spr, int id) {
 
   spr->currCoreId = -1;
 
-  GSpriteEditor_board_changed ((GSpriteEditor *)spr->base.parent);
+  GSpriteEditor_cores_changed ((GSpriteEditor *)spr->base.parent);
 }
 
 static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata, int *destroyed) {
@@ -109,7 +109,7 @@ static void GSpriteBoard_add_core (GSpriteBoard *spr, float cx, float cy) {
   spr->currCoreId = id;
   ((GSprite*)spr->coreCursor)->visible = 0;
 
-  GSpriteEditor_board_changed ((GSpriteEditor *)spr->base.parent);
+  GSpriteEditor_cores_changed ((GSpriteEditor *)spr->base.parent);
 }
 
 static int GSpriteBoard_check_completion (GSpriteBoard *spr) {
@@ -300,6 +300,8 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
     if (GSpriteBoard_check_completion (spr)) {
       GSpriteGalaxies_complete ((GSpriteGalaxies *)spr->base.parent);
     }
+  } else {
+    GSpriteEditor_tiles_changed ((GSpriteEditor *)spr->base.parent, GSpriteBoard_save (spr, 1));
   }
 }
 
@@ -627,6 +629,8 @@ void GSpriteBoard_reset (GSpriteBoard *spr) {
 
   if (!spr->editing)
     GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED, GSpriteBoard_save (spr, 0));
+  else
+    GSpriteEditor_tiles_changed ((GSpriteEditor *)spr->base.parent, GSpriteBoard_save (spr, 0));
 }
 
 int GSpriteBoard_get_map_size_x (GSpriteBoard *spr) {

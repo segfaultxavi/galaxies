@@ -27,6 +27,10 @@ void GPrefs_save (GPrefs *prefs) {
       SDL_RWwrite (rwops, buff, SDL_strlen (buff), 1);
     }
   }
+  if (prefs->editor_desc) {
+    SDL_snprintf (buff, sizeof (buff), "editor.desc %s\n", prefs->editor_desc);
+    SDL_RWwrite (rwops, buff, SDL_strlen (buff), 1);
+  }
 
   SDL_RWclose (rwops);
 
@@ -82,6 +86,13 @@ void GPrefs_load (GPrefs *prefs) {
       while (ptr_cr < buff + size && ptr_cr[0] != '\n') ptr_cr++;
       prefs->level_desc[l] = SDL_malloc (ptr_cr - ptr + 1);
       SDL_strlcpy (prefs->level_desc[l], ptr, ptr_cr - ptr + 1);
+    } else if (SDL_strncmp (ptr, "editor.desc ", 12) == 0) {
+      char *ptr_cr;
+      ptr += 12;
+      ptr_cr = ptr;
+      while (ptr_cr < buff + size && ptr_cr[0] != '\n') ptr_cr++;
+      prefs->editor_desc = SDL_malloc (ptr_cr - ptr + 1);
+      SDL_strlcpy (prefs->editor_desc, ptr, ptr_cr - ptr + 1);
     } else {
       SDL_Log ("Could not understand line: %s\n", ptr);
       goto exit;
@@ -102,4 +113,6 @@ void GPrefs_free (GPrefs *prefs) {
     if (prefs->level_desc[l])
       SDL_free (prefs->level_desc[l]);
   }
+  if (prefs->editor_desc)
+    SDL_free (prefs->editor_desc);
 }

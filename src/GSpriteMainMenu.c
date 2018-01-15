@@ -21,21 +21,11 @@ static int GSpriteMainMenu_play (void *userdata, int *destroyed) {
   return 1;
 }
 
-static void GSpriteMainMenu_editor_yes (void *userdata) {
+static int GSpriteMainMenu_editor (void *userdata, int *destroyed) {
   GSpriteMainMenu *spr = userdata;
   SDL_Log ("Editor");
   spr->base.visible = 0;
-  GSprite_add_child (spr->base.parent, GSpriteEditor_new (spr->base.res, (GSprite *)spr));
-}
-
-static int GSpriteMainMenu_editor (void *userdata, int *destroyed) {
-  GSpriteMainMenu *spr = userdata;
-
-  GSprite_add_child (spr->base.parent,
-    GSpritePopup_new (spr->base.res, "EDITOR",
-        "This is Work In progress.\n"
-        "I accept no complains.",
-        "OK", GSpriteMainMenu_editor_yes, NULL, NULL, spr));
+  GSprite_add_child (spr->base.parent, GSpriteEditor_new (spr->base.res, (GSprite *)spr, spr->base.res->preferences.editor_desc));
   return 1;
 }
 
