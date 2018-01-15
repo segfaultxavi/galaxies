@@ -11,8 +11,6 @@ struct _GSolver {
   char *initial_candidates;
   signed char *state;
   signed char *current_option;
-  Uint64 total_options;
-  Uint64 explored_options;
   int num_solutions;
   char **solutions;
   SDL_Thread *worker_thread;
@@ -145,7 +143,7 @@ static void GSolver_output_current_solution (GSolver *solver) {
       buff[x] = 'a' + GSOLVER_CURRENT_OPTION (solver, x, y);
     }
     buff[x] = '\0';
-    SDL_Log ("Solver:Option %3ld:%s", solver->total_options, buff);
+    SDL_Log ("Solver:Option %3d:%s", solver->num_solutions, buff);
   }
 }
 
@@ -229,7 +227,6 @@ static void GSolver_flood_fill (GSolver *solver, int sx, int sy, int id) {
 static void GSolver_check_current_configuration (GSolver *solver) {
   int i, x, y;
   char *sol;
-  solver->explored_options++;
 
   // FIXME: This should not be needed...
   for (y = 0; y < solver->map_size_y; y++) {
@@ -276,57 +273,28 @@ static void GSolver_check_current_configuration (GSolver *solver) {
   }
 }
 
-static void GSolver_reset_state (GSolver *solver) {
-  int x, y;
-  for (y = 0; y < solver->map_size_y; y++) {
-    for (x = 0; x < solver->map_size_x; x++) {
-      if (((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) &&
-          (GSOLVER_CANDIDATE_LEN (solver, x, y) > 1)) {
-        GSOLVER_STATE (solver, x, y) = 0;
-        GSOLVER_CURRENT_OPTION (solver, x, y) = -1;
-      }
-    }
-  }
-}
-
 static int GSolver_worker_thread (GSolver *solver) {
-
+  Uint64 options = 0;
   Uint32 timestamp = SDL_GetTicks ();
 
   if (!GSolver_set_candidate (solver, 0, 0, 0)) {
     SDL_Log ("Solver:No solution:Unable to set initial candidate list");
-    GSolver_output_initial_candidates (solver);
-    GSolver_output_state (solver);
-    GSolver_output_current_solution (solver);
     solver->quit = 1;
     return 0;
   }
 
-  // Phase 1: Count number of options
-  solver->total_options = 0;
-  SDL_Log ("Solver:Counting options");
-  while (!solver->quit) {
-    solver->total_options++;
-    if (!GSolver_next_configuration (solver))
-      break;
-  }
-  SDL_Log ("Solver:Total options: %ld", solver->total_options);
-
-  // Phase 2: Check every option
-  GSolver_reset_state (solver);
-  GSolver_set_candidate (solver, 0, 0, 0);
-  solver->explored_options = 0;
   SDL_Log ("Solver:Checking solutions");
   while (!solver->quit) {
     GSolver_check_current_configuration (solver);
     if (!GSolver_next_configuration (solver))
       break;
+    options++;
   }
   SDL_Log ("Solver:Solutions found: %d", solver->num_solutions);
   timestamp = SDL_GetTicks () - timestamp;
   SDL_Log ("Solver:Time spent: %dms", timestamp);
   if (timestamp != 0)
-    SDL_Log ("Solver:Speed: %f options/s", 1000 * solver->total_options / (double)timestamp);
+    SDL_Log ("Solver:Speed: %d options/s", 1000 * options / timestamp);
   else
     SDL_Log ("Solver:Speed: inaccurate");
 
@@ -412,8 +380,6 @@ GSolver *GSolver_new (GSpriteBoard *board) {
 
   solver->num_solutions = 0;
   solver->solutions = NULL;
-  solver->total_options = 0;
-  solver->explored_options = 0;
 
   solver->quit = 0;
   solver->worker_thread = SDL_CreateThread ((SDL_ThreadFunction)GSolver_worker_thread, "Solver", solver);
@@ -435,8 +401,22 @@ char *GSolver_get_solution (GSolver *solver, int ndx) {
 }
 
 float GSolver_get_progress (GSolver *solver) {
+  int i, total = 0, explored = 0;
+
   if (solver->quit) return 1.f;
-  if (solver->total_options == 0)
-    return 0.f;
-  return (float)solver->explored_options / solver->total_options;
+
+  // Subsampling an X across the board
+  for (i = 0; i < solver->map_size_x; i++) {
+      int x = i;
+      int y = 0;
+      int state = GSOLVER_STATE (solver, x, y);
+      int len = GSOLVER_CANDIDATE_LEN (solver, x, y);
+      if (state == -1) {
+        state = len - 1;
+      }
+      explored = explored * len + state;
+      total = total * len + len - 1;
+  }
+
+  return (float)explored / (total - 1);
 }
