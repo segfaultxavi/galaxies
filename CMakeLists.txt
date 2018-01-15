@@ -31,6 +31,7 @@ set(SRCS
     src/GSpriteLevelSelect.c
     src/GSpriteProgress.c
     src/main.c
+    src/telegrama_font.c
     )
 
 set(HEADERS

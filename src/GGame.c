@@ -17,6 +17,8 @@ extern unsigned const char spincycle_otf[];
 extern unsigned int spincycle_otf_len;
 extern unsigned const char days_otf[];
 extern unsigned int days_otf_len;
+extern unsigned const char telegrama_ttf[];
+extern unsigned int telegrama_ttf_len;
 
 GGame *GGame_new () {
   GGame *game = SDL_malloc (sizeof (GGame));
@@ -51,7 +53,9 @@ GGame *GGame_new () {
   res->font_small = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
   font_rwops = SDL_RWFromConstMem (days_otf, days_otf_len);
   res->font_text = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
-  if (!res->font_title_big || !res->font_title_med || !res->font_med || !res->font_small || !res->font_text) {
+  font_rwops = SDL_RWFromConstMem (telegrama_ttf, telegrama_ttf_len);
+  res->font_mono = TTF_OpenFontRW (font_rwops, 1, res->game_height / 30);
+  if (!res->font_title_big || !res->font_title_med || !res->font_med || !res->font_small || !res->font_text || !res->font_mono) {
     SDL_Log ("TTF_OpenFontRW: %s", SDL_GetError ());
     goto error;
   }
@@ -83,6 +87,7 @@ void GGame_free (GGame *game) {
   TTF_CloseFont (game->resources.font_med);
   TTF_CloseFont (game->resources.font_small);
   TTF_CloseFont (game->resources.font_text);
+  TTF_CloseFont (game->resources.font_mono);
   SDL_FreeCursor (game->resources.pointer_cur);
   SDL_FreeCursor (game->resources.hand_cur);
   GPrefs_free (&game->resources.preferences);
