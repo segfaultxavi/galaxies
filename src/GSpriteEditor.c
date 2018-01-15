@@ -383,10 +383,10 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu) {
   ((GSprite *)spr->progress_spr)->visible = 0;
 
   GSprite_add_child (margin,
-    GSpriteButton_new (res, 0, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+    GSpriteButton_new (res, 0, 8 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
       res->font_small, 0xFFFFFFFF, 0xFF000000, "PREV", GSpriteEditor_prev_solution, spr));
   GSprite_add_child (margin,
-    GSpriteButton_new (res, 3 * mwidth / 5, 8 * line, 2 * mwidth / 5, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+    GSpriteButton_new (res, 2 * mwidth / 3, 8 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
       res->font_small, 0xFFFFFFFF, 0xFF000000, "NEXT", GSpriteEditor_next_solution, spr));
 
   spr->num_sols_spr = spr->curr_sol_spr = NULL;
