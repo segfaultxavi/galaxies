@@ -79,6 +79,8 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
   int oppx, oppy;
   int moved = 0;
 
+  if (solver->quit) return 0;
+
   // If this tile is not fixed, set it to this core id
   if (((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) &&
       (GSOLVER_CANDIDATE_LEN (solver, x, y) > 1)) {
