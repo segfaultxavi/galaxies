@@ -296,7 +296,7 @@ static int GSolver_worker_thread (GSolver *solver) {
   timestamp = SDL_GetTicks () - timestamp;
   SDL_Log ("Solver:Time spent: %dms", timestamp);
   if (timestamp != 0)
-    SDL_Log ("Solver:Speed: %d options/s", 1000 * options / timestamp);
+    SDL_Log ("Solver:Speed: %f options/s", 1000 * (double)options / timestamp);
   else
     SDL_Log ("Solver:Speed: inaccurate");
 
