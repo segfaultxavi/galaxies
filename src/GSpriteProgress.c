@@ -10,6 +10,10 @@
 struct _GSpriteProgress {
   GSprite base;
   int progress;
+  GSprite *text;
+  TTF_Font *text_font;
+  Uint32 text_color;
+  Uint32 glow_color;
 };
 
 static void GSpriteProgress_render (GSpriteProgress *spr, int offsx, int offsy) {
@@ -47,15 +51,17 @@ static void GSpriteProgress_render (GSpriteProgress *spr, int offsx, int offsy) 
 
 GSprite *GSpriteProgress_new (GResources *res, int x, int y, int w, int h, const char *text, TTF_Font *font, Uint32 text_color, Uint32 glow_color, float progress) {
   GSpriteProgress *spr;
-  GSprite *label;
 
   // Progress
   spr = (GSpriteProgress *)GSprite_new (res, sizeof (GSpriteProgress),
       (GSpriteRender)GSpriteProgress_render, NULL, NULL, NULL);
 
   // Text
-  label = GSpriteLabel_new (res, w / 2, h  / 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, font, text_color, glow_color, text);
-  GSprite_add_child ((GSprite *)spr, label);
+  spr->text = GSpriteLabel_new (res, w / 2, h  / 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, font, text_color, glow_color, text);
+  GSprite_add_child ((GSprite *)spr, spr->text);
+  spr->text_font = font;
+  spr->text_color = text_color;
+  spr->glow_color = glow_color;
 
   spr->base.x = x;
   spr->base.y = y;
@@ -66,4 +72,11 @@ GSprite *GSpriteProgress_new (GResources *res, int x, int y, int w, int h, const
 
 void GSpriteProgress_set_progress (GSpriteProgress *spr, float progress) {
   spr->progress = (int)(progress * spr->base.w);
+}
+
+void GSpriteProgress_set_text (GSpriteProgress *spr, const char *text) {
+  GSprite_free (spr->text);
+  spr->text = GSpriteLabel_new (spr->base.res, spr->base.w / 2, spr->base.h / 2,
+      GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, spr->text_font, spr->text_color, spr->glow_color, text);
+  GSprite_add_child ((GSprite *)spr, spr->text);
 }

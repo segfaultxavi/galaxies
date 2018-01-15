@@ -44,6 +44,7 @@ struct _GSpriteEditor {
   int num_solutions;
   int current_solution;
   SDL_TimerID solver_timer_id;
+  Uint32 solver_start_timestamp;
 };
 
 void GSpriteEditor_board_changed (GSpriteEditor *spr);
@@ -255,6 +256,21 @@ static void GSpriteEditor_update_solution_labels (GSpriteEditor *spr) {
   if (spr->solver) {
     float progress = GSolver_get_progress (spr->solver);
     if (progress < 1.f) {
+      Uint32 timestamp = SDL_GetTicks ();
+      float ellapsed = (timestamp - spr->solver_start_timestamp) / 1000.f;
+      if (ellapsed > 5.f && progress > 0.f) {
+        char buff[128];
+        int eta = (int)((1 - progress) * ellapsed / progress);
+        if (eta < 60)
+          SDL_snprintf (buff, sizeof (buff), "Time remaining %ds", eta);
+        else if (eta < 3600)
+          SDL_snprintf (buff, sizeof (buff), "Time remaining %d:%02d", eta / 60, eta % 60);
+        else
+          SDL_snprintf (buff, sizeof (buff), "Time remaining %d:%02d:%02d", eta / 3600, (eta / 60) % 60, eta % 60);
+        GSpriteProgress_set_text (spr->progress_spr, buff);
+      } else {
+        GSpriteProgress_set_text (spr->progress_spr, "Finding solutions");
+      }
       ((GSprite *)spr->progress_spr)->visible = 1;
       GSpriteProgress_set_progress (spr->progress_spr, progress);
     } else {
@@ -301,6 +317,7 @@ void GSpriteEditor_board_changed (GSpriteEditor *spr) {
   if (spr->solver)
     GSolver_free (spr->solver);
   spr->solver = GSolver_new (spr->board);
+  spr->solver_start_timestamp = SDL_GetTicks ();
   spr->num_solutions = spr->current_solution = 0;
   GSpriteEditor_update_solution_labels (spr);
 }
