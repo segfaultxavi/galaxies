@@ -1,13 +1,15 @@
 TODO
-- Solver progress indicator in editor (progress bar: Finding solutions)
-- Save editor work (as if it was another level)
-- Use highlight to indicate possible moves, instead of hover, which does not work on Android
 - Double click involves NO mouse movement, doh!
 - When adding new levels, keep previous ones status (only save levels with status != UNTRIED, and init from initial_level_desc when there's no level desc in the preferences)
 - Add more levels
+- Audio effects
 - Game collects stats (completion time)
 - Prepare server to receive stats
 - Game sends stats
+- Multithreaded solver
+- Simplify solver (repeated code)
+- Remove "if (editing)" from SpriteBoard and use callbacks, as everywhere else.
+- Music
 
 IDEAS
 - Triangular and Hexagonal grids (add to save format)
