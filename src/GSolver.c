@@ -392,7 +392,7 @@ char *GSolver_get_solution (GSolver *solver, int ndx) {
 
 float GSolver_get_progress (GSolver *solver) {
   int x, y, total = 0, explored = 0;
-  int rows = SDL_max (solver->map_size_y / 4, 1);
+  int rows = 1;
 
   if (solver->quit) return 1.f;
 
