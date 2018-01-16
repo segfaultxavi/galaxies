@@ -41,8 +41,8 @@ const char *credits[][2] = {
   {"", "DAYS by Alexander Kalachev" },
   {"", "TELEGRAMA by YOFonts"},
   {"Music", "?"},
-  {"Sound", "?"},
-  {"Libraries", "sdl, sdl_ttf"}
+  {"Sound", "freesound.org"},
+  {"Libraries", "sdl, sdl_ttf, sdl_mixer"}
 };
 
 GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {

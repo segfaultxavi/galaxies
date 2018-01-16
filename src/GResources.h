@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 typedef struct _GResources GResources;
 
@@ -17,6 +18,7 @@ struct _GResources {
   GSprite *root;
   int game_width;
   int game_height;
+  Mix_Chunk *wav_ping;
 
   // Owned by GSpriteBoard
   SDL_Texture *core_texture;

@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include "GGame.h"
 #include "GResources.h"
 #include "GSprite.h"
@@ -19,12 +20,16 @@ extern unsigned const char days_otf[];
 extern unsigned int days_otf_len;
 extern unsigned const char telegrama_ttf[];
 extern unsigned int telegrama_ttf_len;
+extern unsigned const char ping_wav[];
+extern unsigned int ping_wav_len;
+extern unsigned const char pong_wav[];
+extern unsigned int pong_wav_len;
 
 GGame *GGame_new () {
   GGame *game = SDL_malloc (sizeof (GGame));
   GResources *res = &game->resources;
   SDL_DisplayMode sdpm;
-  SDL_RWops *font_rwops;
+  SDL_RWops *rwops;
   SDL_memset (game, 0, sizeof (GGame));
 
   // Window
@@ -43,20 +48,33 @@ GGame *GGame_new () {
   SDL_SetRenderDrawBlendMode (res->sdl_renderer, SDL_BLENDMODE_BLEND);
 
   // Fonts
-  font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
-  res->font_title_big = TTF_OpenFontRW (font_rwops, 1, res->game_height / 5);
-  font_rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
-  res->font_title_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
-  font_rwops = SDL_RWFromConstMem (spincycle_otf, spincycle_otf_len);
-  res->font_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
-  font_rwops = SDL_RWFromConstMem (spincycle_otf, spincycle_otf_len);
-  res->font_small = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
-  font_rwops = SDL_RWFromConstMem (days_otf, days_otf_len);
-  res->font_text = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
-  font_rwops = SDL_RWFromConstMem (telegrama_ttf, telegrama_ttf_len);
-  res->font_mono = TTF_OpenFontRW (font_rwops, 1, res->game_height / 30);
+  rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
+  res->font_title_big = TTF_OpenFontRW (rwops, 1, res->game_height / 5);
+  rwops = SDL_RWFromConstMem (___BA_TTF, ___BA_TTF_len);
+  res->font_title_med = TTF_OpenFontRW (rwops, 1, res->game_height / 10);
+  rwops = SDL_RWFromConstMem (spincycle_otf, spincycle_otf_len);
+  res->font_med = TTF_OpenFontRW (rwops, 1, res->game_height / 10);
+  rwops = SDL_RWFromConstMem (spincycle_otf, spincycle_otf_len);
+  res->font_small = TTF_OpenFontRW (rwops, 1, res->game_height / 20);
+  rwops = SDL_RWFromConstMem (days_otf, days_otf_len);
+  res->font_text = TTF_OpenFontRW (rwops, 1, res->game_height / 20);
+  rwops = SDL_RWFromConstMem (telegrama_ttf, telegrama_ttf_len);
+  res->font_mono = TTF_OpenFontRW (rwops, 1, res->game_height / 30);
   if (!res->font_title_big || !res->font_title_med || !res->font_med || !res->font_small || !res->font_text || !res->font_mono) {
     SDL_Log ("TTF_OpenFontRW: %s", SDL_GetError ());
+    goto error;
+  }
+
+  // Audio files
+  if (Mix_OpenAudio (MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096) != 0) {
+    SDL_Log ("Mix_OpenAudio: %s", Mix_GetError ());
+    goto error;
+  }
+  Mix_Init (0);
+  rwops = SDL_RWFromConstMem (ping_wav, ping_wav_len);
+  res->wav_ping = Mix_LoadWAV_RW (rwops, 1);
+  if (!res->wav_ping) {
+    SDL_Log ("Mix_LoadWAV_RW: %s", SDL_GetError ());
     goto error;
   }
 
@@ -82,6 +100,8 @@ error:
 void GGame_free (GGame *game) {
   if (!game) return;
   GSprite_free (game->resources.root);
+  Mix_FreeChunk (game->resources.wav_ping);
+  Mix_Quit ();
   TTF_CloseFont (game->resources.font_title_big);
   TTF_CloseFont (game->resources.font_title_med);
   TTF_CloseFont (game->resources.font_med);
