@@ -757,3 +757,10 @@ void GSpriteBoard_galaxy_size_highlight (GSpriteBoard *spr) {
     }
   }
 }
+
+void GSpriteBoard_size_from_desc (const char *desc, int *size_x, int *size_y) {
+  if (size_x)
+    *size_x = GSpriteBoard_a2i (desc[1]);
+  if (size_y)
+    *size_y = GSpriteBoard_a2i (desc[2]);
+}

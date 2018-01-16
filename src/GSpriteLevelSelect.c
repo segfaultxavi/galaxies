@@ -4,6 +4,7 @@
 #include "GSpriteGalaxies.h"
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
+#include "GSpriteBoard.h"
 #include <stdio.h>
 
 #define GLEVEL_BUTTONS_PER_LINE 5
@@ -115,7 +116,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
   int line = res->game_height / 8;
   int bstride = res->game_width / GLEVEL_BUTTONS_PER_LINE;
   int bmargin = bstride / 10;
-  int bsize =bstride - bmargin;
+  int bsize = bstride - bmargin;
   spr->base.w = spr->base.h = -1;
   spr->main_menu = main_menu;
   GSprite_add_child ((GSprite *)spr,
@@ -146,6 +147,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
     int x = l % GLEVEL_BUTTONS_PER_LINE;
     int y = l / GLEVEL_BUTTONS_PER_LINE;
     char text[4];
+    int size;
     sprintf (text, "%d", l);
     spr->buttons[l].level_spr = spr;
     spr->buttons[l].level = l;
@@ -153,6 +155,15 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
       GSpriteButton_new (res, x * bstride + bmargin / 2, 1 * line + y * bstride, bsize, bsize, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
         res->font_med, GSpriteLevelSelect_get_button_color (&spr->buttons[l]), 0xFF000000, text, GSpriteLevelSelect_selection, &spr->buttons[l]);
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->buttons[l].button_spr);
+
+    GSpriteBoard_size_from_desc (initial_level_descriptions[l], &size, NULL);
+    text[1] = '\0';
+    if (size <= 7) text[0] = 'S';
+    else if (size <= 10) text[0] = 'M';
+    else if (size <= 15) text[0] = 'L';
+    else text[0] = 'X';
+    GSprite_add_child ((GSprite *)spr->buttons[l].button_spr,
+        GSpriteLabel_new (res, bsize, bsize, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END, res->font_text, 0xFF000000, 0xFF808080, text));
   }
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
