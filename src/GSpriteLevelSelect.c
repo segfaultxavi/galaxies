@@ -59,7 +59,6 @@ void GSpriteLevelSelect_update_level_status (void *userdata, GSpriteLevelSelectL
     prefs->level_desc[button->level] = desc;
   }
   GSpriteButton_set_color (button->button_spr, GSpriteLevelSelect_get_button_color (button));
-  SDL_Log ("Level %d set to status %d", button->level, status);
 }
 
 static int GSpriteLevelSelect_back (void *userdata, int *destroyed) {
