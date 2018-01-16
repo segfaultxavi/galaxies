@@ -178,18 +178,21 @@ int GSpriteBoard_is_tile_selectable (GSpriteBoard *spr, int x, int y) {
   return 0;
 }
 
-static void GSpriteBoard_flood_fill (GSpriteBoard *spr, int sx, int sy, int id) {
+static int GSpriteBoard_flood_fill (GSpriteBoard *spr, int sx, int sy, int id) {
   GSpriteTile *tile = GBOARD_TILE (spr, sx, sy);
   int flags;
-  if (GSpriteTile_get_id (tile) != id) return;
+  int size = 0;
+  if (GSpriteTile_get_id (tile) != id) return size;
   flags = GSpriteTile_get_flags (tile);
-  if ((flags & GTILE_FLAG_VISITED) != 0) return;
+  if ((flags & GTILE_FLAG_VISITED) != 0) return size;
   GSpriteTile_set_flags (tile, flags | GTILE_FLAG_VISITED);
 
-  if (sx > 0) GSpriteBoard_flood_fill (spr, sx - 1, sy, id);
-  if (sx < spr->mapSizeX - 1) GSpriteBoard_flood_fill (spr, sx + 1, sy, id);
-  if (sy > 0) GSpriteBoard_flood_fill (spr, sx, sy - 1, id);
-  if (sy < spr->mapSizeY - 1) GSpriteBoard_flood_fill (spr, sx, sy + 1, id);
+  size = 1;
+  if (sx > 0) size += GSpriteBoard_flood_fill (spr, sx - 1, sy, id);
+  if (sx < spr->mapSizeX - 1) size += GSpriteBoard_flood_fill (spr, sx + 1, sy, id);
+  if (sy > 0) size += GSpriteBoard_flood_fill (spr, sx, sy - 1, id);
+  if (sy < spr->mapSizeY - 1) size += GSpriteBoard_flood_fill (spr, sx, sy + 1, id);
+  return size;
 }
 
 static void GSpriteBoard_check_core (GSpriteBoard *spr, int id) {
@@ -690,4 +693,67 @@ void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles) {
     }
   }
   spr->currCoreId = -1;
+}
+
+void GSpriteBoard_galaxy_size_highlight (GSpriteBoard *spr) {
+  int id, x, y, max_size = 0;
+
+  spr->currCoreId = -1;
+
+  // Find biggest galaxy
+  for (id = 0; id < spr->numCores; id++) {
+    GSpriteCore *core = spr->cores[id];
+    int sx, sy;
+    int size;
+
+    GSpriteCore_get_corner (core, &sx, &sy);
+
+    // Clear flag
+    for (y = 0; y < spr->mapSizeY; y++)
+      for (x = 0; x < spr->mapSizeX; x++) {
+        GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+        GSpriteTile_set_flags (tile, GSpriteTile_get_flags (tile) & ~GTILE_FLAG_VISITED);
+      }
+
+    // Fill all tiles connected to the core to find out size
+    size = GSpriteBoard_flood_fill (spr, sx, sy, id);
+    if (size > max_size) max_size = size;
+  }
+
+  // Brighten tiles according to their galaxy's size
+  for (id = 0; id < spr->numCores; id++) {
+    GSpriteCore *core = spr->cores[id];
+    int sx, sy;
+    int size;
+    Uint32 color;
+    int r, g, b;
+
+    GSpriteCore_get_corner (core, &sx, &sy);
+
+    // Clear flag
+    for (y = 0; y < spr->mapSizeY; y++)
+      for (x = 0; x < spr->mapSizeX; x++) {
+        GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+        GSpriteTile_set_flags (tile, GSpriteTile_get_flags (tile) & ~GTILE_FLAG_VISITED);
+      }
+
+    // Fill all tiles connected to the core to find out size
+    size = GSpriteBoard_flood_fill (spr, sx, sy, id);
+
+    color = GSpriteCore_get_color (core);
+    r = (color >> 16) & 0xFF;
+    g = (color >> 8) & 0xFF;
+    b = (color >> 0) & 0xFF;
+
+    color = ((0x80 + 0x7F * size / max_size) << 24) | (r << 16) + (g << 8) + b;
+    for (y = 0; y < spr->mapSizeY; y++) {
+      for (x = 0; x < spr->mapSizeX; x++) {
+        GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+        int tile_id = GSpriteTile_get_id (tile);
+        if (tile_id == id) {
+          GSpriteTile_set_id (tile, id, color);
+        }
+      }
+    }
+  }
 }

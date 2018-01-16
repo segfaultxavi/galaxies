@@ -24,5 +24,6 @@ int GSpriteBoard_get_map_size_y (GSpriteBoard *spr);
 int GSpriteBoard_is_empty (GSpriteBoard *spr);
 int GSpriteBoard_has_no_manual_tiles (GSpriteBoard *spr);
 void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles);
+void GSpriteBoard_galaxy_size_highlight (GSpriteBoard *spr);
 
 #endif
