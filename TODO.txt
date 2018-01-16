@@ -10,6 +10,7 @@ TODO
 - Simplify solver (repeated code)
 - Remove "if (editing)" from SpriteBoard and use callbacks, as everywhere else.
 - Music
+- Indicate Linux build dependencies somewhere (README or CMakeLists.txt)
 
 IDEAS
 - Triangular and Hexagonal grids (add to save format)
