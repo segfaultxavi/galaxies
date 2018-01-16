@@ -403,14 +403,14 @@ char *GSolver_get_solution (GSolver *solver, int ndx) {
 }
 
 float GSolver_get_progress (GSolver *solver) {
-  int i, total = 0, explored = 0;
+  int x, y, total = 0, explored = 0;
+  int rows = SDL_max (solver->map_size_y / 4, 1);
 
   if (solver->quit) return 1.f;
 
-  // Subsampling an X across the board
-  for (i = 0; i < solver->map_size_x; i++) {
-      int x = i;
-      int y = 0;
+  // Sample only the first 25% rows
+  for (y = 0; y < rows; y++) {
+    for (x = 0; x < solver->map_size_x; x++) {
       int state = GSOLVER_STATE (solver, x, y);
       int len = GSOLVER_CANDIDATE_LEN (solver, x, y);
       if (state == -1) {
@@ -418,6 +418,7 @@ float GSolver_get_progress (GSolver *solver) {
       }
       explored = explored * len + state;
       total = total * len + len - 1;
+    }
   }
 
   return (float)explored / (total - 1);
