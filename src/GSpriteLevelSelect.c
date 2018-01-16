@@ -24,8 +24,13 @@ static const char *initial_level_descriptions[] = {
   "1hhmeebfakekgckbkimgmmhmikcm",
   "1hhkggkakeljilceecafaldm",
   "1hhkhgcgillgkecmajabjafc",
-  "1mmxhhphpphpiedjalcmeaedaescwdugusvwmupwkubtawguew",
-  "1hhnggkdiemfcickagjkhmiiecgacc"
+  "1hhnggkdiemfcickagjkhmiiecgacc",
+  "1iigehkhcgmiooaa",
+  "1iioeekgkbmeiaoeilmkfnboakmoceag",
+  "1jjmiiggcckahmnikkqeammeiqon",
+  "1kkurcoeflakdreoiscksfdejceclakomgqmnpdaqrss",
+  "1llpkkmmeocrnsqpupskrdqhjcefiimgae",
+  "1mmxhhphpphpiedjalcmeaedaescwdugusvwmupwkubtawguew"
 };
 
 static Uint32 GSpriteLevelSelect_get_button_color (GSpriteLevelSelectButtonData *button) {
@@ -117,10 +122,20 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
       0xFF000000, 0xFFFFFFFF, "Level Selection"));
 
-  if (res->preferences.num_levels == 0) {
+  if (res->preferences.num_levels < num_levels) {
     // Initialize preferences
+    for (l = res->preferences.num_levels; l < num_levels; l++) {
+      res->preferences.level_status[l] = GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED;
+    }
     res->preferences.num_levels = num_levels;
-    for (l = 0; l < num_levels; l++) {
+  }
+
+  // Check if level descriptions have changed
+  for (l = 0; l < num_levels; l++) {
+    if (res->preferences.level_desc[l] &&
+        SDL_strncmp (res->preferences.level_desc[l], initial_level_descriptions[l], SDL_strlen (initial_level_descriptions[l])) != 0) {
+      SDL_free (res->preferences.level_desc[l]);
+      res->preferences.level_desc[l] = NULL;
       res->preferences.level_status[l] = GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED;
     }
   }

@@ -5,7 +5,7 @@
 
 typedef struct _GPrefs GPrefs;
 
-#define GPREFS_MAX_LEVELS 5
+#define GPREFS_MAX_LEVELS 50
 
 struct _GPrefs {
   int num_levels;
