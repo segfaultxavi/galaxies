@@ -81,9 +81,12 @@ GSprite *GSpriteCore_new (GResources *res, float x, float y, int id, int radiusX
   spr->base.w = radiusX;
   spr->base.h = radiusY;
   spr->solid = solid;
-  r = rand () % 0x40 + 0x40;
-  g = rand () % 0x40 + 0x40;
-  b = rand () % 0x40 + 0x40;
+  r = rand () % 0x40;
+  g = rand () % 0x40;
+  b = 0x40 - (r + g) / 2;
+  r += 0x40;
+  g += 0x40;
+  b += 0x40;
   spr->id = id;
   spr->color = 0x80000000 | (r << 16) + (g << 8) + b;
   spr->callback = callback;
