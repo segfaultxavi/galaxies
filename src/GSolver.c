@@ -75,27 +75,20 @@ void GSolver_free (GSolver *solver) {
 
 int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
   int id = GSOLVER_CANDIDATE (solver, x, y, c);
-  int old_id = GSOLVER_CURRENT_OPTION (solver, x, y);
+  int i = 0;
   int oppx, oppy;
   int moved = 0;
+  int next_x, next_y;
 
   if (solver->quit) return 0;
 
   // If this tile is not fixed, set it to this core id
-  if (((GSOLVER_TILE_FLAG (solver, x, y) & GTILE_FLAG_FIXED) == 0) &&
-      (GSOLVER_CANDIDATE_LEN (solver, x, y) > 1)) {
+  if (GSOLVER_STATE (solver, x, y) > -1) {
     GSpriteCore *core = solver->cores[id];
-    if (old_id > -1) {
-      // Remove previous opposite, if there was one
-      GSpriteCore *old_core = solver->cores[old_id];
-      int old_oppx, old_oppy;
-      GSpriteCore_get_opposite (old_core, x, y, &old_oppx, &old_oppy);
-      if (old_oppy > y || (old_oppy == y && old_oppx > x)) {
-        if (GSOLVER_CURRENT_OPTION (solver, old_oppx, old_oppy) == old_id) {
-          GSOLVER_STATE (solver, old_oppx, old_oppy) = 0; // This tile is now unlocked
-        }
-      }
-    }
+
+    GSOLVER_CURRENT_OPTION (solver, x, y) = id;
+    GSOLVER_STATE (solver, x, y) = c;
+
     GSpriteCore_get_opposite (core, x, y, &oppx, &oppy);
     if (oppy < y || (oppy == y && oppx < x)) {
       // Cannot go back
@@ -105,34 +98,31 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
       // This candidate core cannot be used: the opposite tile is locked
       return 0;
     }
-    GSOLVER_CURRENT_OPTION (solver, x, y) = id;
-    GSOLVER_STATE (solver, x, y) = c;
     GSOLVER_CURRENT_OPTION (solver, oppx, oppy) = id;
     GSOLVER_STATE (solver, oppx, oppy) = -1; // The opposite tile is locked until we detach this tile from this code
     moved = 1;
   }
 
   // Find next movable tile (= unlocked)
+  next_x = x;
+  next_y = y;
   do {
-    x++;
-    if (x >= solver->map_size_x) {
-      x = 0;
-      y++;
+    next_x++;
+    if (next_x >= solver->map_size_x) {
+      next_x = 0;
+      next_y++;
+      if (next_y == solver->map_size_y) return 1;
     }
-  } while (y < solver->map_size_y && GSOLVER_STATE (solver, x, y) == -1);
-  if (y < solver->map_size_y) {
-    // If we found one, keep iterating
-    int i = 0;
-    while ((i < GSOLVER_CANDIDATE_LEN (solver, x, y)) && (GSolver_set_candidate (solver, x, y, i) == 0)) i++;
-    if (i == GSOLVER_CANDIDATE_LEN (solver, x, y)) {
-      if (moved) {
-        GSOLVER_CURRENT_OPTION (solver, x, y) = -1;
-        GSOLVER_STATE (solver, x, y) = 0;
-        GSOLVER_CURRENT_OPTION (solver, oppx, oppy) = -1;
-        GSOLVER_STATE (solver, oppx, oppy) = 0;
-      }
+  } while (GSOLVER_STATE (solver, next_x, next_y) == -1);
+  // Iterate
+  while ((i < GSOLVER_CANDIDATE_LEN (solver, next_x, next_y)) &&
+      (GSolver_set_candidate (solver, next_x, next_y, i) == 0)) i++;
+  if (i == GSOLVER_CANDIDATE_LEN (solver, next_x, next_y)) {
+    if (moved) {
+      // Revert opposite
+      GSOLVER_STATE (solver, oppx, oppy) = 0;
     }
-    return i < GSOLVER_CANDIDATE_LEN (solver, x, y);
+    return 0;
   }
   return 1;
 }
@@ -182,35 +172,31 @@ static int GSolver_next_configuration (GSolver *solver) {
   int curr_y = solver->map_size_y - 1;
 
   do {
+    if (solver->quit == 1) return 0;
+
     // Search backwards for the first unlocked tile with untried candidates (if there is one)
     while ((GSOLVER_STATE (solver, curr_x, curr_y) == -1) ||
         (GSOLVER_STATE (solver, curr_x, curr_y) == GSOLVER_CANDIDATE_LEN (solver, curr_x, curr_y) - 1)) {
-
-      if (GSOLVER_STATE (solver, curr_x, curr_y) != -1) {
-        int old_id = GSOLVER_CURRENT_OPTION (solver, curr_x, curr_y);
-        // Remove previous opposite, if there was one
-        if (old_id > -1) {
-          GSpriteCore *old_core = solver->cores[old_id];
-          int old_oppx, old_oppy;
-          GSpriteCore_get_opposite (old_core, curr_x, curr_y, &old_oppx, &old_oppy);
-          if (old_oppy > curr_y || (old_oppy == curr_y && old_oppx > curr_x)) {
-            if (GSOLVER_CURRENT_OPTION (solver, old_oppx, old_oppy) == old_id) {
-              GSOLVER_STATE (solver, old_oppx, old_oppy) = 0; // This tile is now unlocked
-            }
-          }
-        }
-      }
-
       curr_x--;
       if (curr_x < 0) {
         curr_x = solver->map_size_x - 1;
         curr_y--;
         if (curr_y < 0) return 0;
       }
+
+      if (GSOLVER_STATE (solver, curr_x, curr_y) != -1) {
+        int old_id = GSOLVER_CANDIDATE (solver, curr_x, curr_y, GSOLVER_STATE (solver, curr_x, curr_y));
+        // Remove previous opposite
+        GSpriteCore *old_core = solver->cores[old_id];
+        int old_oppx, old_oppy;
+        GSpriteCore_get_opposite (old_core, curr_x, curr_y, &old_oppx, &old_oppy);
+        if (old_oppy > curr_y || (old_oppy == curr_y && old_oppx > curr_x)) {
+          GSOLVER_STATE (solver, old_oppx, old_oppy) = 0; // This tile is now unlocked
+        } else SDL_assert (0);
+      }
     }
-    GSOLVER_STATE (solver, curr_x, curr_y)++;
     // Set the tile to its next candidate, if possible. Otherwise, iterate.
-  } while (GSolver_set_candidate (solver, curr_x, curr_y, GSOLVER_STATE (solver, curr_x, curr_y)) == 0);
+  } while (GSolver_set_candidate (solver, curr_x, curr_y, GSOLVER_STATE (solver, curr_x, curr_y) + 1) == 0);
 
   return 1;
 }
@@ -278,8 +264,10 @@ static void GSolver_check_current_configuration (GSolver *solver) {
 static int GSolver_worker_thread (GSolver *solver) {
   Uint64 options = 0;
   Uint32 timestamp = SDL_GetTicks ();
+  int i = 0;
 
-  if (!GSolver_set_candidate (solver, 0, 0, 0)) {
+  while (i < GSOLVER_CANDIDATE_LEN (solver, 0, 0) && !GSolver_set_candidate (solver, 0, 0, i)) i++;
+  if (i == GSOLVER_CANDIDATE_LEN (solver, 0, 0)) {
     SDL_Log ("Solver:No solution:Unable to set initial candidate list");
     solver->quit = 1;
     return 0;
