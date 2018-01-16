@@ -73,6 +73,45 @@ void GSolver_free (GSolver *solver) {
   SDL_free (solver);
 }
 
+static void GSolver_output_current_solution (GSolver *solver) {
+  int x, y;
+  for (y = 0; y < solver->map_size_y; y++) {
+    char buff[1024];
+    for (x = 0; x < solver->map_size_x; x++) {
+      buff[x] = 'a' + GSOLVER_CURRENT_OPTION (solver, x, y);
+    }
+    buff[x] = '\0';
+    SDL_Log ("Solver:Option %3d:%s", solver->num_solutions, buff);
+  }
+}
+
+static void GSolver_output_state (GSolver *solver) {
+  int x, y;
+  for (y = 0; y < solver->map_size_y; y++) {
+    char buff[1024];
+    for (x = 0; x < solver->map_size_x; x++) {
+      buff[x] = '0' + GSOLVER_STATE (solver, x, y);
+    }
+    buff[x] = '\0';
+    SDL_Log ("Solver:State:%s", buff);
+  }
+}
+
+static void GSolver_output_initial_candidates (GSolver *solver) {
+  int x, y, i;
+  for (y = 0; y < solver->map_size_y; y++) {
+    char buff[1024];
+    SDL_memset (buff, '.', sizeof (buff));
+    for (x = 0; x < solver->map_size_x; x++) {
+      for (i = 0; i < GSOLVER_CANDIDATE_LEN (solver, x, y); i++) {
+        buff[x * solver->num_cores + i] = 'a' + GSOLVER_CANDIDATE (solver, x, y, i);
+      }
+    }
+    buff[x * solver->num_cores] = '\0';
+    SDL_Log ("Solver:Initial:%s", buff);
+  }
+}
+
 int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
   int id = GSOLVER_CANDIDATE (solver, x, y, c);
   int i = 0;
@@ -125,45 +164,6 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
     return 0;
   }
   return 1;
-}
-
-static void GSolver_output_current_solution (GSolver *solver) {
-  int x, y;
-  for (y = 0; y < solver->map_size_y; y++) {
-    char buff[1024];
-    for (x = 0; x < solver->map_size_x; x++) {
-      buff[x] = 'a' + GSOLVER_CURRENT_OPTION (solver, x, y);
-    }
-    buff[x] = '\0';
-    SDL_Log ("Solver:Option %3d:%s", solver->num_solutions, buff);
-  }
-}
-
-static void GSolver_output_state (GSolver *solver) {
-  int x, y;
-  for (y = 0; y < solver->map_size_y; y++) {
-    char buff[1024];
-    for (x = 0; x < solver->map_size_x; x++) {
-      buff[x] = '0' + GSOLVER_STATE (solver, x, y);
-    }
-    buff[x] = '\0';
-    SDL_Log ("Solver:State:%s", buff);
-  }
-}
-
-static void GSolver_output_initial_candidates (GSolver *solver) {
-  int x, y, i;
-  for (y = 0; y < solver->map_size_y; y++) {
-    char buff[1024];
-    SDL_memset (buff, '.', sizeof (buff));
-    for (x = 0; x < solver->map_size_x; x++) {
-      for (i = 0; i < GSOLVER_CANDIDATE_LEN (solver, x, y); i++) {
-        buff[x * solver->num_cores + i] = 'a' + GSOLVER_CANDIDATE (solver, x, y, i);
-      }
-    }
-    buff[x * solver->num_cores] = '\0';
-    SDL_Log ("Solver:Initial:%s", buff);
-  }
 }
 
 static int GSolver_next_configuration (GSolver *solver) {
