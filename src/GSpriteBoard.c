@@ -45,9 +45,9 @@ static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
 
 static void GSpriteBoard_set_curr_core_id (GSpriteBoard *spr, int id) {
   if (id > -1)
-    GAudio_play (spr->base.res->audio, spr->base.res->wav_ping);
+    GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_ping);
   else
-    GAudio_play (spr->base.res->audio, spr->base.res->wav_pong);
+    GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_pong);
   spr->currCoreId = id;
 }
 
@@ -311,7 +311,7 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
   // Assign tile to current core
   GSpriteTile_set_id (tile, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
   GSpriteTile_set_id (tile2, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
-  GAudio_play (spr->base.res->audio, spr->base.res->wav_woosh);
+  GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_woosh);
 
   if (!spr->editing) {
     GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_IN_PROGRESS, GSpriteBoard_save (spr, 1));

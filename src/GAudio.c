@@ -13,6 +13,8 @@ extern unsigned const char pong_wav[];
 extern unsigned int pong_wav_len;
 extern unsigned const char woosh_wav[];
 extern unsigned int woosh_wav_len;
+extern unsigned const char music_ogg[];
+extern unsigned int music_ogg_len;
 
 void GAudio_free (GAudio *audio) {
   if (!audio) return;
@@ -20,6 +22,8 @@ void GAudio_free (GAudio *audio) {
   Mix_FreeChunk ((Mix_Chunk *)audio->res->wav_ping);
   Mix_FreeChunk ((Mix_Chunk *)audio->res->wav_pong);
   Mix_FreeChunk ((Mix_Chunk *)audio->res->wav_woosh);
+  if (audio->res->ogg_music)
+    Mix_FreeMusic ((Mix_Music *)audio->res->ogg_music);
   Mix_Quit ();
   SDL_free (audio);
 }
@@ -34,7 +38,9 @@ GAudio *GAudio_new (GResources *res) {
     SDL_Log ("Mix_OpenAudio: %s", Mix_GetError ());
     goto error;
   }
-  Mix_Init (0);
+  if (Mix_Init (MIX_INIT_OGG) != MIX_INIT_OGG) {
+    SDL_Log ("Mix_Init: %s (continuing)", Mix_GetError ());
+  }
 
   rwops = SDL_RWFromConstMem (ping_wav, ping_wav_len);
   res->wav_ping = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
@@ -43,8 +49,13 @@ GAudio *GAudio_new (GResources *res) {
   rwops = SDL_RWFromConstMem (woosh_wav, woosh_wav_len);
   res->wav_woosh = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
   if (!res->wav_ping || !res->wav_pong || !res->wav_woosh) {
-    SDL_Log ("Mix_LoadWAV_RW: %s", SDL_GetError ());
+    SDL_Log ("Mix_LoadWAV_RW: %s", Mix_GetError ());
     goto error;
+  }
+  rwops = SDL_RWFromConstMem (music_ogg, music_ogg_len);
+  res->ogg_music = (GAudioMusic *)Mix_LoadMUS_RW (rwops, 1);
+  if (!res->ogg_music) {
+    SDL_Log ("Mix_LoadMUS_RW: %s (continuing)", Mix_GetError ());
   }
   return audio;
 
@@ -53,8 +64,19 @@ error:
   return NULL;
 }
 
-void GAudio_play (GAudio *audio, GAudioSample *sample) {
+void GAudio_play_sample (GAudio *audio, GAudioSample *sample) {
   if (!audio) return;
 
-  Mix_PlayChannel (-1, (Mix_Chunk *)sample, 0);
+  if (Mix_PlayChannel (-1, (Mix_Chunk *)sample, 0) == -1) {
+    SDL_Log ("Mix_PlayChannel: %s", Mix_GetError ());
+  }
 }
+
+void GAudio_play_music (GAudio *audio, GAudioMusic *music) {
+  if (!audio || !music) return;
+
+  if (Mix_PlayMusic ((Mix_Music *)music, -1) == -1) {
+    SDL_Log ("Mix_PlayMusic: %s", Mix_GetError ());
+  }
+}
+

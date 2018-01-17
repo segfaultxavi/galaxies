@@ -103,7 +103,9 @@
     <PostBuildEvent>
       <Command>xcopy ..\..\contrib\SDL2-2.0.7\lib\x86\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x86\*.dll $(OutputPath) /Q /Y
-xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll $(OutputPath) /Q /Y</Command>
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\libogg*.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\libvorbis*.dll $(OutputPath) /Q /Y</Command>
       <Message>
       </Message>
     </PostBuildEvent>
@@ -129,7 +131,9 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll $(OutputPath) /Q /Y<
     <PostBuildEvent>
       <Command>xcopy ..\..\contrib\SDL2-2.0.7\lib\x64\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y
-xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y</Command>
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libogg*.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libvorbis*.dll $(OutputPath) /Q /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,7 +161,9 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y<
     <PostBuildEvent>
       <Command>xcopy ..\..\contrib\SDL2-2.0.7\lib\x86\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x86\*.dll $(OutputPath) /Q /Y
-xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll $(OutputPath) /Q /Y</Command>
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\libogg*.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\libvorbis*.dll $(OutputPath) /Q /Y</Command>
       <Message>
       </Message>
     </PostBuildEvent>
@@ -187,7 +193,9 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll $(OutputPath) /Q /Y<
     <PostBuildEvent>
       <Command>xcopy ..\..\contrib\SDL2-2.0.7\lib\x64\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y
-xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y</Command>
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libogg*.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libvorbis*.dll $(OutputPath) /Q /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -214,6 +222,7 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y<
     <ClCompile Include="..\..\src\GSpriteProgress.c" />
     <ClCompile Include="..\..\src\GSpriteTile.c" />
     <ClCompile Include="..\..\src\main.c" />
+    <ClCompile Include="..\..\src\music_ogg.c" />
     <ClCompile Include="..\..\src\ping_wav.c" />
     <ClCompile Include="..\..\src\pong_wav.c" />
     <ClCompile Include="..\..\src\spincycle_font.c" />

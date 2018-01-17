@@ -133,6 +133,8 @@ void GGame_run (GGame *game) {
   // Some events must be handled as fast as possible
   SDL_SetEventFilter (GGame_event_filter, game);
 
+  GAudio_play_music (game->resources.audio, game->resources.ogg_music);
+
   while (!quit) {
     SDL_Event event;
     GEvent gevent = { 0 };

@@ -60,7 +60,7 @@ static int GSpriteButton_event (GSpriteButton *spr, GEvent *event, int *destroye
     case GEVENT_TYPE_SPRITE_ACTIVATE:
     case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
       spr->state = GBUTTON_STATE_ACTIVE;
-      GAudio_play (spr->base.res->audio, spr->base.res->wav_pong);
+      GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_pong);
       ret = spr->callback (spr->userdata, destroyed);
       break;
     default:

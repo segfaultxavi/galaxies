@@ -40,8 +40,8 @@ const char *credits[][2] = {
   {"", "SPIN CYCLE by Blue Vinyl fonts"},
   {"", "DAYS by Alexander Kalachev" },
   {"", "TELEGRAMA by YOFonts"},
-  {"Music", "?"},
-  {"Sound", "freesound.org"},
+  {"Music", "PATRICK LIEBERKIND"},
+  {"Sound FX", "freesound.org"},
   {"Libraries", "sdl, sdl_ttf, sdl_mixer"}
 };
 

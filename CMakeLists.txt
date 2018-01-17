@@ -37,6 +37,7 @@ set(SRCS
     src/pong_wav.c
     src/GAudio.c
     src/woosh_wav.c
+    src/music_ogg.c
     )
 
 set(HEADERS
