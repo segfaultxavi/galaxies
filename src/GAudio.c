@@ -18,6 +18,8 @@ void GAudio_free (GAudio *audio) {
   if (!audio) return;
 
   Mix_FreeChunk ((Mix_Chunk *)audio->res->wav_ping);
+  Mix_FreeChunk ((Mix_Chunk *)audio->res->wav_pong);
+  Mix_FreeChunk ((Mix_Chunk *)audio->res->wav_woosh);
   Mix_Quit ();
   SDL_free (audio);
 }
