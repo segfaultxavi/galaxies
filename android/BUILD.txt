@@ -1,5 +1,10 @@
 SETUP:
 
-Follow https://wiki.libsdl.org/Android
 Starting from Android SDK 26 the "android" tool does not support the "update project" command. Install version 25 from: http://dl-ssl.google.com/android/repository/platform_tools_r25.2.5-linux.zip
 And then: tools/bin/sdkmanager "platform-tools" "platforms;android-26" "build-tools;26.0.3"
+
+Follow https://wiki.libsdl.org/Android (3.2. SDL wrapper + SDL_image NDK module)
+Copy Android.mk from this folder into the <SDL>/build/com.qojat.galaxies/jni/src/Android.mk
+
+Create symlinks for SDL2_ttf and SDL2_mixer
+Edit Android.mk in SDL2_mixer and set to "false" all SUPPORT_* flags we don't need (OGG, FLAC, and specially MPG123 which does not seem to build for x86).
