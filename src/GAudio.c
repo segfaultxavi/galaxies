@@ -25,6 +25,7 @@ void GAudio_free (GAudio *audio) {
   if (audio->res->ogg_music)
     Mix_FreeMusic ((Mix_Music *)audio->res->ogg_music);
   Mix_Quit ();
+  Mix_CloseAudio ();
   SDL_free (audio);
 }
 
