@@ -218,6 +218,7 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y<
     <ClCompile Include="..\..\src\pong_wav.c" />
     <ClCompile Include="..\..\src\spincycle_font.c" />
     <ClCompile Include="..\..\src\telegrama_font.c" />
+    <ClCompile Include="..\..\src\woosh_wav.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\GAudio.h" />

@@ -43,6 +43,14 @@ static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
   }
 }
 
+static void GSpriteBoard_set_curr_core_id (GSpriteBoard *spr, int id) {
+  if (id > -1)
+    GAudio_play (spr->base.res->audio, spr->base.res->wav_ping);
+  else
+    GAudio_play (spr->base.res->audio, spr->base.res->wav_pong);
+  spr->currCoreId = id;
+}
+
 static void GSpriteBoard_remove_core (GSpriteBoard *spr, int id) {
   int i, x, y;
   GSprite_free ((GSprite *)spr->cores[id]);
@@ -65,7 +73,7 @@ static void GSpriteBoard_remove_core (GSpriteBoard *spr, int id) {
     }
   }
 
-  spr->currCoreId = -1;
+  GSpriteBoard_set_curr_core_id (spr, -1);
 
   GSpriteEditor_cores_changed ((GSpriteEditor *)spr->base.parent);
 }
@@ -78,11 +86,10 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata, int *
       res = 1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
-      GAudio_play (spr->base.res->audio, spr->base.res->wav_pong);
       if (spr->currCoreId != id)
-        spr->currCoreId = id;
+        GSpriteBoard_set_curr_core_id (spr, id);
       else
-        spr->currCoreId = -1;
+        GSpriteBoard_set_curr_core_id (spr, -1);
       spr->currTileX = -1;
       spr->currTileY = -1;
       res = 1;
@@ -108,7 +115,7 @@ static void GSpriteBoard_add_core (GSpriteBoard *spr, float cx, float cy) {
     spr->tileSizeX, spr->tileSizeY, 1, GSpriteBoard_core_event, spr);
   GSpriteBoard_deploy_core (spr, cx, cy, id);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[id]);
-  spr->currCoreId = id;
+  GSpriteBoard_set_curr_core_id (spr, id);
   ((GSprite*)spr->coreCursor)->visible = 0;
 
   GSpriteEditor_cores_changed ((GSpriteEditor *)spr->base.parent);
@@ -245,12 +252,12 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
     float cx, cy;
     if (!spr->editing) {
       // Without selected core, clicked on an owned tile 
-      spr->currCoreId = tile_id;
+      GSpriteBoard_set_curr_core_id (spr, tile_id);
       return;
     }
     GSpriteBoard_get_core_coords (spr, x, y, sx, sy, &cx, &cy);
     if (!GSpriteBoard_valid_core_position (spr, cx, cy)) {
-      spr->currCoreId = tile_id;
+      GSpriteBoard_set_curr_core_id (spr, tile_id);
       return;
     }
     // Add new core
@@ -258,13 +265,13 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
     return;
   } else if (spr->currCoreId == tile_id) {
     // Clicked on tile already owned: deselect core
-    spr->currCoreId = -1;
+    GSpriteBoard_set_curr_core_id (spr, -1);
     return;
   }
 
   if (GSpriteBoard_valid_tile_position (spr, x, y, spr->currCoreId) == 0) {
     // Clicked on an owned tile, which is invalid for the current core
-    spr->currCoreId = tile_id;
+    GSpriteBoard_set_curr_core_id (spr, tile_id);
     return;
   }
 
@@ -304,6 +311,7 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
   // Assign tile to current core
   GSpriteTile_set_id (tile, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
   GSpriteTile_set_id (tile2, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
+  GAudio_play (spr->base.res->audio, spr->base.res->wav_woosh);
 
   if (!spr->editing) {
     GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_IN_PROGRESS, GSpriteBoard_save (spr, 1));
@@ -339,7 +347,6 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
     case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
-      GAudio_play (spr->base.res->audio, spr->base.res->wav_ping);
       GSpriteBoard_handle_click (spr, x, y, event->x, event->y);
       res = 1;
       break;
@@ -447,7 +454,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->coreCursor);
   }
 
-  spr->currCoreId = -1;
+  GSpriteBoard_set_curr_core_id (spr, -1);
 }
 
 static int GSpriteBoard_a2i (char a) {

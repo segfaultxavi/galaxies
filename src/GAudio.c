@@ -11,6 +11,8 @@ extern unsigned const char ping_wav[];
 extern unsigned int ping_wav_len;
 extern unsigned const char pong_wav[];
 extern unsigned int pong_wav_len;
+extern unsigned const char woosh_wav[];
+extern unsigned int woosh_wav_len;
 
 void GAudio_free (GAudio *audio) {
   if (!audio) return;
@@ -36,7 +38,9 @@ GAudio *GAudio_new (GResources *res) {
   res->wav_ping = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
   rwops = SDL_RWFromConstMem (pong_wav, pong_wav_len);
   res->wav_pong = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
-  if (!res->wav_ping || !res->wav_pong) {
+  rwops = SDL_RWFromConstMem (woosh_wav, woosh_wav_len);
+  res->wav_woosh = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
+  if (!res->wav_ping || !res->wav_pong || !res->wav_woosh) {
     SDL_Log ("Mix_LoadWAV_RW: %s", SDL_GetError ());
     goto error;
   }

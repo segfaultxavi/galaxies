@@ -36,6 +36,7 @@ set(SRCS
     src/ping_wav.c
     src/pong_wav.c
     src/GAudio.c
+    src/woosh_wav.c
     )
 
 set(HEADERS

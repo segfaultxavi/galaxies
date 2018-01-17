@@ -19,7 +19,8 @@ struct _GResources {
   int game_width;
   int game_height;
   GAudio *audio;
-  GAudioSample *wav_ping, *wav_pong;
+  GAudioSample *wav_ping, *wav_pong, *wav_woosh;
+  GAudioSample *mp3_music;
 
   // Owned by GSpriteBoard
   SDL_Texture *core_texture;
