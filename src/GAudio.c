@@ -31,9 +31,12 @@ GAudio *GAudio_new (GResources *res) {
     goto error;
   }
   Mix_Init (0);
+
   rwops = SDL_RWFromConstMem (ping_wav, ping_wav_len);
   res->wav_ping = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
-  if (!res->wav_ping) {
+  rwops = SDL_RWFromConstMem (pong_wav, pong_wav_len);
+  res->wav_pong = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
+  if (!res->wav_ping || !res->wav_pong) {
     SDL_Log ("Mix_LoadWAV_RW: %s", SDL_GetError ());
     goto error;
   }
@@ -47,5 +50,5 @@ error:
 void GAudio_play (GAudio *audio, GAudioSample *sample) {
   if (!audio) return;
 
-  Mix_PlayChannel (-1, (Mix_Chunk *)audio->res->wav_ping, 0);
+  Mix_PlayChannel (-1, (Mix_Chunk *)sample, 0);
 }

@@ -7,6 +7,7 @@
 #include "GSpriteTile.h"
 #include "GSpriteBoardGrid.h"
 #include "GSpriteCore.h"
+#include "GAudio.h"
 #include <string.h>
 
 struct _GSpriteBoard {
@@ -77,6 +78,7 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata, int *
       res = 1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
+      GAudio_play (spr->base.res->audio, spr->base.res->wav_pong);
       if (spr->currCoreId != id)
         spr->currCoreId = id;
       else
@@ -337,6 +339,7 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
     case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
+      GAudio_play (spr->base.res->audio, spr->base.res->wav_ping);
       GSpriteBoard_handle_click (spr, x, y, event->x, event->y);
       res = 1;
       break;
