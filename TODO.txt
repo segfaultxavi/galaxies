@@ -1,19 +1,23 @@
-TODO
-- Double click involves NO mouse movement, doh!
-- When adding new levels, keep previous ones status (only save levels with status != UNTRIED, and init from initial_level_desc when there's no level desc in the preferences)
-- Add more levels
-- Audio effects
+FEATURES
+- Add a Level Complete sound
+- Music is compiled once for each architecture, better have it as an external file.
 - Game collects stats (completion time)
 - Prepare server to receive stats
 - Game sends stats
-- Multithreaded solver
-- Simplify solver (repeated code)
+- Add more levels
+- More audio effects
+- Level select buttons: indicate map size with a grid instead of letters.
+
+HOUSEKEEPING
 - Remove "if (editing)" from SpriteBoard and use callbacks, as everywhere else.
-- Music
+- Simplify solver (repeated code)
+- Multithreaded solver
+- Double click involves NO mouse movement, doh!
 - Indicate Linux build dependencies somewhere (README or CMakeLists.txt)
 
 IDEAS
 - Triangular and Hexagonal grids (add to save format)
+  Level selection buttons indicate the type of grid (in the shape of the button?)
 - Other types of symmetry besides 2-fold: 4-fold on square grid, 2-, 3- or 6-fold on hexagonal grid, 3-fold on triangular grid.
   Each core can have its own symmetry, indicated in the save format with uppercase letters (aa, aA, Aa, AA = types 0, 1, 2, 3, for the same coords).
 - Each core indicates the type of symmetry it produces
