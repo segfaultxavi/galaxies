@@ -35,6 +35,7 @@ set(SRCS
     src/telegrama_font.c
     src/ping_wav.c
     src/pong_wav.c
+    src/GAudio.c
     )
 
 set(HEADERS
@@ -58,6 +59,7 @@ set(HEADERS
     src/GSpriteTile.h
     src/GSpriteBoardGrid.h
     src/GSprite.h
+    src/GAudio.h
     )
 
 add_executable(galaxies ${SRCS} ${HEADERS})

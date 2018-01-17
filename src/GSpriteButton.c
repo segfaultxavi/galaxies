@@ -1,8 +1,8 @@
 #include <SDL.h>
-#include <SDL_mixer.h>
 #include "GSpriteButton.h"
 #include "GSpriteLabel.h"
 #include "GResources.h"
+#include "GAudio.h"
 
 typedef enum _GButtonState {
   GBUTTON_STATE_NORMAL,
@@ -60,7 +60,7 @@ static int GSpriteButton_event (GSpriteButton *spr, GEvent *event, int *destroye
     case GEVENT_TYPE_SPRITE_ACTIVATE:
     case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
       spr->state = GBUTTON_STATE_ACTIVE;
-      Mix_PlayChannel (-1, spr->base.res->wav_ping, 0);
+      GAudio_play (spr->base.res->audio, spr->base.res->wav_ping);
       ret = spr->callback (spr->userdata, destroyed);
       break;
     default:

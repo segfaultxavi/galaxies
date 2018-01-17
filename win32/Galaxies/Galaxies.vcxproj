@@ -193,6 +193,7 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y<
   <ItemGroup>
     <ClCompile Include="..\..\src\bajoran_font.c" />
     <ClCompile Include="..\..\src\days_font.c" />
+    <ClCompile Include="..\..\src\GAudio.c" />
     <ClCompile Include="..\..\src\GGame.c" />
     <ClCompile Include="..\..\src\GGraphics.c" />
     <ClCompile Include="..\..\src\GPrefs.c" />
@@ -219,6 +220,7 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y<
     <ClCompile Include="..\..\src\telegrama_font.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\GAudio.h" />
     <ClInclude Include="..\..\src\GEvent.h" />
     <ClInclude Include="..\..\src\GGame.h" />
     <ClInclude Include="..\..\src\GGraphics.h" />

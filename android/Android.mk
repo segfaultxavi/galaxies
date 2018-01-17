@@ -9,7 +9,7 @@ SDL_PATH := ../SDL
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/$(SDL_PATH)/include
 
 # Add your application source files here...
-LOCAL_SRC_FILES :=  bajoran_font.c GGame.c GGraphics.c GSpriteBoard.c GSpriteBoardGrid.c GSpriteButton.c GSprite.c GSpriteCore.c GSpriteCredits.c GSpriteGalaxies.c GSpriteLabel.c GSpriteLevelSelect.c GSpriteMainMenu.c GSpriteNull.c GSpriteTile.c main.c spincycle_font.c days_font.c GPrefs.c GSpriteEditor.c GSpritePopup.c GSolver.c GSpriteProgress.c telegrama_font.c
+LOCAL_SRC_FILES :=  bajoran_font.c GGame.c GGraphics.c GSpriteBoard.c GSpriteBoardGrid.c GSpriteButton.c GSprite.c GSpriteCore.c GSpriteCredits.c GSpriteGalaxies.c GSpriteLabel.c GSpriteLevelSelect.c GSpriteMainMenu.c GSpriteNull.c GSpriteTile.c main.c spincycle_font.c days_font.c GPrefs.c GSpriteEditor.c GSpritePopup.c GSolver.c GSpriteProgress.c telegrama_font.c GAudio.c
 
 LOCAL_SHARED_LIBRARIES := SDL2 SDL2_ttf
 
