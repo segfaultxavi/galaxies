@@ -2,7 +2,6 @@
 #define __GSPRITE_CREDITS_H__
 
 #include <SDL.h>
-#include <SDL_ttf.h>
 #include "GResources.h"
 #include "GSprite.h"
 

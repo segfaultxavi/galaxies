@@ -56,6 +56,9 @@ GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
   GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_big,
       0xFF000000, 0xFFFFFFFF, "TENTAI SHOW"));
+  GSprite_add_child ((GSprite *)spr,
+    GSpriteLabel_new (res, 3 * res->game_width / 4, 3 * res->game_height / 30, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
+      0xFFFFFFFF, 0xFFFFFFFF, "CREDITS"));
   for (l = 0; l < sizeof (credits) / sizeof (credits[0]); l++) {
     if (credits[l][0][0] != '\0')
     GSprite_add_child ((GSprite *)spr,
