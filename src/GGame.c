@@ -80,6 +80,9 @@ GGame *GGame_new () {
   // Load preferences
   GPrefs_load (&res->preferences);
 
+  GAudio_set_audio_volume (res->audio, (float)res->preferences.audio);
+  GAudio_set_music_volume (res->audio, (float)res->preferences.music);
+
   return game;
 
 error:

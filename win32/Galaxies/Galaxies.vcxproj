@@ -221,6 +221,7 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libvorbis*.dll $(OutputPath) /Q /Y<
     <ClCompile Include="..\..\src\GSpriteMainMenu.c" />
     <ClCompile Include="..\..\src\GSpriteNull.c" />
     <ClCompile Include="..\..\src\GSpriteButton.c" />
+    <ClCompile Include="..\..\src\GSpriteOptions.c" />
     <ClCompile Include="..\..\src\GSpritePopup.c" />
     <ClCompile Include="..\..\src\GSpriteProgress.c" />
     <ClCompile Include="..\..\src\GSpriteTile.c" />
@@ -254,6 +255,7 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libvorbis*.dll $(OutputPath) /Q /Y<
     <ClInclude Include="..\..\src\GSpriteMainMenu.h" />
     <ClInclude Include="..\..\src\GSpriteNull.h" />
     <ClInclude Include="..\..\src\GSpriteButton.h" />
+    <ClInclude Include="..\..\src\GSpriteOptions.h" />
     <ClInclude Include="..\..\src\GSpritePopup.h" />
     <ClInclude Include="..\..\src\GSpriteProgress.h" />
     <ClInclude Include="..\..\src\GSpriteTile.h" />

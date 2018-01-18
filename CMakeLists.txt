@@ -30,6 +30,7 @@ set(SRCS
     src/GSpriteBoardGrid.c
     src/GSpriteLevelSelect.c
     src/GSpriteProgress.c
+    src/GSpriteOptions.c
     src/main.c
     src/telegrama_font.c
     src/webhostinghub_font.c

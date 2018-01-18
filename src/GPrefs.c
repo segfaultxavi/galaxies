@@ -17,6 +17,10 @@ void GPrefs_save (GPrefs *prefs) {
 
   SDL_snprintf (buff, sizeof (buff), "preferences %d\n", GPREFS_FILE_VERSION);
   SDL_RWwrite (rwops, buff, SDL_strlen (buff), 1);
+  SDL_snprintf (buff, sizeof (buff), "audio %d\n", prefs->audio);
+  SDL_RWwrite (rwops, buff, SDL_strlen (buff), 1);
+  SDL_snprintf (buff, sizeof (buff), "music %d\n", prefs->music);
+  SDL_RWwrite (rwops, buff, SDL_strlen (buff), 1);
   SDL_snprintf (buff, sizeof (buff), "num_levels %d\n", prefs->num_levels);
   SDL_RWwrite (rwops, buff, SDL_strlen (buff), 1);
   for (l = 0; l < prefs->num_levels; l++) {
@@ -44,7 +48,10 @@ void GPrefs_load (GPrefs *prefs) {
   char *pfilepath = SDL_GetPrefPath ("qojat", "galaxies");
   int l, i;
 
+  // Default values (after first installation)
   SDL_memset (prefs, 0, sizeof (*prefs));
+  prefs->audio = 1;
+  prefs->music = 1;
 
   buff = SDL_malloc (512);
   SDL_snprintf (buff, 512, "%s%s", pfilepath, GPREFS_FILE_NAME);
@@ -77,6 +84,10 @@ void GPrefs_load (GPrefs *prefs) {
   while (ptr < buff + size) {
     if (SDL_sscanf (ptr, " num_levels %d\n", &i) == 1) {
       prefs->num_levels = i;
+    } else if (SDL_sscanf (ptr, " audio %d\n", &i) == 1) {
+      prefs->audio = i;
+    } else if (SDL_sscanf (ptr, " music %d\n", &i) == 1) {
+      prefs->music = i;
     } else if (SDL_sscanf (ptr, " level%d.status %d\n", &l, &i) == 2) {
       prefs->level_status[l] = i;
     } else if (SDL_sscanf (ptr, " level%d.desc ", &l) == 1) {

@@ -30,6 +30,7 @@ LOCAL_SRC_FILES := \
   GSpritePopup.c \
   GSolver.c \
   GSpriteProgress.c \
+  GSpriteOptions.c \
   GAudio.c \
   spincycle_font.c \
   comfortaa_font.c \

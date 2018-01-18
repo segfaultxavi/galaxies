@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include "GResources.h"
+#include "GPrefs.h"
 #include "GAudio.h"
 
 struct _GAudio {
@@ -66,7 +67,8 @@ error:
 }
 
 void GAudio_play_sample (GAudio *audio, GAudioSample *sample) {
-  if (!audio) return;
+  if (!audio || !sample) return;
+  if (audio->res->preferences.audio == 0) return;
 
   if (Mix_PlayChannel (-1, (Mix_Chunk *)sample, 0) == -1) {
     SDL_Log ("Mix_PlayChannel: %s", Mix_GetError ());
@@ -81,3 +83,12 @@ void GAudio_play_music (GAudio *audio, GAudioMusic *music) {
   }
 }
 
+void GAudio_set_audio_volume (GAudio *audio, float vol) {
+  if (!audio) return;
+  Mix_Volume (-1, (int)(128 * vol));
+}
+
+void GAudio_set_music_volume (GAudio *audio, float vol) {
+  if (!audio) return;
+  Mix_VolumeMusic ((int)(128 * vol));
+}

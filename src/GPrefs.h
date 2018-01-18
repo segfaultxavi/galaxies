@@ -8,6 +8,8 @@ typedef struct _GPrefs GPrefs;
 #define GPREFS_MAX_LEVELS 50
 
 struct _GPrefs {
+  int audio;
+  int music;
   int num_levels;
   int level_status[GPREFS_MAX_LEVELS];
   char *level_desc[GPREFS_MAX_LEVELS];
