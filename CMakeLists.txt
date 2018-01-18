@@ -32,6 +32,7 @@ set(SRCS
     src/GSpriteProgress.c
     src/main.c
     src/telegrama_font.c
+    src/webhostinghub_font.c
     src/ping_wav.c
     src/pong_wav.c
     src/GAudio.c

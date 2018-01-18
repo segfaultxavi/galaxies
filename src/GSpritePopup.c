@@ -89,20 +89,26 @@ static int GSpritePopup_is_inside (GSprite *spr, int x, int y) {
   return 1;
 }
 
-GSprite *GSpritePopup_new (GResources *res, const char *title_text, const char *body_text,
-    const char *button1_text, GSpritePopupCallback callback1,
-    const char *button2_text, GSpritePopupCallback callback2,
+GSprite *GSpritePopup_new (GResources *res, const char *title_text, const char *icon_text, const char *body_text,
+    const char *button1_text, GSpritePopupCallback callback1, const char *button1_icon,
+    const char *button2_text, GSpritePopupCallback callback2, const char *button2_icon,
     void *userdata) {
-  GSprite *title, *label, *but;
+  GSprite *icon, *title, *label, *but;
   GSpritePopup *spr;
 
   // Popup
   spr = (GSpritePopup *)GSprite_new (res, sizeof (GSpritePopup),
       (GSpriteRender)GSpritePopup_render, (GSpriteEvent)GSpritePopup_event, GSpritePopup_is_inside, NULL);
 
+  // Icon
+  icon = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, res->font_icons_med, 0xFF000000, 0xFFFFFFFF, icon_text);
+  icon->x = GPOPUP_MARGIN;
+  icon->y = GPOPUP_MARGIN;
+  GSprite_add_child ((GSprite *)spr, icon);
+
   // Title
   title = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, res->font_med, 0xFF000000, 0xFFFFFFFF, title_text);
-  title->x = GPOPUP_MARGIN;
+  title->x = GPOPUP_MARGIN + icon->w + GPOPUP_MARGIN;
   title->y = GPOPUP_MARGIN;
   GSprite_add_child ((GSprite *)spr, title);
 
@@ -114,17 +120,17 @@ GSprite *GSpritePopup_new (GResources *res, const char *title_text, const char *
 
   // Buttons
   if (callback1) {
-    but = GSpriteButton_new (res, GPOPUP_MARGIN, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
-      res->font_med, 0xFFFFFFFF, 0xFF000000, button1_text, GSpritePopup_callback1, spr);
+    but = GSpriteButton_new_with_icon (res, GPOPUP_MARGIN, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
+        res->font_med, 0xFFFFFFFF, 0xFF000000, button1_text, GSpritePopup_callback1, spr, res->font_icons_med, button1_icon);
     GSprite_add_child ((GSprite *)spr, but);
   }
   if (callback2) {
-    but = GSpriteButton_new (res, label->w + GPOPUP_MARGIN, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_BEGIN,
-      res->font_med, 0xFFFFFFFF, 0xFF000000, button2_text, GSpritePopup_callback2, spr);
+    but = GSpriteButton_new_with_icon (res, label->w + GPOPUP_MARGIN, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_BEGIN,
+        res->font_med, 0xFFFFFFFF, 0xFF000000, button2_text, GSpritePopup_callback2, spr, res->font_icons_med, button2_icon);
     GSprite_add_child ((GSprite *)spr, but);
   }
 
-  spr->base.w = SDL_max (title->w, label->w) + 2 * GPOPUP_MARGIN;
+  spr->base.w = SDL_max (icon->w + GPOPUP_MARGIN + title->w, label->w) + 2 * GPOPUP_MARGIN;
   spr->base.h = title->h + label->h + but->h + 4 * GPOPUP_MARGIN;
   GSprite_justify ((GSprite *)spr, res->game_width / 2, res->game_height / 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER);
   spr->callback1 = callback1;

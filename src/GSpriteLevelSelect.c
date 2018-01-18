@@ -5,6 +5,7 @@
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
 #include "GSpriteBoard.h"
+#include "GIcons.h"
 #include <stdio.h>
 
 #define GLEVEL_BUTTONS_PER_LINE 5
@@ -166,7 +167,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
         GSpriteLabel_new (res, bsize, bsize, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END, res->font_text, 0xFF000000, 0xFF808080, text));
   }
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
-      res->font_med, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteLevelSelect_back, spr));
+    GSpriteButton_new_with_icon (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
+      res->font_med, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteLevelSelect_back, spr, res->font_icons_med, GICON_BACK));
   return (GSprite *)spr;
 }

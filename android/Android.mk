@@ -34,6 +34,7 @@ LOCAL_SRC_FILES := \
   spincycle_font.c \
   comfortaa_font.c \
   telegrama_font.c \
+  webhostinghub_font.c \
   ping_wav.c \
   pong_wav.c \
   woosh_wav.c \

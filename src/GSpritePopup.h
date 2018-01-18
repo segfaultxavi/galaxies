@@ -9,9 +9,9 @@ typedef struct _GSpritePopup GSpritePopup;
 
 typedef void (* GSpritePopupCallback)(void *userdata);
 
-GSprite *GSpritePopup_new (GResources *res, const char *title, const char *text,
-  const char *button1, GSpritePopupCallback callback1,
-  const char *button2, GSpritePopupCallback callback2,
+GSprite *GSpritePopup_new (GResources *res, const char *title_text, const char *icon_text, const char *body_text,
+  const char *button1_text, GSpritePopupCallback callback1, const char *button1_icon,
+  const char *button2_text, GSpritePopupCallback callback2, const char *button2_icon,
   void *userdata);
 
 // You can use this as a NOP callback

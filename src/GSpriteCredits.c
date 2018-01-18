@@ -3,6 +3,7 @@
 #include "GSpriteCredits.h"
 #include "GSpriteLabel.h"
 #include "GSpriteButton.h"
+#include "GIcons.h"
 
 struct _GSpriteCredits {
   GSprite base;
@@ -39,6 +40,7 @@ const char *credits[][2] = {
   {"Fonts", "SPIN CYCLE by Blue Vinyl fonts"},
   {"", "COMFORTAA by Johan Aakerlund" },
   {"", "TELEGRAMA by YOFonts"},
+  {"", "WebHostingHub Glyphs"},
   {"Music", "Patrick Lieberkind"},
   {"Sound FX", "freesound.org"},
   {"Libraries", "sdl, sdl_ttf, sdl_mixer"}
@@ -64,7 +66,7 @@ GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
         res->font_text, 0xFFFFFF00, 0, credits [l][1]));
   }
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
-      res->font_med, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteCredits_back, spr));
+    GSpriteButton_new_with_icon (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
+      res->font_med, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteCredits_back, spr, res->font_icons_med, GICON_BACK));
   return (GSprite *)spr;
 }

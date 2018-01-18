@@ -1,4 +1,4 @@
-#include <SDL.h>
+﻿#include <SDL.h>
 #include "GGame.h"
 #include "GResources.h"
 #include "GSpriteEditor.h"
@@ -10,6 +10,7 @@
 #include "GSpritePopup.h"
 #include "GSpriteProgress.h"
 #include "GSolver.h"
+#include "GIcons.h"
 
 #define GEDITOR_DEFAULT_SIZE 7
 
@@ -54,7 +55,7 @@ static int GSpriteEditor_help (void *userdata, int *destroyed) {
   SDL_Log ("Editor:Help");
 
   GSprite_add_child ((GSprite *)spr,
-    GSpritePopup_new (spr->base.res, "HELP",
+    GSpritePopup_new (spr->base.res, "HELP", GICON_HELP,
       "Click on a core to SELECT it. Click again to UNSELECT it.\n"
       "With no selection, click on an empty spot to CREATE a core.\n"
       "Double-click a core to REMOVE it.\n"
@@ -64,7 +65,7 @@ static int GSpriteEditor_help (void *userdata, int *destroyed) {
       "Calculating solutions can take a long time on big maps.\n"
       " \n"
       "Have fun!",
-      "OK", GSpritePopup_dismiss, NULL, NULL, spr));
+      "OK", GSpritePopup_dismiss, NULL, NULL, NULL, NULL, spr));
 
   return 1;
 }
@@ -83,11 +84,11 @@ static int GSpriteEditor_reset (void *userdata, int *destroyed) {
     return 1;
 
   GSprite_add_child ((GSprite *)spr,
-    GSpritePopup_new (spr->base.res, "RESET",
+    GSpritePopup_new (spr->base.res, "RESET", GICON_RESET,
       "Are you sure?\n"
       "This will remove all tile colors\n"
       "and preserve cores.",
-      "YES", GSpriteEditor_reset_yes, "NO", GSpritePopup_dismiss, spr));
+      "YES", GSpriteEditor_reset_yes, NULL, "NO", GSpritePopup_dismiss, NULL, spr));
   return 1;
 }
 
@@ -109,11 +110,11 @@ static int GSpriteEditor_restart(void *userdata, int *destroyed) {
     return 1;
 
   GSprite_add_child ((GSprite *)spr,
-    GSpritePopup_new (spr->base.res, "RESTART",
+    GSpritePopup_new (spr->base.res, "RESTART", GICON_RESTART,
       "Are you sure?\n"
       "This will remove everything\n"
       "from the map.",
-      "YES", GSpriteEditor_restart_yes, "NO", GSpritePopup_dismiss, spr));
+      "YES", GSpriteEditor_restart_yes, NULL, "NO", GSpritePopup_dismiss, NULL, spr));
   return 1;
 }
 
@@ -154,11 +155,11 @@ static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
   }
 
   GSprite_add_child ((GSprite *)spr,
-    GSpritePopup_new (spr->base.res, "SIZE CHANGE",
+    GSpritePopup_new (spr->base.res, "SIZE CHANGE", GICON_WARNING,
       "Are you sure?\n"
       "This will remove everything\n"
       "from the map.",
-      "YES", GSpriteEditor_size_change_yes, "NO", GSpritePopup_dismiss, &spr->size_change_plus));
+      "YES", GSpriteEditor_size_change_yes, NULL, "NO", GSpritePopup_dismiss, NULL, &spr->size_change_plus));
   return 1;
 }
 
@@ -174,11 +175,11 @@ static int GSpriteEditor_size_minus (void *userdata, int *destroyed) {
   }
 
   GSprite_add_child ((GSprite *)spr,
-    GSpritePopup_new (spr->base.res, "SIZE CHANGE",
+    GSpritePopup_new (spr->base.res, "SIZE CHANGE", GICON_WARNING,
       "Are you sure?\n"
       "This will remove everything\n"
       "from the map.",
-      "YES", GSpriteEditor_size_change_yes, "NO", GSpritePopup_dismiss, &spr->size_change_minus));
+      "YES", GSpriteEditor_size_change_yes, NULL, "NO", GSpritePopup_dismiss, NULL, &spr->size_change_minus));
   return 1;
 }
 
@@ -209,10 +210,10 @@ static int GSpriteEditor_copy_from_clipboard (void *userdata, int *destroyed) {
   SDL_Log ("Editor:Copy from clipboard %s", desc);
   if (GSpriteBoard_check (desc) == 0) {
     GSprite_add_child ((GSprite *)spr,
-      GSpritePopup_new (spr->base.res, "IMPORT FAILED",
+      GSpritePopup_new (spr->base.res, "IMPORT FAILED", GICON_IMPORT,
         "The content of the clipboard is\n"
         "not a valid Tentai Show map.",
-        "OK", GSpritePopup_dismiss, NULL, NULL, NULL));
+        "OK", GSpritePopup_dismiss, NULL, NULL, NULL, NULL, NULL));
     SDL_free (desc);
     return 1;
   }
@@ -225,11 +226,11 @@ static int GSpriteEditor_copy_from_clipboard (void *userdata, int *destroyed) {
   }
 
   GSprite_add_child ((GSprite *)spr,
-    GSpritePopup_new (spr->base.res, "IMPORT",
+    GSpritePopup_new (spr->base.res, "IMPORT", GICON_IMPORT,
       "Are you sure?\n"
       "The current map will be replaced\n"
       "by the content of the clipboard.",
-      "YES", GSpriteEditor_copy_from_clipboard_yes, "NO", GSpriteEditor_copy_from_clipboard_no, &spr->copy_from_clipboard));
+      "YES", GSpriteEditor_copy_from_clipboard_yes, NULL, "NO", GSpriteEditor_copy_from_clipboard_no, NULL, &spr->copy_from_clipboard));
 
   return 1;
 }
@@ -243,10 +244,10 @@ static int GSpriteEditor_copy_to_clipboard (void *userdata, int *destroyed) {
   SDL_free (desc);
 
   GSprite_add_child ((GSprite *)spr,
-    GSpritePopup_new (spr->base.res, "EXPORTED",
+    GSpritePopup_new (spr->base.res, "EXPORTED", GICON_EXPORT,
       "The current map has been copied\n"
       "to the clipboard.",
-      "OK", GSpritePopup_dismiss, NULL, NULL, NULL));
+      "OK", GSpritePopup_dismiss, NULL, NULL, NULL, NULL, NULL));
   return 1;
 }
 
@@ -394,10 +395,10 @@ Uint32 GSpriteEditor_solver_timer (Uint32 interval, void *param) {
   return interval;
 }
 
-#define BUTTON(x,y,name, callback) \
+#define BUTTON(x,y,name, callback, icon) \
   GSprite_add_child (margin, \
-    GSpriteButton_new (res, x * mwidth / 4, y * line, mwidth / 2 - 2, line - 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, \
-      res->font_small, 0xFFFFFFFF, 0xFF000000, name, callback, spr))
+    GSpriteButton_new_with_icon (res, x * mwidth / 4, y * line, mwidth / 2 - 2, line - 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, \
+      res->font_small, 0xFFFFFFFF, 0xFF000000, name, callback, spr, res->font_icons_small, icon))
 
 GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *desc) {
   int line = res->game_height / 10;
@@ -421,13 +422,13 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
     GSpriteLabel_new (res, mwidth / 2, 1 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
       0xFF000000, 0xFFFFFFFF, "EDITOR"));
 
-  BUTTON (1, 3, "RESET", GSpriteEditor_reset);
-  BUTTON (3, 3, "RESTART", GSpriteEditor_restart);
-  BUTTON (1, 4, "SIZE -", GSpriteEditor_size_minus);
-  BUTTON (3, 4, "SIZE +", GSpriteEditor_size_plus);
-  BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard);
-  BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard);
-  BUTTON (1, 6, "HELP", GSpriteEditor_help);
+  BUTTON (1, 3, "RESET", GSpriteEditor_reset, NULL);
+  BUTTON (3, 3, "RESTART", GSpriteEditor_restart, NULL);
+  BUTTON (1, 4, "SIZE", GSpriteEditor_size_minus, GICON_DOWN);
+  BUTTON (3, 4, "SIZE", GSpriteEditor_size_plus, GICON_UP);
+  BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard, NULL);
+  BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard, NULL);
+  BUTTON (1, 6, "HELP", GSpriteEditor_help, NULL);
 
   spr->progress_spr = (GSpriteProgress *)GSpriteProgress_new (res, 0, 7 * line, mwidth, line / 2,
       "Finding solutions", res->font_mono, 0xFFFFFFFF, 0xFFFFFFFF, 0.f);
@@ -435,19 +436,19 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
   ((GSprite *)spr->progress_spr)->visible = 0;
 
   GSprite_add_child (margin,
-    GSpriteButton_new (res, 0, 8 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
-      res->font_small, 0xFFFFFFFF, 0xFF000000, "PREV", GSpriteEditor_prev_solution, spr));
+    GSpriteButton_new_with_icon (res, 0, 8 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+      res->font_small, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteEditor_prev_solution, spr, res->font_icons_small, GICON_LEFT));
   GSprite_add_child (margin,
-    GSpriteButton_new (res, 2 * mwidth / 3, 8 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
-      res->font_small, 0xFFFFFFFF, 0xFF000000, "NEXT", GSpriteEditor_next_solution, spr));
+    GSpriteButton_new_with_icon (res, 2 * mwidth / 3, 8 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+      res->font_small, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteEditor_next_solution, spr, res->font_icons_small, GICON_RIGHT));
 
   spr->num_sols_spr = spr->curr_sol_spr = NULL;
   spr->num_solutions = spr->current_solution = 0;
   GSpriteEditor_update_solution_labels (spr);
 
   GSprite_add_child (margin,
-    GSpriteButton_new (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
-      res->font_small, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteEditor_back, spr));
+    GSpriteButton_new_with_icon (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+      res->font_small, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteEditor_back, spr, res->font_icons_small, GICON_BACK));
 
   GSprite_add_child ((GSprite *)spr, margin);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 1);

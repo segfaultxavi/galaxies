@@ -18,6 +18,8 @@ extern unsigned const char comfortaa_ttf[];
 extern unsigned int comfortaa_ttf_len;
 extern unsigned const char telegrama_ttf[];
 extern unsigned int telegrama_ttf_len;
+extern unsigned const char webhostinghub_ttf[];
+extern unsigned int webhostinghub_ttf_len;
 
 GGame *GGame_new () {
   GGame *game = SDL_malloc (sizeof (GGame));
@@ -52,7 +54,11 @@ GGame *GGame_new () {
   res->font_text = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
   font_rwops = SDL_RWFromConstMem (telegrama_ttf, telegrama_ttf_len);
   res->font_mono = TTF_OpenFontRW (font_rwops, 1, res->game_height / 30);
-  if (!res->font_big || !res->font_med || !res->font_small || !res->font_text || !res->font_mono) {
+  font_rwops = SDL_RWFromConstMem (webhostinghub_ttf, webhostinghub_ttf_len);
+  res->font_icons_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
+  font_rwops = SDL_RWFromConstMem (webhostinghub_ttf, webhostinghub_ttf_len);
+  res->font_icons_small = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
+  if (!res->font_big || !res->font_med || !res->font_small || !res->font_text || !res->font_mono || !res->font_icons_med || !res->font_icons_small) {
     SDL_Log ("TTF_OpenFontRW: %s", SDL_GetError ());
     goto error;
   }
@@ -90,6 +96,8 @@ void GGame_free (GGame *game) {
   TTF_CloseFont (game->resources.font_small);
   TTF_CloseFont (game->resources.font_text);
   TTF_CloseFont (game->resources.font_mono);
+  TTF_CloseFont (game->resources.font_icons_med);
+  TTF_CloseFont (game->resources.font_icons_small);
   SDL_FreeCursor (game->resources.pointer_cur);
   SDL_FreeCursor (game->resources.hand_cur);
   GPrefs_free (&game->resources.preferences);

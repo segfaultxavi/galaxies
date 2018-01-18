@@ -8,6 +8,7 @@
 #include "GSpriteNull.h"
 #include "GSpriteBoard.h"
 #include "GSpritePopup.h"
+#include "GIcons.h"
 
 struct _GSpriteGalaxies {
   GSprite base;
@@ -23,7 +24,7 @@ static int GSpriteGalaxies_help (void *userdata, int *destroyed) {
   SDL_Log ("Galaxies:Help");
 
   GSprite_add_child ((GSprite *)spr,
-    GSpritePopup_new (spr->base.res, "HELP",
+    GSpritePopup_new (spr->base.res, "HELP", GICON_HELP,
       "Click on a circle (a CORE) to select it.\n"
       "Click neighbor tiles to link them to that core.\n"
       " \n"
@@ -32,7 +33,7 @@ static int GSpriteGalaxies_help (void *userdata, int *destroyed) {
       "• Linking a tile automatically links the opposite one.\n"
       " \n"
       "Good luck!",
-      "OK", GSpritePopup_dismiss, NULL, NULL, spr));
+      "OK", GSpritePopup_dismiss, NULL, NULL, NULL, NULL, spr));
 
   return 1;
 }
@@ -52,10 +53,10 @@ static int GSpriteGalaxies_reset (void *userdata, int *destroyed) {
     return 1;
 
   GSprite_add_child ((GSprite *)spr,
-    GSpritePopup_new (spr->base.res, "RESET",
+    GSpritePopup_new (spr->base.res, "RESET", GICON_RESET,
       "Are you sure?\n"
       "This will remove all tile colors.",
-      "YES", GSpriteGalaxies_reset_yes, "NO", GSpritePopup_dismiss, spr));
+      "YES", GSpriteGalaxies_reset_yes, NULL, "NO", GSpritePopup_dismiss, NULL, spr));
 
   return 1;
 }
@@ -110,8 +111,8 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, int level_
   GSprite_add_child (margin, spr->completed);
   spr->completed->visible = 0;
   GSprite_add_child (margin,
-    GSpriteButton_new (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
-      res->font_small, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteGalaxies_back, spr));
+    GSpriteButton_new_with_icon (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+      res->font_small, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteGalaxies_back, spr, res->font_icons_small, GICON_BACK));
   GSprite_add_child ((GSprite *)spr, margin);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 0);
   GSpriteBoard_load (spr->board, level_description);
