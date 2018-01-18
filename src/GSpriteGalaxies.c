@@ -1,4 +1,4 @@
-#include <SDL.h>
+ï»¿#include <SDL.h>
 #include "GGame.h"
 #include "GResources.h"
 #include "GSpriteGalaxies.h"
@@ -27,9 +27,9 @@ static int GSpriteGalaxies_help (void *userdata, int *destroyed) {
       "Click on a circle (a CORE) to select it.\n"
       "Click neighbor tiles to link them to that core.\n"
       " \n"
-      "· All tiles must be linked to a core.\n"
-      "· All tiles linked to the same core must form a single group.\n"
-      "· Linking a tile automatically links the opposite one.\n"
+      "â€¢ All tiles must be linked to a core.\n"
+      "â€¢ All tiles linked to the same core must form a single group.\n"
+      "â€¢ Linking a tile automatically links the opposite one.\n"
       " \n"
       "Good luck!",
       "OK", GSpritePopup_dismiss, NULL, NULL, spr));

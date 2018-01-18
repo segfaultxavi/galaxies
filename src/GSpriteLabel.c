@@ -30,9 +30,9 @@ GSprite *GSpriteLabel_new (GResources *res, int x, int y, GSpriteJustify justify
   GSpriteLabel *spr = (GSpriteLabel *)GSprite_new (res, sizeof (GSpriteLabel),
       (GSpriteRender)GSpriteLabel_render, NULL, NULL, (GSpriteFree)GSpriteLabel_free);
   SDL_Color col = { (text_color >> 16) & 0xFF, (text_color >> 8) & 0xFF, (text_color >> 0) & 0xFF, (text_color >> 24) & 0xFF};
-  surf = TTF_RenderText_Blended (font, text, col);
+  surf = TTF_RenderUTF8_Blended (font, text, col);
   if (!surf) {
-    SDL_Log ("TTF_RenderText_Blended: %s", TTF_GetError ());
+    SDL_Log ("TTF_RenderUTF8_Blended: %s", TTF_GetError ());
     GSprite_free ((GSprite *)spr);
     return NULL;
   }
