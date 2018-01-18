@@ -71,6 +71,8 @@ static int GSpritePopup_event (GSpritePopup *spr, GEvent *event, int *destroyed)
       if (event->keycode == SDLK_ESCAPE || event->keycode == SDLK_AC_BACK) {
         if (spr->callback2)
           ret = GSpritePopup_callback2 (spr, destroyed);
+        else if (spr->callback1)
+          ret = GSpritePopup_callback1 (spr, destroyed);
       }
       if (event->keycode == SDLK_RETURN || event->keycode == SDLK_KP_ENTER) {
         if (spr->callback1)
