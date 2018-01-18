@@ -14,8 +14,8 @@ struct _GGame {
 
 extern unsigned const char spincycle_otf[];
 extern unsigned int spincycle_otf_len;
-extern unsigned const char days_otf[];
-extern unsigned int days_otf_len;
+extern unsigned const char comfortaa_ttf[];
+extern unsigned int comfortaa_ttf_len;
 extern unsigned const char telegrama_ttf[];
 extern unsigned int telegrama_ttf_len;
 
@@ -48,7 +48,7 @@ GGame *GGame_new () {
   res->font_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
   font_rwops = SDL_RWFromConstMem (spincycle_otf, spincycle_otf_len);
   res->font_small = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
-  font_rwops = SDL_RWFromConstMem (days_otf, days_otf_len);
+  font_rwops = SDL_RWFromConstMem (comfortaa_ttf, comfortaa_ttf_len);
   res->font_text = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
   font_rwops = SDL_RWFromConstMem (telegrama_ttf, telegrama_ttf_len);
   res->font_mono = TTF_OpenFontRW (font_rwops, 1, res->game_height / 30);

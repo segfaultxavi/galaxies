@@ -11,7 +11,7 @@ INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} ${SDL_TTF_INCLUDE_DIRS} ${SDL_MIX_INCLU
 set(SRCS
     src/GSpriteButton.c
     src/GSpriteMainMenu.c
-    src/days_font.c
+    src/comfortaa_font.c
     src/GSprite.c
     src/GSpriteNull.c
     src/GGame.c

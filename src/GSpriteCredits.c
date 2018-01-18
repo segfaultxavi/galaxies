@@ -34,12 +34,12 @@ static int GSpriteCredits_event (GSpriteCredits *spr, GEvent *event, int *destro
 }
 
 const char *credits[][2] = {
-  {"Programming", "XAVI ARTIGAS"},
+  {"Programming", "Xavi Artigas"},
   {"Original idea", "TENTAI SHOW by Nikoli"},
   {"Fonts", "SPIN CYCLE by Blue Vinyl fonts"},
-  {"", "DAYS by Alexander Kalachev" },
+  {"", "COMFORTAA by Johan Aakerlund" },
   {"", "TELEGRAMA by YOFonts"},
-  {"Music", "PATRICK LIEBERKIND"},
+  {"Music", "Patrick Lieberkind"},
   {"Sound FX", "freesound.org"},
   {"Libraries", "sdl, sdl_ttf, sdl_mixer"}
 };

@@ -32,7 +32,7 @@ LOCAL_SRC_FILES := \
   GSpriteProgress.c \
   GAudio.c \
   spincycle_font.c \
-  days_font.c \
+  comfortaa_font.c \
   telegrama_font.c \
   ping_wav.c \
   pong_wav.c \

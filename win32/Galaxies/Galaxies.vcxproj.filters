@@ -81,9 +81,6 @@
     <ClCompile Include="..\..\src\GAudio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\days_font.c">
-      <Filter>Source Files\Assets</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ping_wav.c">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
@@ -100,6 +97,9 @@
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\music_ogg.c">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\comfortaa_font.c">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
   </ItemGroup>
