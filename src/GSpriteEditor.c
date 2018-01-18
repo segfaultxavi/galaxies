@@ -49,6 +49,26 @@ struct _GSpriteEditor {
 
 void GSpriteEditor_cores_changed (GSpriteEditor *spr);
 
+static int GSpriteEditor_help (void *userdata, int *destroyed) {
+  GSpriteEditor *spr = userdata;
+  SDL_Log ("Editor:Help");
+
+  GSprite_add_child ((GSprite *)spr,
+    GSpritePopup_new (spr->base.res, "HELP",
+      "Click on a core to SELECT it. Click again to UNSELECT it.\n"
+      "With no selection, click on an empty spot to CREATE a core.\n"
+      "Double-click a core to REMOVE it.\n"
+      " \n"
+      "Solutions are calculated as you edit your map.\n"
+      "GOOD PUZZLES HAVE ONLY ONE SOLUTION.\n"
+      "Calculating solutions can take a long time on big maps.\n"
+      " \n"
+      "Have fun!",
+      "OK", GSpritePopup_dismiss, NULL, NULL, spr));
+
+  return 1;
+}
+
 static void GSpriteEditor_reset_yes (void *userdata) {
   GSpriteEditor *spr = userdata;
   SDL_Log ("Editor:Reset:Yes");
@@ -407,6 +427,7 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
   BUTTON (3, 4, "SIZE +", GSpriteEditor_size_plus);
   BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard);
   BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard);
+  BUTTON (1, 6, "HELP", GSpriteEditor_help);
 
   spr->progress_spr = (GSpriteProgress *)GSpriteProgress_new (res, 0, 7 * line, mwidth, line / 2,
       "Finding solutions", res->font_mono, 0xFFFFFFFF, 0xFFFFFFFF, 0.f);

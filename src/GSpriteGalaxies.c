@@ -18,6 +18,25 @@ struct _GSpriteGalaxies {
   GSpriteBoard *board;
 };
 
+static int GSpriteGalaxies_help (void *userdata, int *destroyed) {
+  GSpriteGalaxies *spr = userdata;
+  SDL_Log ("Galaxies:Help");
+
+  GSprite_add_child ((GSprite *)spr,
+    GSpritePopup_new (spr->base.res, "HELP",
+      "Click on a circle (a CORE) to select it.\n"
+      "Click neighbor tiles to link them to that core.\n"
+      " \n"
+      "· All tiles must be linked to a core.\n"
+      "· All tiles linked to the same core must form a single group.\n"
+      "· Linking a tile automatically links the opposite one.\n"
+      " \n"
+      "Good luck!",
+      "OK", GSpritePopup_dismiss, NULL, NULL, spr));
+
+  return 1;
+}
+
 static void GSpriteGalaxies_reset_yes (void *userdata) {
   GSpriteGalaxies *spr = userdata;
 
@@ -81,7 +100,9 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, int level_
   GSprite_add_child (margin,
     GSpriteLabel_new (res, mwidth / 2, 1 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_small,
       0xFFFFFFFF, 0x00000000, str));
-  spr->reset = GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+  GSprite_add_child (margin, GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+    res->font_small, 0xFFFFFFFF, 0xFF000000, "Help", GSpriteGalaxies_help, spr));
+  spr->reset = GSpriteButton_new (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
     res->font_small, 0xFFFFFFFF, 0xFF000000, "Reset", GSpriteGalaxies_reset, spr);
   GSprite_add_child (margin, spr->reset);
   spr->completed = GSpriteLabel_new_multiline (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
