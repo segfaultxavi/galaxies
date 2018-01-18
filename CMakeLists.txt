@@ -9,7 +9,6 @@ PKG_SEARCH_MODULE(SDL_MIX REQUIRED SDL2_mixer)
 INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} ${SDL_TTF_INCLUDE_DIRS} ${SDL_MIX_INCLUDE_DIRS})
 
 set(SRCS
-    src/bajoran_font.c
     src/GSpriteButton.c
     src/GSpriteMainMenu.c
     src/days_font.c

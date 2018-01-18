@@ -395,10 +395,10 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
   spr->margin_width = mwidth;
   spr->line_height = line;
   GSprite_add_child (margin,
-    GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
-      0xFF000000, 0xFFFFFFFF, "tentai show"));
+    GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
+      0xFF000000, 0xFFFFFFFF, "TENTAI SHOW"));
   GSprite_add_child (margin,
-    GSpriteLabel_new (res, mwidth / 2, 1 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
+    GSpriteLabel_new (res, mwidth / 2, 1 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
       0xFF000000, 0xFFFFFFFF, "EDITOR"));
 
   BUTTON (1, 3, "RESET", GSpriteEditor_reset);

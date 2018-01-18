@@ -36,8 +36,7 @@ static int GSpriteCredits_event (GSpriteCredits *spr, GEvent *event, int *destro
 const char *credits[][2] = {
   {"Programming", "XAVI ARTIGAS"},
   {"Original idea", "TENTAI SHOW by Nikoli"},
-  {"Fonts", "BAJORAN by Kiwi media"},
-  {"", "SPIN CYCLE by Blue Vinyl fonts"},
+  {"Fonts", "SPIN CYCLE by Blue Vinyl fonts"},
   {"", "DAYS by Alexander Kalachev" },
   {"", "TELEGRAMA by YOFonts"},
   {"Music", "PATRICK LIEBERKIND"},
@@ -53,8 +52,8 @@ GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
   spr->base.w = spr->base.h = -1;
   spr->main_menu = main_menu;
   GSprite_add_child ((GSprite *)spr,
-    GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_big,
-      0xFF000000, 0xFFFFFFFF, "tentai show"));
+    GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_big,
+      0xFF000000, 0xFFFFFFFF, "TENTAI SHOW"));
   for (l = 0; l < sizeof (credits) / sizeof (credits[0]); l++) {
     if (credits[l][0][0] != '\0')
     GSprite_add_child ((GSprite *)spr,

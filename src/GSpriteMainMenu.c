@@ -65,10 +65,10 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
       NULL, (GSpriteEvent)GSpriteMainMenu_event, NULL, NULL);
   spr->base.w = spr->base.h = -1;
   GSprite_add_child ((GSprite *)spr,
-    GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_big,
-      0xFF000000, 0xFFFFFFFF, "tentai show"));
+    GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_big,
+      0xFF000000, 0xFFFFFFFF, "TENTAI SHOW"));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteLabel_new (res, 3 * res->game_width / 4, 3 * line / 4, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_title_med,
+    GSpriteLabel_new (res, 3 * res->game_width / 4, 3 * line / 4, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
       0xFFFFFFFF, 0xFFFFFFFF, "ALPHA"));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new (res, res->game_width / 2, 2 * line, res->game_width / 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,

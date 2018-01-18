@@ -31,7 +31,6 @@ LOCAL_SRC_FILES := \
   GSolver.c \
   GSpriteProgress.c \
   GAudio.c \
-  bajoran_font.c \
   spincycle_font.c \
   days_font.c \
   telegrama_font.c \

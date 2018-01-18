@@ -81,9 +81,6 @@
     <ClCompile Include="..\..\src\GAudio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\bajoran_font.c">
-      <Filter>Source Files\Assets</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\days_font.c">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>

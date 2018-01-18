@@ -199,7 +199,6 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libvorbis*.dll $(OutputPath) /Q /Y<
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\bajoran_font.c" />
     <ClCompile Include="..\..\src\days_font.c" />
     <ClCompile Include="..\..\src\GAudio.c" />
     <ClCompile Include="..\..\src\GGame.c" />
