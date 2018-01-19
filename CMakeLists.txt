@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(galaxies)
+project(tentaishow)
 
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
@@ -66,6 +66,6 @@ set(HEADERS
     src/GAudio.h
     )
 
-add_executable(galaxies ${SRCS} ${HEADERS})
+add_executable(tentaishow ${SRCS} ${HEADERS})
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL_TTF_LIBRARIES} ${SDL_MIX_LIBRARIES})
