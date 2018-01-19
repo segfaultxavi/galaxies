@@ -123,6 +123,7 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, int level_
 void GSpriteGalaxies_complete (GSpriteGalaxies *spr) {
   spr->reset->visible = 0;
   spr->completed->visible = 1;
+  GAudio_play_sample (spr->base.res->audio, spr->base.res->ogg_applause);
   GSpriteLevelSelect_update_level_status (spr->level_data, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_DONE, GSpriteBoard_save (spr->board, 1));
   GSpriteBoard_finish (spr->board);
 }

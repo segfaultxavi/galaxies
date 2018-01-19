@@ -39,6 +39,7 @@ set(SRCS
     src/GAudio.c
     src/woosh_wav.c
     src/music_ogg.c
+    src/applause_ogg.c
     )
 
 set(HEADERS

@@ -39,7 +39,8 @@ LOCAL_SRC_FILES := \
   ping_wav.c \
   pong_wav.c \
   woosh_wav.c \
-  music_ogg.c
+  music_ogg.c \
+  applause_ogg.c
 
 LOCAL_SHARED_LIBRARIES := SDL2 SDL2_ttf SDL2_mixer
 

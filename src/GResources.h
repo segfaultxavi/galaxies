@@ -20,7 +20,7 @@ struct _GResources {
   int game_width;
   int game_height;
   GAudio *audio;
-  GAudioSample *wav_ping, *wav_pong, *wav_woosh;
+  GAudioSample *wav_ping, *wav_pong, *wav_woosh, *ogg_applause;
   GAudioMusic *ogg_music;
 
   // Owned by GSpriteBoard

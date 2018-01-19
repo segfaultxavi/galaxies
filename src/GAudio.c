@@ -16,6 +16,8 @@ extern unsigned const char woosh_wav[];
 extern unsigned int woosh_wav_len;
 extern unsigned const char music_ogg[];
 extern unsigned int music_ogg_len;
+extern unsigned const char applause_ogg[];
+extern unsigned int applause_ogg_len;
 
 void GAudio_free (GAudio *audio) {
   if (!audio) return;
@@ -23,6 +25,7 @@ void GAudio_free (GAudio *audio) {
   Mix_FreeChunk ((Mix_Chunk *)audio->res->wav_ping);
   Mix_FreeChunk ((Mix_Chunk *)audio->res->wav_pong);
   Mix_FreeChunk ((Mix_Chunk *)audio->res->wav_woosh);
+  Mix_FreeChunk ((Mix_Chunk *)audio->res->ogg_applause);
   if (audio->res->ogg_music)
     Mix_FreeMusic ((Mix_Music *)audio->res->ogg_music);
   Mix_Quit ();
@@ -50,7 +53,9 @@ GAudio *GAudio_new (GResources *res) {
   res->wav_pong = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
   rwops = SDL_RWFromConstMem (woosh_wav, woosh_wav_len);
   res->wav_woosh = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
-  if (!res->wav_ping || !res->wav_pong || !res->wav_woosh) {
+  rwops = SDL_RWFromConstMem (applause_ogg, applause_ogg_len);
+  res->ogg_applause = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
+  if (!res->wav_ping || !res->wav_pong || !res->wav_woosh || !res->ogg_applause) {
     SDL_Log ("Mix_LoadWAV_RW: %s", Mix_GetError ());
     goto error;
   }
