@@ -1,4 +1,4 @@
-#include <SDL.h>
+﻿#include <SDL.h>
 #include "GGame.h"
 #include "GSpriteCredits.h"
 #include "GSpriteLabel.h"
@@ -51,6 +51,8 @@ GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
       NULL, (GSpriteEvent)GSpriteCredits_event, NULL, NULL);
   int l;
   int line = res->game_height / 16;
+  GSprite *button, *label;
+
   spr->base.w = spr->base.h = -1;
   spr->main_menu = main_menu;
   GSprite_add_child ((GSprite *)spr,
@@ -68,8 +70,18 @@ GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
       GSpriteLabel_new (res, (int)(res->game_width * 0.35f), (l + 4) * line, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
         res->font_text, 0xFFFFFF00, 0, credits [l][1]));
   }
+
+  button = GSpriteButton_new_with_icon (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
+    res->font_med, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteCredits_back, spr, res->font_icons_med, GICON_BACK);
+  GSprite_add_child ((GSprite *)spr, button);
+
+  label = GSpriteLabel_new (res, (res->game_width - button->w) / 2, res->game_height - 20, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+    res->font_icons_small, 0xFF808080, 0, "Made in " GICON_PALMTREE " Barcelona");
+  GSprite_add_child ((GSprite *)spr, label);
+
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new_with_icon (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
-      res->font_med, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteCredits_back, spr, res->font_icons_med, GICON_BACK));
+    GSpriteLabel_new (res, (res->game_width - button->w) / 2, res->game_height - 40 - label->h, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+      res->font_text, 0xFFC0C0C0, 0, "© 2017 Xavi Artigas"));
+
   return (GSprite *)spr;
 }

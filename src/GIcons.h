@@ -21,6 +21,6 @@
 #define GICON_OK "\xef\x83\x93" // U+F0D3
 #define GICON_HELP "\xef\x8c\x95" // U+F315
 #define GICON_WARNING "\xef\x8c\x96" // U+F316
+#define GICON_PALMTREE "\xef\x8e\x92" // U+F392
 
 #endif
-
