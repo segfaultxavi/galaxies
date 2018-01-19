@@ -124,7 +124,7 @@ void GSpriteGalaxies_complete (GSpriteGalaxies *spr) {
   spr->reset->visible = 0;
   spr->completed->visible = 1;
   GSpriteLevelSelect_update_level_status (spr->level_data, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_DONE, GSpriteBoard_save (spr->board, 1));
-  GSpriteBoard_galaxy_size_highlight (spr->board);
+  GSpriteBoard_finish (spr->board);
 }
 
 void GSpriteGalaxies_update_level_status (GSpriteGalaxies *spr, GSpriteLevelSelectLevelStatus status, char *desc) {

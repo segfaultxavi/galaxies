@@ -23,6 +23,7 @@ struct _GSpriteBoard {
   int editing;
   GSpriteCore *coreCursor;
   char *last_code;
+  int finished;
 };
 
 #define GBOARD_TILE(spr,x,y) spr->tiles[(y) * spr->mapSizeX + (x)]
@@ -86,19 +87,21 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata, int *
       res = 1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
+      res = 1;
+      if (spr->finished) break;
       if (spr->currCoreId != id)
         GSpriteBoard_set_curr_core_id (spr, id);
       else
         GSpriteBoard_set_curr_core_id (spr, -1);
       spr->currTileX = -1;
       spr->currTileY = -1;
-      res = 1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
+      res = 1;
       if (!spr->editing) break;
+      if (spr->finished) break;
       GSpriteBoard_remove_core (spr, id);
       if (destroyed) *destroyed = 1;
-      res = 1;
       break;
     default:
       break;
@@ -330,6 +333,8 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
   GSpriteTile *tile = GBOARD_TILE (spr, x, y);
   switch (event->type) {
     case GEVENT_TYPE_MOVE:
+      res = 1;
+      if (spr->finished) break;
       if (spr->currCoreId == -1 && spr->editing) {
         // Core placement mode
         float cx, cy;
@@ -338,7 +343,6 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
         ((GSprite*)spr->coreCursor)->y = (int)(cy * spr->tileSizeY);
         ((GSprite*)spr->coreCursor)->visible = GSpriteBoard_valid_core_position (spr, cx, cy);
       }
-      res = 1;
       break;
     case GEVENT_TYPE_SPRITE_IN:
       spr->currTileX = x;
@@ -347,8 +351,9 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
     case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
-      GSpriteBoard_handle_click (spr, x, y, event->x, event->y);
       res = 1;
+      if (spr->finished) break;
+      GSpriteBoard_handle_click (spr, x, y, event->x, event->y);
       break;
     default:
       break;
@@ -368,6 +373,7 @@ void GSpriteBoard_free (GSpriteBoard *spr) {
 GSprite *GSpriteBoard_new (GResources *res, int editing) {
   GSpriteBoard *spr = (GSpriteBoard *)GSprite_new (res, sizeof (GSpriteBoard), (GSpriteRender)GSpriteBoard_render, NULL, NULL, (GSpriteFree)GSpriteBoard_free);
   spr->editing = editing;
+  spr->finished = 0;
   spr->base.w = spr->base.h = res->game_height;
   return (GSprite *)spr;
 }
@@ -705,7 +711,7 @@ void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles) {
   spr->currCoreId = -1;
 }
 
-void GSpriteBoard_galaxy_size_highlight (GSpriteBoard *spr) {
+void GSpriteBoard_finish (GSpriteBoard *spr) {
   int id, x, y, max_size = 0;
 
   spr->currCoreId = -1;
@@ -766,6 +772,11 @@ void GSpriteBoard_galaxy_size_highlight (GSpriteBoard *spr) {
       }
     }
   }
+
+  // Finally, change the border lines to black
+  GSpriteBoardGrid_set_color (spr->grid, 0xFF000000);
+
+  spr->finished = 1;
 }
 
 void GSpriteBoard_size_from_desc (const char *desc, int *size_x, int *size_y) {

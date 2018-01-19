@@ -8,16 +8,20 @@ struct _GSpriteBoardGrid {
   int mapSizeX, mapSizeY;
   int tileSizeX, tileSizeY;
   GSpriteBoard *board;
+  Uint32 color;
 };
-
-static SDL_Color gcolor_grid_inactive = { 0x80, 0x80, 0x80, 0xFF };
 
 static void GSpriteBoardGrid_render (GSpriteBoardGrid *spr, int offsx, int offsy) {
   int x, y;
+  int a, r, g, b;
   SDL_Renderer *renderer = spr->base.res->sdl_renderer;
 
   // Grid separating galaxies
-  SDL_SetRenderDrawColor (renderer, gcolor_grid_inactive.r, gcolor_grid_inactive.g, gcolor_grid_inactive.b, gcolor_grid_inactive.a);
+  a = (spr->color >> 24) & 0xFF;
+  r = (spr->color >> 16) & 0xFF;
+  g = (spr->color >>  8) & 0xFF;
+  b = (spr->color >>  0) & 0xFF;
+  SDL_SetRenderDrawColor (renderer, r, g, b, a);
   for (y = 0; y <= spr->mapSizeY; y++) {
     for (x = 0; x < spr->mapSizeX; x++) {
       GSpriteTile *tile_up = GSpriteBoard_get_tile (spr->board, x, y - 1);
@@ -91,5 +95,10 @@ GSprite *GSpriteBoardGrid_new (GResources *res, int mapSizeX, int mapSizeY, int 
   spr->tileSizeX = tileSizeX;
   spr->tileSizeY = tileSizeY;
   spr->board = board;
+  spr->color = 0xFF808080;
   return (GSprite *)spr;
+}
+
+void GSpriteBoardGrid_set_color (GSpriteBoardGrid *spr, Uint32 color) {
+  spr->color = color;
 }
