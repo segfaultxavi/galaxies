@@ -64,6 +64,10 @@ GAudio *GAudio_new (GResources *res) {
   if (!res->ogg_music) {
     SDL_Log ("Mix_LoadMUS_RW: %s (continuing)", Mix_GetError ());
   }
+
+  GAudio_set_audio_volume (audio, (float)res->preferences.audio);
+  GAudio_set_music_volume (audio, (float)res->preferences.music);
+
   return audio;
 
 error:
