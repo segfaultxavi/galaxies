@@ -5,6 +5,10 @@
 #include "GSprite.h"
 #include "GResources.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GSpritePopup GSpritePopup;
 
 typedef void (* GSpritePopupCallback)(void *userdata);
@@ -16,5 +20,9 @@ GSprite *GSpritePopup_new (GResources *res, const char *title_text, const char *
 
 // You can use this as a NOP callback
 void GSpritePopup_dismiss (void *userdata);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

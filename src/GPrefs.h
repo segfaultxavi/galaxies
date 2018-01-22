@@ -3,6 +3,10 @@
 
 #include <SDL.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GPrefs GPrefs;
 
 #define GPREFS_MAX_LEVELS 50
@@ -19,5 +23,9 @@ struct _GPrefs {
 void GPrefs_save (GPrefs *prefs);
 void GPrefs_load (GPrefs *prefs);
 void GPrefs_free (GPrefs *prefs);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

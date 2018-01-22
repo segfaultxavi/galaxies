@@ -6,6 +6,10 @@
 #include "GSpriteTile.h"
 #include "GSpriteCore.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GSpriteBoard GSpriteBoard;
 
 GSprite *GSpriteBoard_new (GResources *res, int editing);
@@ -26,5 +30,9 @@ int GSpriteBoard_has_no_manual_tiles (GSpriteBoard *spr);
 void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles);
 void GSpriteBoard_finish (GSpriteBoard *spr);
 void GSpriteBoard_size_from_desc (const char *desc, int *size_x, int *size_y);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

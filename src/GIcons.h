@@ -1,6 +1,10 @@
 #ifndef __GICONS__
 #define __GICONS__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define GICON_BACK "\xef\x8c\x85" // U+F305
 #define GICON_AUDIO "\xef\x83\xa2" // U+F0E2
 #define GICON_IMPORT "\xef\x8c\xae" // U+F32E
@@ -22,5 +26,9 @@
 #define GICON_HELP "\xef\x8c\x95" // U+F315
 #define GICON_WARNING "\xef\x8c\x96" // U+F316
 #define GICON_PALMTREE "\xef\x8e\x92" // U+F392
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

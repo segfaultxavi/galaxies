@@ -4,6 +4,10 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GResources GResources;
 
 #include "GSprite.h"
@@ -29,5 +33,9 @@ struct _GResources {
 
   GPrefs preferences;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

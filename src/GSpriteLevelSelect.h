@@ -6,6 +6,10 @@
 #include "GResources.h"
 #include "GSprite.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum _GSpriteLevelSelectLevelStatus {
   GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED,
   GSPRITE_LEVEL_SELECT_LEVEL_STATUS_IN_PROGRESS,
@@ -17,5 +21,9 @@ typedef struct _GSpriteLevelSelect GSpriteLevelSelect;
 GSprite *GSpriteLevelSelect_new (GResources *resources, GSprite *main_menu);
 
 void GSpriteLevelSelect_update_level_status (void *userdata, GSpriteLevelSelectLevelStatus status, char *desc);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

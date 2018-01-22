@@ -6,8 +6,16 @@
 #include "GSprite.h"
 #include "GResources.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GSpriteMainMenu GSpriteMainMenu;
 
 GSprite *GSpriteMainMenu_new (GResources *resources);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

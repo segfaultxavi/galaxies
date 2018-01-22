@@ -4,6 +4,10 @@
 #include "GSprite.h"
 #include "GEvent.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GSpriteTile GSpriteTile;
 
 typedef int (*GSpriteTileCallback)(int x, int y, GEvent *event, void *userdata);
@@ -17,6 +21,9 @@ int GSpriteTile_get_id (const GSpriteTile *spr);
 void GSpriteTile_set_flags (GSpriteTile *spr, int flags);
 int GSpriteTile_get_flags (const GSpriteTile *spr);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

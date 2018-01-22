@@ -5,8 +5,16 @@
 #include "GResources.h"
 #include "GSprite.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GSpriteOptions GSpriteOptions;
 
 GSprite *GSpriteOptions_new (GResources *resources, GSprite *main_menu);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -4,6 +4,10 @@
 #include <SDL.h>
 #include "GSpriteBoard.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GSolver GSolver;
 
 GSolver *GSolver_new (GSpriteBoard *board);
@@ -15,5 +19,9 @@ int GSolver_get_num_solutions (GSolver *solver);
 // Solution is a map_size_x * map_size_y array of core IDs
 // Do not free
 char *GSolver_get_solution (GSolver *solver, int ndx);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

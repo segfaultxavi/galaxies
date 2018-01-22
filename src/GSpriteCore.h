@@ -5,6 +5,10 @@
 #include "GEvent.h"
 #include "GResources.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GSpriteCore GSpriteCore;
 
 typedef int (*GSpriteCoreCallback)(int id, GEvent *event, void *userdata, int *destroyed);
@@ -19,6 +23,10 @@ Uint32 GSpriteCore_get_color (GSpriteCore *spr);
 void GSpriteCore_get_corner (GSpriteCore *spr, int *x, int *y);
 void GSpriteCore_get_opposite (GSpriteCore *spr, int x, int y, int *x2, int *y2);
 GSpriteCore *GSpriteCore_clone (GSpriteCore *spr);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

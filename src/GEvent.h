@@ -1,6 +1,10 @@
 #ifndef __GEVENT_H__
 #define __GEVENT_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define GEVENT_POSITION_NONE -1000000
 
 typedef enum _GEventType {
@@ -22,5 +26,9 @@ typedef struct _GEvent {
   int keycode;     // SDL_Keycode for keyboard events
   void *userdata;  // For GEvents carried over SDL events
 } GEvent;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

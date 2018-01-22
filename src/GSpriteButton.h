@@ -6,6 +6,10 @@
 #include "GSprite.h"
 #include "GResources.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GSpriteButton GSpriteButton;
 
 // Return 1 if the event has been handled
@@ -19,5 +23,9 @@ GSprite *GSpriteButton_new_with_icon (GResources *res, int x, int y, int w, int 
    TTF_Font *icon_font, const char *icon_text);
 
 void GSpriteButton_set_color (GSpriteButton *spr, Uint32 color);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

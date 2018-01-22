@@ -3,6 +3,10 @@
 
 #include <SDL.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GAudio GAudio;
 typedef struct _GAudioSample GAudioSample;
 typedef struct _GAudioMusic GAudioMusic;
@@ -15,5 +19,9 @@ void GAudio_play_sample (GAudio *audio, GAudioSample *sample);
 void GAudio_play_music (GAudio *audio, GAudioMusic *music);
 void GAudio_set_audio_volume (GAudio *audio, float vol);
 void GAudio_set_music_volume (GAudio *audio, float vol);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

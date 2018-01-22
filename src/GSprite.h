@@ -4,6 +4,10 @@
 #include <SDL.h>
 #include "GEvent.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct _GSprite GSprite;
 
 #include "GResources.h"
@@ -70,5 +74,9 @@ GSprite *GSprite_hierarchical_event (GSprite *spr, GEvent *event, int *destroyed
 int GSprite_is_inside (GSprite *spr, int x, int y);
 // Changes the position of the sprite depending on its w and h and the requested justification
 void GSprite_justify (GSprite *spr, int x, int y, GSpriteJustify justify_hor, GSpriteJustify justify_ver);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
