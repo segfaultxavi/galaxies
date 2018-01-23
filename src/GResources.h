@@ -13,6 +13,7 @@ typedef struct _GResources GResources;
 #include "GSprite.h"
 #include "GPrefs.h"
 #include "GAudio.h"
+#include "GAndroid.h"
 
 struct _GResources {
   // Owned by GGame
@@ -26,6 +27,7 @@ struct _GResources {
   GAudio *audio;
   GAudioSample *wav_ping, *wav_pong, *wav_woosh, *ogg_applause;
   GAudioMusic *ogg_music;
+  GAndroid *android;
 
   // Owned by GSpriteBoard
   SDL_Texture *core_texture;

@@ -206,6 +206,7 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libvorbis*.dll $(OutputPath) /Q /Y<
   <ItemGroup>
     <ClCompile Include="..\..\src\applause_ogg.c" />
     <ClCompile Include="..\..\src\comfortaa_font.c" />
+    <ClCompile Include="..\..\src\GAndroid.c" />
     <ClCompile Include="..\..\src\GAudio.c" />
     <ClCompile Include="..\..\src\GGame.c" />
     <ClCompile Include="..\..\src\GGraphics.c" />
@@ -237,6 +238,7 @@ xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libvorbis*.dll $(OutputPath) /Q /Y<
     <ClCompile Include="..\..\src\woosh_wav.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\GAndroid.h" />
     <ClInclude Include="..\..\src\GAudio.h" />
     <ClInclude Include="..\..\src\GEvent.h" />
     <ClInclude Include="..\..\src\GGame.h" />

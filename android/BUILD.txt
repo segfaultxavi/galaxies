@@ -8,3 +8,13 @@ Copy Android.mk from this folder into the <SDL>/build/com.qojat.galaxies/jni/src
 
 Create symlinks for SDL2_ttf and SDL2_mixer
 Edit Android.mk in SDL2_mixer and set to "false" all SUPPORT_* flags except SUPPORT_OGG (specially MPG123 which does not seem to build for x86).
+
+GOOGLE PLAY SERVICES (WIP)
+Trying to do everything from C (through JNI) is hard...
+Using Android SDK install "Android Support Repository" (or Google Repository).
+Extract the aar files with jar xf ...aar
+Rename classes.jar into whatever.jar and copy into libs folder.
+
+Or you could use Gradle and Maven and have them download it for you:
+- Install Maven
+- mvn dependency:get -Dartifact=com.google.android.gms:play-services-auth:11.8.0 -DremoteRepositories=https://maven.google.com

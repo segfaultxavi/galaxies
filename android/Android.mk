@@ -32,6 +32,7 @@ LOCAL_SRC_FILES := \
   GSpriteProgress.c \
   GSpriteOptions.c \
   GAudio.c \
+  GAndroid.c \
   spincycle_font.c \
   comfortaa_font.c \
   telegrama_font.c \

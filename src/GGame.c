@@ -2,6 +2,7 @@
 #include <SDL_ttf.h>
 #include "GGame.h"
 #include "GAudio.h"
+#include "GAndroid.h"
 #include "GResources.h"
 #include "GSprite.h"
 #include "GSpriteMainMenu.h"
@@ -80,6 +81,9 @@ GGame *GGame_new () {
   res->root = GSpriteNull_new (res, 0, 0);
   GSprite_add_child (res->root, GSpriteMainMenu_new (res));
 
+  // Android specific stuff
+  res->android = GAndroid_new (res);
+
   return game;
 
 error:
@@ -89,6 +93,7 @@ error:
 
 void GGame_free (GGame *game) {
   if (!game) return;
+  GAndroid_free (game->resources.android);
   GAudio_free (game->resources.audio);
   GSprite_free (game->resources.root);
   TTF_CloseFont (game->resources.font_big);

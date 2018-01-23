@@ -31,6 +31,7 @@ set(SRCS
     src/GSpriteLevelSelect.c
     src/GSpriteProgress.c
     src/GSpriteOptions.c
+    src/GAndroid.c
     src/main.c
     src/telegrama_font.c
     src/webhostinghub_font.c
@@ -64,6 +65,7 @@ set(HEADERS
     src/GSpriteBoardGrid.h
     src/GSprite.h
     src/GAudio.h
+    src/GAndroid.h
     )
 
 add_executable(tentaishow ${SRCS} ${HEADERS})
