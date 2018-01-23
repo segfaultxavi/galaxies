@@ -125,7 +125,8 @@ GSprite *GSpritePopup_new (GResources *res, const char *title_text, const char *
     GSprite_add_child ((GSprite *)spr, but);
   }
   if (callback2) {
-    but = GSpriteButton_new_with_icon (res, label->w + GPOPUP_MARGIN, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_BEGIN,
+    int pos = SDL_max (icon->w + GPOPUP_MARGIN + title->w, label->w) + GPOPUP_MARGIN;
+    but = GSpriteButton_new_with_icon (res, pos, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_BEGIN,
         res->font_med, 0xFFFFFFFF, 0xFF000000, button2_text, GSpritePopup_callback2, spr, res->font_icons_med, button2_icon);
     GSprite_add_child ((GSprite *)spr, but);
   }

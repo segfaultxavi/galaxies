@@ -157,8 +157,8 @@ static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
   GSprite_add_child ((GSprite *)spr,
     GSpritePopup_new (spr->base.res, "SIZE CHANGE", GICON_WARNING,
       "Are you sure?\n"
-      "This will remove everything\n"
-      "from the map.",
+      "This will remove everything from\n"
+      "the map.",
       "YES", GSpriteEditor_size_change_yes, NULL, "NO", GSpritePopup_dismiss, NULL, &spr->size_change_plus));
   return 1;
 }
@@ -177,8 +177,8 @@ static int GSpriteEditor_size_minus (void *userdata, int *destroyed) {
   GSprite_add_child ((GSprite *)spr,
     GSpritePopup_new (spr->base.res, "SIZE CHANGE", GICON_WARNING,
       "Are you sure?\n"
-      "This will remove everything\n"
-      "from the map.",
+      "This will remove everything from\n"
+      "the map.",
       "YES", GSpriteEditor_size_change_yes, NULL, "NO", GSpritePopup_dismiss, NULL, &spr->size_change_minus));
   return 1;
 }
