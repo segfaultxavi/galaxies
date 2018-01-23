@@ -8,7 +8,7 @@
 #include "GIcons.h"
 #include <stdio.h>
 
-#define GLEVEL_BUTTONS_PER_LINE 5
+#define GLEVEL_BUTTONS_PER_LINE 6
 
 typedef struct _GSpriteLevelSelectButtonData {
   GSpriteLevelSelect *level_spr;
@@ -23,6 +23,9 @@ struct _GSpriteLevelSelect {
 };
 
 static const char *initial_level_descriptions[] = {
+  "1dddccbade",
+  "1ffeeedcdghg",
+  "1gggfdcceahgjjcj",
   "1hhmeebfakekgckbkimgmmhmikcm",
   "1hhkggkakeljilceecafaldm",
   "1hhkhgcgillgkecmajabjafc",
@@ -32,7 +35,9 @@ static const char *initial_level_descriptions[] = {
   "1jjmiiggcckahmnikkqeammeiqon",
   "1kkurcoeflakdreoiscksfdejceclakomgqmnpdaqrss",
   "1llpkkmmeocrnsqpupskrdqhjcefiimgae",
-  "1mmxhhphpphpiedjalcmeaedaescwdugusvwmupwkubtawguew"
+  "1llpkkfmnirispqqasdulskcucqakadaru",
+  "1mmxhhphpphpiedjalcmeaedaescwdugusvwmupwkubtawguew",
+  "1mmrgkbdeicmnpbterptowuqwoqmpcsfmajqkt"
 };
 
 static Uint32 GSpriteLevelSelect_get_button_color (GSpriteLevelSelectButtonData *button) {
