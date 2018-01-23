@@ -13,7 +13,15 @@ GOOGLE PLAY SERVICES (WIP)
 Trying to do everything from C (through JNI) is hard...
 Using Android SDK install "Android Support Repository" (or Google Repository).
 Extract the aar files with jar xf ...aar
-Rename classes.jar into whatever.jar and copy into libs folder.
+Rename classes.jar into whatever.jar and copy into libs folder:
+play-services-auth-11.0.4.jar
+play-services-auth-base-11.0.4.jar
+play-services-base-11.0.4.jar
+play-services-basement-11.0.4.jar
+play-services-drive-11.0.4.jar
+play-services-games-11.0.4.jar
+play-services-tasks-11.0.4.jar
+support-compat-25.3.1.jar
 
 Or you could use Gradle and Maven and have them download it for you:
 - Install Maven

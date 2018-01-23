@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Google Play game services IDs.
+Save this file as res/values/games-ids.xml in your project.
+-->
+<resources>
+  <!-- app_id -->
+  <string name="app_id" translatable="false">303550814571</string>
+  <!-- package_name -->
+  <string name="package_name" translatable="false">com.qojat.tentaishow</string>
+  <!-- event Level completed -->
+  <string name="event_level_completed" translatable="false">CgkI67Kn6OoIEAIQAQ</string>
+</resources>
