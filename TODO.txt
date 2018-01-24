@@ -1,12 +1,14 @@
 FEATURES
-- Add a Level Complete sound
+- Add "Test" button to the editor (Or "Editor" button to the Level Selector)
 - Music is compiled once for each architecture, better have it as an external file.
 - Game collects stats (completion time)
+- Game sends stats (Google Play?)
 - Prepare server to receive stats
-- Game sends stats
 - Add more levels
 - More audio effects
+- Add sliders for volume control
 - Level select buttons: indicate map size with a grid instead of letters.
+- Translations (and button to change language)
 
 HOUSEKEEPING
 - Remove "if (editing)" from SpriteBoard and use callbacks, as everywhere else.
