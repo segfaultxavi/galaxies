@@ -155,7 +155,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
     int y = l / GLEVEL_BUTTONS_PER_LINE;
     char text[4];
     int size;
-    sprintf (text, "%d", l);
+    sprintf (text, "%d", l + 1);
     spr->buttons[l].level_spr = spr;
     spr->buttons[l].level = l;
     spr->buttons[l].button_spr = (GSpriteButton *)
