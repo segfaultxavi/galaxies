@@ -33,6 +33,7 @@ static const char *initial_level_descriptions[] = {
   "1iigehkhcgmiooaa",
   "1iioeekgkbmeiaoeilmkfnboakmoceag",
   "1jjmiiggcckahmnikkqeammeiqon",
+  "1jjliidnddaindnngqlqiaqgql",
   "1kkurcoeflakdreoiscksfdejceclakomgqmnpdaqrss",
   "1llpkkmmeocrnsqpupskrdqhjcefiimgae",
   "1llpkkfmnirispqqasdulskcucqakadaru",
