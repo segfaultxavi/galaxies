@@ -30,6 +30,7 @@ struct _GSpriteEditor {
   GSpriteBoard *board;
   GSprite *num_sols_spr;
   GSprite *curr_sol_spr;
+  GSprite *size_spr;
   GSpriteProgress *progress_spr;
   GSpriteEditorSizeChange size_change_plus;
   GSpriteEditorSizeChange size_change_minus;
@@ -70,6 +71,17 @@ static int GSpriteEditor_help (void *userdata, int *destroyed) {
   return 1;
 }
 
+static void GSpriteEditor_set_size_spr (GSpriteEditor *spr) {
+  char text[16];
+  if (spr->size_spr)
+    GSprite_free (spr->size_spr);
+  SDL_snprintf (text, sizeof (text), "SIZE %d", GSpriteBoard_get_map_size_x (spr->board));
+  spr->size_spr = GSpriteLabel_new (spr->base.res, spr->margin_width / 2, 4 * spr->line_height,
+    GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, spr->base.res->font_small,
+    0xFF000000, 0xFFFFFFFF, text);
+  GSprite_add_child (spr->margin, spr->size_spr);
+}
+
 static void GSpriteEditor_reset_yes (void *userdata) {
   GSpriteEditor *spr = userdata;
   SDL_Log ("Editor:Reset:Yes");
@@ -100,6 +112,7 @@ static void GSpriteEditor_restart_yes (void *userdata) {
   GSpriteBoard_start (spr->board, GEDITOR_DEFAULT_SIZE, GEDITOR_DEFAULT_SIZE, 0, NULL, NULL);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   GSpriteEditor_cores_changed (spr);
+  GSpriteEditor_set_size_spr (spr);
 }
 
 static int GSpriteEditor_restart(void *userdata, int *destroyed) {
@@ -141,6 +154,7 @@ static void GSpriteEditor_size_change_yes (void *userdata) {
   GSpriteBoard_start (sc->spr->board, mapSizeX, mapSizeY, 0, NULL, NULL);
   GSprite_add_child ((GSprite *)sc->spr, (GSprite *)sc->spr->board);
   GSpriteEditor_cores_changed (sc->spr);
+  GSpriteEditor_set_size_spr (sc->spr);
 }
 
 static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
@@ -194,6 +208,7 @@ static void GSpriteEditor_copy_from_clipboard_yes (void *userdata) {
   SDL_free (cfc->new_desc);
   cfc->new_desc = NULL;
   GSpriteEditor_cores_changed (spr);
+  GSpriteEditor_set_size_spr (spr);
 }
 
 static void GSpriteEditor_copy_from_clipboard_no (void *userdata) {
@@ -424,8 +439,14 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
 
   BUTTON (1, 3, "RESET", GSpriteEditor_reset, NULL);
   BUTTON (3, 3, "RESTART", GSpriteEditor_restart, NULL);
-  BUTTON (1, 4, "SIZE", GSpriteEditor_size_minus, GICON_DOWN);
-  BUTTON (3, 4, "SIZE", GSpriteEditor_size_plus, GICON_UP);
+
+  GSprite_add_child (margin,
+    GSpriteButton_new_with_icon (res, 0, 4 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+      res->font_small, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteEditor_size_minus, spr, res->font_icons_small, GICON_DOWN));
+  GSprite_add_child (margin,
+    GSpriteButton_new_with_icon (res, 2 * mwidth / 3, 4 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+      res->font_small, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteEditor_size_plus, spr, res->font_icons_small, GICON_UP));
+
   BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard, NULL);
   BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard, NULL);
   BUTTON (1, 6, "HELP", GSpriteEditor_help, NULL);
@@ -457,6 +478,8 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
   else
     GSpriteBoard_load (spr->board, desc);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
+
+  GSpriteEditor_set_size_spr (spr);
 
   spr->solver_timer_id = SDL_AddTimer (100, GSpriteEditor_solver_timer, spr);
   return (GSprite *)spr;
