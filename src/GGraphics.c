@@ -18,10 +18,20 @@ SDL_Surface *GGraphics_circle (int w, int h, int R1, int R2) {
   for (y = 0; y < h; y++) {
     for (x = 0; x < w; x++) {
       float r = (float)(SQR (x - w / 2) + SQR (y - h / 2));
-      if ( r <= R2 && r >= R1)
+      if (r > R2 && r < (R2 + w)) {
+        // Not actual antialias, but close enough
+        int a = (int)(255 * (R2 + w - r) / w);
+        a = SDL_max (SDL_min (255, a), 0);
+        colors[y * w + x] = (a << 24) | 0x00FFFFFF;
+      } else if (r <= R2 && r >= R1) {
         colors[y * w + x] = 0xFFFFFFFF;
-      else
+      } else if (r > (R1 - w) && r < R1) {
+        int a = (int)(255 * (r - R1 + w) / w);
+        a = SDL_max (SDL_min (255, a), 0);
+        colors[y * w + x] = (a << 24) | 0x00FFFFFF;
+      } else {
         colors[y * w + x] = 0x00000000;
+      }
     }
   }
   surf = SDL_CreateRGBSurfaceFrom (data, w, h, 32, w * 4, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
