@@ -1,6 +1,7 @@
 FEATURES
+- Add icon to cores
+- Different types of cores
 - Add "Test" button to the editor (Or "Editor" button to the Level Selector)
-- Music is compiled once for each architecture, better have it as an external file.
 - Game collects stats (completion time)
 - Game sends stats (Google Play?)
 - Prepare server to receive stats
