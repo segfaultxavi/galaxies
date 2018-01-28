@@ -2,7 +2,6 @@
 #define __GSPRITE_H__
 
 #include <SDL.h>
-#include "GEvent.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,6 +10,7 @@ extern "C" {
 typedef struct _GSprite GSprite;
 
 #include "GResources.h"
+#include "GEvent.h"
 
 typedef void (*GSpriteRender)(GSprite *spr, int offsx, int offsy);
 typedef int (*GSpriteEvent)(GSprite *spr, GEvent *event, int *destroyed);

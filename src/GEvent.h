@@ -1,6 +1,8 @@
 #ifndef __GEVENT_H__
 #define __GEVENT_H__
 
+#include "GSprite.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -24,7 +26,7 @@ typedef struct _GEvent {
   GEventType type; // Type of event
   int x, y;        // Coordinates for position-based events
   int keycode;     // SDL_Keycode for keyboard events
-  void *userdata;  // For GEvents carried over SDL events
+  GSprite *target; // For targetted GEvents
 } GEvent;
 
 #ifdef __cplusplus

@@ -171,14 +171,18 @@ void GGame_run (GGame *game) {
       case SDL_USEREVENT:
         // Galaxies events carried through SDL events
         gevent.type = event.user.code;
-        gevent.userdata = event.user.data1;
+        gevent.target = event.user.data1;
         break;
       default:
         break;
       }
       if (gevent.type != GEVENT_TYPE_NONE) {
         int spr_destroyed = 0;
-        GSprite *receiver = GSprite_hierarchical_event (game->resources.root, &gevent, &spr_destroyed);
+        GSprite *receiver = NULL;
+        if (gevent.target)
+          GSprite_event (gevent.target, &gevent, &spr_destroyed);
+        else
+          receiver = GSprite_hierarchical_event (game->resources.root, &gevent, &spr_destroyed);
         if (gevent.type < GEVENT_TYPE_FOCUS_MARKER) {
           if (gevent.x > GEVENT_POSITION_NONE && focus && receiver != focus) {
             GEvent focus_out_event = { GEVENT_TYPE_SPRITE_OUT, GEVENT_POSITION_NONE, GEVENT_POSITION_NONE };

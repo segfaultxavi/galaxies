@@ -381,7 +381,7 @@ static int GSpriteEditor_event (GSpriteEditor *spr, GEvent *event, int *destroye
       }
       break;
     case GEVENT_TYPE_TIMER:
-      if (event->userdata == spr && spr->solver) {
+      if (event->target == (GSprite *)spr && spr->solver) {
         spr->num_solutions = GSolver_get_num_solutions (spr->solver);
         GSpriteEditor_update_solution_labels (spr);
       }
