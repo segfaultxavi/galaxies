@@ -12,21 +12,36 @@ struct _GGame {
   GResources resources;
 };
 
-extern unsigned const char spincycle_otf[];
-extern unsigned int spincycle_otf_len;
-extern unsigned const char comfortaa_ttf[];
-extern unsigned int comfortaa_ttf_len;
-extern unsigned const char telegrama_ttf[];
-extern unsigned int telegrama_ttf_len;
-extern unsigned const char webhostinghub_ttf[];
-extern unsigned int webhostinghub_ttf_len;
+SDL_RWops *GGame_openAsset (GResources *res, const char *name) {
+  char full_path[256];
+  SDL_RWops *rwops;
 
+  if (res->data_path)
+    SDL_snprintf (full_path, sizeof (full_path), "%s%s", res->data_path, name);
+  else
+    SDL_snprintf (full_path, sizeof (full_path), "%s", name);
+  rwops = SDL_RWFromFile (full_path, "rb");
+  if (!rwops) {
+    SDL_Log ("SDL_RWFromFile: %s", SDL_GetError ());
+  }
+  return rwops;
+}
+#include "SDL_system.h"
 GGame *GGame_new () {
   GGame *game = SDL_malloc (sizeof (GGame));
   GResources *res = &game->resources;
   SDL_DisplayMode sdpm;
   SDL_RWops *font_rwops;
   SDL_memset (game, 0, sizeof (GGame));
+
+  res->data_path = SDL_GetBasePath ();
+  if (res->data_path) {
+    char assets_path[256];
+    SDL_snprintf (assets_path, sizeof (assets_path), "%s%s", res->data_path, "assets/");
+    SDL_free (res->data_path);
+    res->data_path = SDL_strdup (assets_path);
+  }
+  SDL_Log ("Data folder: %s", res->data_path);
 
   // Window
   SDL_GetCurrentDisplayMode (0, &sdpm);
@@ -44,19 +59,19 @@ GGame *GGame_new () {
   SDL_SetRenderDrawBlendMode (res->sdl_renderer, SDL_BLENDMODE_BLEND);
 
   // Fonts
-  font_rwops = SDL_RWFromConstMem (spincycle_otf, spincycle_otf_len);
+  font_rwops = GGame_openAsset (res, "spincycle.otf");
   res->font_big = TTF_OpenFontRW (font_rwops, 1, res->game_height / 5);
-  font_rwops = SDL_RWFromConstMem (spincycle_otf, spincycle_otf_len);
+  font_rwops = GGame_openAsset (res, "spincycle.otf");
   res->font_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
-  font_rwops = SDL_RWFromConstMem (spincycle_otf, spincycle_otf_len);
+  font_rwops = GGame_openAsset (res, "spincycle.otf");
   res->font_small = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
-  font_rwops = SDL_RWFromConstMem (comfortaa_ttf, comfortaa_ttf_len);
+  font_rwops = GGame_openAsset (res, "comfortaa.ttf");
   res->font_text = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
-  font_rwops = SDL_RWFromConstMem (telegrama_ttf, telegrama_ttf_len);
+  font_rwops = GGame_openAsset (res, "telegrama.ttf");
   res->font_mono = TTF_OpenFontRW (font_rwops, 1, res->game_height / 30);
-  font_rwops = SDL_RWFromConstMem (webhostinghub_ttf, webhostinghub_ttf_len);
+  font_rwops = GGame_openAsset (res, "webhostinghub.ttf");
   res->font_icons_med = TTF_OpenFontRW (font_rwops, 1, res->game_height / 10);
-  font_rwops = SDL_RWFromConstMem (webhostinghub_ttf, webhostinghub_ttf_len);
+  font_rwops = GGame_openAsset (res, "webhostinghub.ttf");
   res->font_icons_small = TTF_OpenFontRW (font_rwops, 1, res->game_height / 20);
   if (!res->font_big || !res->font_med || !res->font_small || !res->font_text || !res->font_mono || !res->font_icons_med || !res->font_icons_small) {
     SDL_Log ("TTF_OpenFontRW: %s", SDL_GetError ());
@@ -101,6 +116,7 @@ void GGame_free (GGame *game) {
   SDL_FreeCursor (game->resources.pointer_cur);
   SDL_FreeCursor (game->resources.hand_cur);
   GPrefs_free (&game->resources.preferences);
+  SDL_free (game->resources.data_path);
   SDL_DestroyRenderer (game->resources.sdl_renderer);
   SDL_DestroyWindow (game->sdl_window);
 

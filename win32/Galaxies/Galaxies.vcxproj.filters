@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Assets">
-      <UniqueIdentifier>{a8c84270-2c0b-48f8-a2fa-f263a28cabb0}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.c">
@@ -81,35 +78,8 @@
     <ClCompile Include="..\..\src\GAudio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\ping_wav.c">
-      <Filter>Source Files\Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\pong_wav.c">
-      <Filter>Source Files\Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\spincycle_font.c">
-      <Filter>Source Files\Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\telegrama_font.c">
-      <Filter>Source Files\Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\woosh_wav.c">
-      <Filter>Source Files\Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\music_ogg.c">
-      <Filter>Source Files\Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\comfortaa_font.c">
-      <Filter>Source Files\Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\webhostinghub_font.c">
-      <Filter>Source Files\Assets</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\GSpriteOptions.c">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\applause_ogg.c">
-      <Filter>Source Files\Assets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

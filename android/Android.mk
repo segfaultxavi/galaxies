@@ -31,16 +31,7 @@ LOCAL_SRC_FILES := \
   GSolver.c \
   GSpriteProgress.c \
   GSpriteOptions.c \
-  GAudio.c \
-  spincycle_font.c \
-  comfortaa_font.c \
-  telegrama_font.c \
-  webhostinghub_font.c \
-  ping_wav.c \
-  pong_wav.c \
-  woosh_wav.c \
-  music_ogg.c \
-  applause_ogg.c
+  GAudio.c
 
 LOCAL_SHARED_LIBRARIES := SDL2 SDL2_ttf SDL2_mixer
 

@@ -11,7 +11,6 @@ INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} ${SDL_TTF_INCLUDE_DIRS} ${SDL_MIX_INCLU
 set(SRCS
     src/GSpriteButton.c
     src/GSpriteMainMenu.c
-    src/comfortaa_font.c
     src/GSprite.c
     src/GSpriteNull.c
     src/GGame.c
@@ -24,7 +23,6 @@ set(SRCS
     src/GSpriteEditor.c
     src/GSolver.c
     src/GSpriteGalaxies.c
-    src/spincycle_font.c
     src/GSpriteBoard.c
     src/GSpriteLabel.c
     src/GSpriteBoardGrid.c
@@ -32,14 +30,7 @@ set(SRCS
     src/GSpriteProgress.c
     src/GSpriteOptions.c
     src/main.c
-    src/telegrama_font.c
-    src/webhostinghub_font.c
-    src/ping_wav.c
-    src/pong_wav.c
     src/GAudio.c
-    src/woosh_wav.c
-    src/music_ogg.c
-    src/applause_ogg.c
     )
 
 set(HEADERS

@@ -3,21 +3,11 @@
 #include "GResources.h"
 #include "GPrefs.h"
 #include "GAudio.h"
+#include "GGame.h"
 
 struct _GAudio {
   GResources *res;
 };
-
-extern unsigned const char ping_wav[];
-extern unsigned int ping_wav_len;
-extern unsigned const char pong_wav[];
-extern unsigned int pong_wav_len;
-extern unsigned const char woosh_wav[];
-extern unsigned int woosh_wav_len;
-extern unsigned const char music_ogg[];
-extern unsigned int music_ogg_len;
-extern unsigned const char applause_ogg[];
-extern unsigned int applause_ogg_len;
 
 void GAudio_free (GAudio *audio) {
   if (!audio) return;
@@ -47,19 +37,19 @@ GAudio *GAudio_new (GResources *res) {
     SDL_Log ("Mix_Init: %s (continuing)", Mix_GetError ());
   }
 
-  rwops = SDL_RWFromConstMem (ping_wav, ping_wav_len);
+  rwops = GGame_openAsset (res, "ping.wav");
   res->wav_ping = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
-  rwops = SDL_RWFromConstMem (pong_wav, pong_wav_len);
+  rwops = GGame_openAsset (res, "pong.wav");
   res->wav_pong = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
-  rwops = SDL_RWFromConstMem (woosh_wav, woosh_wav_len);
+  rwops = GGame_openAsset (res, "woosh.wav");
   res->wav_woosh = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
-  rwops = SDL_RWFromConstMem (applause_ogg, applause_ogg_len);
+  rwops = GGame_openAsset (res, "applause.ogg");
   res->ogg_applause = (GAudioSample *)Mix_LoadWAV_RW (rwops, 1);
   if (!res->wav_ping || !res->wav_pong || !res->wav_woosh || !res->ogg_applause) {
     SDL_Log ("Mix_LoadWAV_RW: %s", Mix_GetError ());
     goto error;
   }
-  rwops = SDL_RWFromConstMem (music_ogg, music_ogg_len);
+  rwops = GGame_openAsset (res, "music.ogg");
   res->ogg_music = (GAudioMusic *)Mix_LoadMUS_RW (rwops, 1);
   if (!res->ogg_music) {
     SDL_Log ("Mix_LoadMUS_RW: %s (continuing)", Mix_GetError ());
