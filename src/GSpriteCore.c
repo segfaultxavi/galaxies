@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include "GSprite.h"
 #include "GSpriteCore.h"
 #include "GResources.h"
 #include "GGraphics.h"
@@ -139,4 +140,12 @@ GSpriteCore *GSpriteCore_clone (GSpriteCore *spr) {
   clone->callback = NULL;
   clone->board = NULL;
   return clone;
+}
+
+GSpriteCoreType GSpriteCore_get_type (GSpriteCore *spr) {
+  return spr->type;
+}
+
+void GSpriteCore_set_type (GSpriteCore *spr, GSpriteCoreType type) {
+  spr->type = type;
 }

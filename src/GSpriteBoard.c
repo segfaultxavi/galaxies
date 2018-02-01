@@ -28,7 +28,7 @@ struct _GSpriteBoard {
 
 #define GBOARD_TILE(spr,x,y) spr->tiles[(y) * spr->mapSizeX + (x)]
 
-static void GSpriteBoard_deploy_core (GSpriteBoard *spr, float sx, float sy, int id);
+static void GSpriteBoard_deploy_core (GSpriteBoard *spr, float sx, float sy, GSpriteCoreType type, int id);
 
 static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
   int i;
@@ -109,14 +109,14 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata, int *
   return res;
 }
 
-static void GSpriteBoard_add_core (GSpriteBoard *spr, float cx, float cy) {
+static void GSpriteBoard_add_core (GSpriteBoard *spr, float cx, float cy, GSpriteCoreType type) {
   int id = spr->numCores;
   spr->numCores++;
   spr->cores = SDL_realloc (spr->cores, spr->numCores * sizeof (GSpriteCore *));
 
   spr->cores[id] = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, id,
     spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr);
-  GSpriteBoard_deploy_core (spr, cx, cy, id);
+  GSpriteBoard_deploy_core (spr, cx, cy, type, id);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[id]);
   GSpriteBoard_set_curr_core_id (spr, id);
   ((GSprite*)spr->coreCursor)->visible = 0;
@@ -264,7 +264,7 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
       return;
     }
     // Add new core
-    GSpriteBoard_add_core (spr, cx, cy);
+    GSpriteBoard_add_core (spr, cx, cy, GCORE_TYPE_2_FOLD);
     return;
   } else if (spr->currCoreId == tile_id) {
     // Clicked on tile already owned: deselect core
@@ -378,10 +378,11 @@ GSprite *GSpriteBoard_new (GResources *res, int editing) {
   return (GSprite *)spr;
 }
 
-static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, int id) {
+static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, GSpriteCoreType type, int id) {
   int x, y, lenx, leny;
   ((GSprite *)spr->cores[id])->x = (int)(sx * spr->tileSizeX);
   ((GSprite *)spr->cores[id])->y = (int)(sy * spr->tileSizeY);
+  GSpriteCore_set_type (spr->cores[id], type);
   
   // Tiles under the core
   lenx = (int)sx != sx ? 1 : 2;
@@ -437,7 +438,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   for (x = 0; x < numInitialCores; x++) {
     spr->cores[x] = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, x,
       spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr);
-    GSpriteBoard_deploy_core (spr, initialCores[x * 2 + 0], initialCores[x * 2 + 1], x);
+    GSpriteBoard_deploy_core (spr, initialCores[x * 3 + 0], initialCores[x * 3 + 1], (int)initialCores[x * 3 + 2], x);
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[x]);
   }
 
@@ -466,14 +467,27 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
 static int GSpriteBoard_a2i (char a) {
   if (a == '.') return -1;
   if (a >= 'a' && a <= 'z') return a - 'a';
-  if (a >= 'A' && a <= 'Z') return a - 'A' + 26;
+  if (a >= 'A' && a <= 'Z') return a - 'A';
+  SDL_Log ("GSpriteBoard_a2i: Invalid format char: %c", a);
   return 0;
 }
 
 static char GSpriteBoard_i2a (int i) {
   if (i == -1) return '.';
   if (i < 26) return 'a' + i;
-  return 'A' + i - 26;
+  SDL_Log ("GSpriteBoard_i2a: Invalid int: %d", i);
+  return '!';
+}
+
+static void GSpriteBoard_save_core (int x, int y, GSpriteCoreType type, char *out) {
+  out[0] = GSpriteBoard_i2a (x) - ((type & 1) ? 0x20 : 0);
+  out[1] = GSpriteBoard_i2a (y) - ((type & 2) ? 0x20 : 0);
+}
+
+static void GSpriteBoard_load_core (const char *in, int *x, int *y, GSpriteCoreType *type) {
+  *x = GSpriteBoard_a2i (in[0]);
+  *y = GSpriteBoard_a2i (in[1]);
+  *type = 0 + (in[0] >= 'a' ? 0 : 1) + (in[1] >= 'a' ? 0 : 2);
 }
 
 static int GSpriteBoard_preload (const char *desc, int *p_size_x, int *p_size_y, int *p_num_cores, float **p_initial_cores, int **p_initial_tiles) {
@@ -497,31 +511,36 @@ static int GSpriteBoard_preload (const char *desc, int *p_size_x, int *p_size_y,
   size_y = GSpriteBoard_a2i (desc[2]);
   if (size_x < 3 || size_x > 20 || size_y < 3 || size_y > 20) return 0; // Invalid sizes
   num_cores = GSpriteBoard_a2i (desc[3]);
-  initial_cores = SDL_malloc (num_cores * 2 * sizeof (float));
+  initial_cores = SDL_malloc (num_cores * 3 * sizeof (float));
   for (i = 0; i < num_cores; i++) {
-    float x = (GSpriteBoard_a2i (desc[4 + i * 2 + 0]) + 1) / 2.f;
-    float y = (GSpriteBoard_a2i (desc[4 + i * 2 + 1]) + 1) / 2.f;
+    int xi, yi;
+    GSpriteCoreType type;
+    float x, y;
+    GSpriteBoard_load_core (&desc[4 + i * 2 + 0], &xi, &yi, &type);
+    x = (xi + 1) / 2.f;
+    y = (yi + 1) / 2.f;
     if (x < 0 || x >= (size_x + 0.5f) || y < 0 || y >= (size_y + 0.5f)) {
-      SDL_Log ("%g,%g outside %dx%d", x, y, size_x, size_y);
+      SDL_Log ("GSpriteBoard_preload: %g,%g outside %dx%d", x, y, size_x, size_y);
       SDL_free (initial_cores);
       return 0;
     }
-    initial_cores[i * 2 + 0] = x;
-    initial_cores[i * 2 + 1] = y;
+    initial_cores[i * 3 + 0] = x;
+    initial_cores[i * 3 + 1] = y;
+    initial_cores[i * 3 + 2] = (float)type;
   }
   // Check core collisions
   for (i = 0; i < num_cores; i++) {
-    int minx = (int)(initial_cores[i * 2 + 0]);
-    int maxx = (int)(initial_cores[i * 2 + 0] + 0.5f);
-    int miny = (int)(initial_cores[i * 2 + 1]);
-    int maxy = (int)(initial_cores[i * 2 + 1] + 0.5f);
+    int minx = (int)(initial_cores[i * 3 + 0]);
+    int maxx = (int)(initial_cores[i * 3 + 0] + 0.5f);
+    int miny = (int)(initial_cores[i * 3 + 1]);
+    int maxy = (int)(initial_cores[i * 3 + 1] + 0.5f);
     int j;
     for (j = i + 1; j < num_cores; j++) {
-      if ((initial_cores[j * 2 + 0] >= minx) && (initial_cores[j * 2 + 0] <= maxx) &&
-        (initial_cores[j * 2 + 1] >= miny) && (initial_cores[j * 2 + 1] <= maxy)) {
-        SDL_Log ("Cores %d (%g,%g) and %d (%g,%g) overlap",
-          i, initial_cores[i * 2 + 0], initial_cores[i * 2 + 1],
-          j, initial_cores[j * 2 + 0], initial_cores[j * 2 + 1]);
+      if ((initial_cores[j * 3 + 0] >= minx) && (initial_cores[j * 3 + 0] <= maxx) &&
+        (initial_cores[j * 3 + 1] >= miny) && (initial_cores[j * 3 + 1] <= maxy)) {
+        SDL_Log ("GSpriteBoard_preload: Cores %d (%g,%g) and %d (%g,%g) overlap",
+          i, initial_cores[i * 3 + 0], initial_cores[i * 3 + 1],
+          j, initial_cores[j * 3 + 0], initial_cores[j * 3 + 1]);
         SDL_free (initial_cores);
         return 0;
       }
@@ -529,7 +548,7 @@ static int GSpriteBoard_preload (const char *desc, int *p_size_x, int *p_size_y,
   }
   if (desc_len > 4 + num_cores * 2) {
     if (desc_len != 4 + num_cores * 2 + size_x * size_y) {
-      SDL_Log ("Invalid code (code_len:%d sizex:%d sizey:%d num_cores:%d", desc_len, size_x, size_y, num_cores);
+      SDL_Log ("GSpriteBoard_preload: Invalid code (code_len:%d sizex:%d sizey:%d num_cores:%d", desc_len, size_x, size_y, num_cores);
       SDL_free (initial_cores);
       return 0;
     }
@@ -605,8 +624,7 @@ char *GSpriteBoard_save (GSpriteBoard *spr, int includeTileColors) {
   // Coords of all cores
   for (i = 0; i < spr->numCores; i++) {
     GSprite *core = (GSprite *)spr->cores[i];
-    ptr[0] = GSpriteBoard_i2a ((core->x * 2 / spr->tileSizeX) - 1);
-    ptr[1] = GSpriteBoard_i2a ((core->y * 2 / spr->tileSizeY) - 1);
+    GSpriteBoard_save_core ((core->x * 2 / spr->tileSizeX) - 1, (core->y * 2 / spr->tileSizeY) - 1, GSpriteCore_get_type ((GSpriteCore *)core), ptr);
     ptr += 2;
   }
 

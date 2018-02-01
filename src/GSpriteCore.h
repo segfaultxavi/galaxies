@@ -10,8 +10,8 @@ extern "C" {
 #endif
 
 typedef enum _GSpriteCoreType {
-  GCORE_TYPE_BLOCKER,
-  GCORE_TYPE_2_FOLD
+  GCORE_TYPE_BLOCKER = 3,
+  GCORE_TYPE_2_FOLD = 0
 } GSpriteCoreType;
 
 typedef struct _GSpriteCore GSpriteCore;
@@ -29,6 +29,8 @@ Uint32 GSpriteCore_get_color (GSpriteCore *spr);
 void GSpriteCore_get_corner (GSpriteCore *spr, int *x, int *y);
 void GSpriteCore_get_opposite (GSpriteCore *spr, int x, int y, int *x2, int *y2);
 GSpriteCore *GSpriteCore_clone (GSpriteCore *spr);
+GSpriteCoreType GSpriteCore_get_type (GSpriteCore *spr);
+void GSpriteCore_set_type (GSpriteCore *spr, GSpriteCoreType type);
 
 #ifdef __cplusplus
 }
