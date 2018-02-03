@@ -94,14 +94,14 @@ void GPrefs_load (GPrefs *prefs) {
       char *ptr_cr;
       ptr += 14;
       ptr_cr = ptr;
-      while (ptr_cr < buff + size && ptr_cr[0] != '\n') ptr_cr++;
+      while (ptr_cr < buff + size && ptr_cr[0] != '\n' && ptr_cr[0] != '\r') ptr_cr++;
       prefs->level_desc[l] = SDL_malloc (ptr_cr - ptr + 1);
       SDL_strlcpy (prefs->level_desc[l], ptr, ptr_cr - ptr + 1);
     } else if (SDL_strncmp (ptr, "editor.desc ", 12) == 0) {
       char *ptr_cr;
       ptr += 12;
       ptr_cr = ptr;
-      while (ptr_cr < buff + size && ptr_cr[0] != '\n') ptr_cr++;
+      while (ptr_cr < buff + size && ptr_cr[0] != '\n' && ptr_cr[0] != '\r') ptr_cr++;
       prefs->editor_desc = SDL_malloc (ptr_cr - ptr + 1);
       SDL_strlcpy (prefs->editor_desc, ptr, ptr_cr - ptr + 1);
     } else {
