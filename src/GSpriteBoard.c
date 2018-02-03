@@ -124,7 +124,7 @@ static void GSpriteBoard_add_core (GSpriteBoard *spr, float cx, float cy, GSprit
   GSpriteEditor_cores_changed ((GSpriteEditor *)spr->base.parent);
 }
 
-static int GSpriteBoard_check_completion (GSpriteBoard *spr) {
+int GSpriteBoard_check_completion (GSpriteBoard *spr) {
   int x, y;
   for (y = 0; y < spr->mapSizeY; y++) {
     for (x = 0; x < spr->mapSizeX; x++) {
@@ -591,7 +591,7 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
 }
 
 // Returns 1 if the string is a valid map description
-int GSpriteBoard_check (const char *desc) {
+int GSpriteBoard_check_description (const char *desc) {
   int size_x, size_y, num_cores;
   float *initial_cores = NULL;
   int *initial_tiles = NULL;
@@ -674,6 +674,7 @@ void GSpriteBoard_reset (GSpriteBoard *spr) {
     GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED, GSpriteBoard_save (spr, 0));
   else
     GSpriteEditor_tiles_changed ((GSpriteEditor *)spr->base.parent, GSpriteBoard_save (spr, 0));
+  GSpriteBoard_set_finished (spr, 0);
 }
 
 int GSpriteBoard_get_map_size_x (GSpriteBoard *spr) {
@@ -729,10 +730,16 @@ void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles) {
   spr->currCoreId = -1;
 }
 
-void GSpriteBoard_finish (GSpriteBoard *spr) {
+void GSpriteBoard_set_finished (GSpriteBoard *spr, int finished) {
   int id, x, y, max_size = 0;
 
   spr->currCoreId = -1;
+  spr->finished = finished;
+
+  if (!finished) {
+    GSpriteBoardGrid_set_color (spr->grid, 0xFF808080);
+    return;
+  }
 
   // Find biggest galaxy
   for (id = 0; id < spr->numCores; id++) {
@@ -793,8 +800,6 @@ void GSpriteBoard_finish (GSpriteBoard *spr) {
 
   // Finally, change the border lines to black
   GSpriteBoardGrid_set_color (spr->grid, 0xFF000000);
-
-  spr->finished = 1;
 }
 
 void GSpriteBoard_size_from_desc (const char *desc, int *size_x, int *size_y) {

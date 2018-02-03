@@ -14,8 +14,7 @@ struct _GSpriteGalaxies {
   GSprite base;
   GSprite *level_select;
   void *level_data;
-  GSprite *reset;
-  GSprite *completed;
+  GSprite *completed_spr;
   GSpriteBoard *board;
 };
 
@@ -38,11 +37,17 @@ static int GSpriteGalaxies_help (void *userdata, int *destroyed) {
   return 1;
 }
 
+void GSpriteGalaxies_set_ui_completed (GSpriteGalaxies *spr, int completed) {
+  spr->completed_spr->visible = completed;
+  GSpriteBoard_set_finished (spr->board, completed);
+}
+
 static void GSpriteGalaxies_reset_yes (void *userdata) {
   GSpriteGalaxies *spr = userdata;
 
   SDL_Log ("Galaxies:Reset:Yes");
   GSpriteBoard_reset (spr->board);
+  GSpriteGalaxies_set_ui_completed (spr, 0);
 }
 
 static int GSpriteGalaxies_reset (void *userdata, int *destroyed) {
@@ -64,6 +69,15 @@ static int GSpriteGalaxies_reset (void *userdata, int *destroyed) {
 static int GSpriteGalaxies_back (void *userdata, int *destroyed) {
   GSpriteGalaxies *spr = userdata;
   SDL_Log ("Galaxies:Back");
+  spr->level_select->visible = 1;
+  GSprite_free ((GSprite *)spr);
+  if (destroyed) *destroyed = 1;
+  return 1;
+}
+
+static int GSpriteGalaxies_next (void *userdata, int *destroyed) {
+  GSpriteGalaxies *spr = userdata;
+  SDL_Log ("Galaxies:Next");
   spr->level_select->visible = 1;
   GSprite_free ((GSprite *)spr);
   if (destroyed) *destroyed = 1;
@@ -103,29 +117,28 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, int level_
       0xFFFFFFFF, 0x00000000, str));
   GSprite_add_child (margin, GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
     res->font_small, 0xFFFFFFFF, 0xFF000000, "Help", GSpriteGalaxies_help, spr));
-  spr->reset = GSpriteButton_new (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-    res->font_small, 0xFFFFFFFF, 0xFF000000, "Reset", GSpriteGalaxies_reset, spr);
-  GSprite_add_child (margin, spr->reset);
-  spr->completed = GSpriteLabel_new_multiline (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
+  GSprite_add_child (margin, GSpriteButton_new (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+    res->font_small, 0xFFFFFFFF, 0xFF000000, "Reset", GSpriteGalaxies_reset, spr));
+  spr->completed_spr = GSpriteLabel_new_multiline (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
     res->font_med, 0xFFFFFFFF, 0xFFFF0000, "level\ncomplete");
-  GSprite_add_child (margin, spr->completed);
-  spr->completed->visible = 0;
+  GSprite_add_child (margin, spr->completed_spr);
+  spr->completed_spr->visible = 0;
   GSprite_add_child (margin,
-    GSpriteButton_new_with_icon (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+    GSpriteButton_new_with_icon (res, mwidth / 4, res->game_height, mwidth / 2 - 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
       res->font_small, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteGalaxies_back, spr, res->font_icons_small, GICON_BACK));
   GSprite_add_child ((GSprite *)spr, margin);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 0);
   GSpriteBoard_load (spr->board, level_description);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
+
+  GSpriteGalaxies_set_ui_completed (spr, GSpriteBoard_check_completion (spr->board));
   return (GSprite *)spr;
 }
 
 void GSpriteGalaxies_complete (GSpriteGalaxies *spr) {
-  spr->reset->visible = 0;
-  spr->completed->visible = 1;
+  GSpriteGalaxies_set_ui_completed (spr, 1);
   GAudio_play_sample (spr->base.res->audio, spr->base.res->ogg_applause);
   GSpriteLevelSelect_update_level_status (spr->level_data, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_DONE, GSpriteBoard_save (spr->board, 1));
-  GSpriteBoard_finish (spr->board);
 }
 
 void GSpriteGalaxies_update_level_status (GSpriteGalaxies *spr, GSpriteLevelSelectLevelStatus status, char *desc) {

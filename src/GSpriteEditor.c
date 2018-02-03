@@ -223,7 +223,7 @@ static int GSpriteEditor_copy_from_clipboard (void *userdata, int *destroyed) {
   char *desc;
   desc = SDL_GetClipboardText ();
   SDL_Log ("Editor:Copy from clipboard %s", desc);
-  if (GSpriteBoard_check (desc) == 0) {
+  if (GSpriteBoard_check_description (desc) == 0) {
     GSprite_add_child ((GSprite *)spr,
       GSpritePopup_new (spr->base.res, "IMPORT FAILED", GICON_IMPORT,
         "The content of the clipboard is\n"
