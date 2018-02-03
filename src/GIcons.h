@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #define GICON_BACK "\xef\x8c\x85" // U+F305
+#define GICON_NEXT "\xef\x8c\x84" // U+F304
 #define GICON_AUDIO "\xef\x83\xa2" // U+F0E2
 #define GICON_IMPORT "\xef\x8c\xae" // U+F32E
 #define GICON_EXPORT "\xef\x8c\xaf" // U+F32F

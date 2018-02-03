@@ -15,6 +15,7 @@ struct _GSpriteGalaxies {
   GSprite *level_select;
   void *level_data;
   GSprite *completed_spr;
+  GSprite *next_button;
   GSpriteBoard *board;
 };
 
@@ -39,6 +40,7 @@ static int GSpriteGalaxies_help (void *userdata, int *destroyed) {
 
 void GSpriteGalaxies_set_ui_completed (GSpriteGalaxies *spr, int completed) {
   spr->completed_spr->visible = completed;
+  spr->next_button->visible = completed;
   GSpriteBoard_set_finished (spr->board, completed);
 }
 
@@ -77,9 +79,11 @@ static int GSpriteGalaxies_back (void *userdata, int *destroyed) {
 
 static int GSpriteGalaxies_next (void *userdata, int *destroyed) {
   GSpriteGalaxies *spr = userdata;
+  void *level_data = spr->level_data;
   SDL_Log ("Galaxies:Next");
   spr->level_select->visible = 1;
   GSprite_free ((GSprite *)spr);
+  GSpriteLevelSelect_play_next_level (level_data);
   if (destroyed) *destroyed = 1;
   return 1;
 }
@@ -126,6 +130,10 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, int level_
   GSprite_add_child (margin,
     GSpriteButton_new_with_icon (res, mwidth / 4, res->game_height, mwidth / 2 - 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
       res->font_small, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteGalaxies_back, spr, res->font_icons_small, GICON_BACK));
+  spr->next_button = GSpriteButton_new_with_icon (res, 3 * mwidth / 4, res->game_height, mwidth / 2 - 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+    res->font_small, 0xFFFFFFFF, 0xFF000000, "Next", GSpriteGalaxies_next, spr, res->font_icons_small, GICON_NEXT);
+  spr->next_button->visible = 0;
+  GSprite_add_child (margin, spr->next_button);
   GSprite_add_child ((GSprite *)spr, margin);
   spr->board = (GSpriteBoard *)GSpriteBoard_new (res, 0);
   GSpriteBoard_load (spr->board, level_description);

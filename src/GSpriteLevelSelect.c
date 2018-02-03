@@ -177,3 +177,13 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
       res->font_med, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteLevelSelect_back, spr, res->font_icons_med, GICON_BACK));
   return (GSprite *)spr;
 }
+
+void GSpriteLevelSelect_play_next_level (void *userdata) {
+  GSpriteLevelSelectButtonData *button = userdata;
+  GSpriteLevelSelect *spr = button->level_spr;
+  int num_levels = sizeof (initial_level_descriptions) / sizeof (initial_level_descriptions[0]);
+  int level = button->level;
+  if (level < num_levels) level++;
+
+  GSpriteLevelSelect_selection (&spr->buttons[level], NULL);
+}
