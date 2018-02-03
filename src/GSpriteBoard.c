@@ -548,7 +548,7 @@ static int GSpriteBoard_preload (const char *desc, int *p_size_x, int *p_size_y,
   }
   if (desc_len > 4 + num_cores * 2) {
     if (desc_len != 4 + num_cores * 2 + size_x * size_y) {
-      SDL_Log ("GSpriteBoard_preload: Invalid code (code_len:%d sizex:%d sizey:%d num_cores:%d", desc_len, size_x, size_y, num_cores);
+      SDL_Log ("GSpriteBoard_preload: Invalid code (code_len:%d sizex:%d sizey:%d num_cores:%d desc:%s)", desc_len, size_x, size_y, num_cores, desc);
       SDL_free (initial_cores);
       return 0;
     }
