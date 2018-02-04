@@ -115,7 +115,7 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, int level_
   GSprite_add_child (margin,
     GSpriteLabel_new (res, mwidth / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
       0xFF000000, 0xFFFFFFFF, "TENTAI SHOW"));
-  SDL_snprintf (str, sizeof (str), "Level %d", level_number);
+  SDL_snprintf (str, sizeof (str), "Level %d", level_number + 1);
   GSprite_add_child (margin,
     GSpriteLabel_new (res, mwidth / 2, 1 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_small,
       0xFFFFFFFF, 0x00000000, str));
