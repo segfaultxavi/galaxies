@@ -31,10 +31,12 @@ struct _GSpriteEditor {
   GSprite *num_sols_spr;
   GSprite *curr_sol_spr;
   GSprite *size_spr;
+  GSpriteCore *core_spr[4];
   GSpriteProgress *progress_spr;
   GSpriteEditorSizeChange size_change_plus;
   GSpriteEditorSizeChange size_change_minus;
   GSpriteEditorCopyFromClipboard copy_from_clipboard;
+  int selected_core_type;
 
   // Menu construction
   GSprite *margin;
@@ -410,12 +412,42 @@ Uint32 GSpriteEditor_solver_timer (Uint32 interval, void *param) {
   return interval;
 }
 
+void GSpriteEditor_update_core_buttons (GSpriteEditor *spr) {
+  int i;
+
+  for (i = 0; i < 4; i++) {
+    if (i == spr->selected_core_type)
+      GSpriteCore_set_color (spr->core_spr[i], 0xFFC0C0C0);
+    else
+      GSpriteCore_set_color (spr->core_spr[i], 0xFF404040);
+  }
+}
+
+int GSpriteEditor_core_button_event (int id, GEvent *event, void *userdata, int *destroyed) {
+  int ret = 0;
+  GSpriteEditor *spr = userdata;
+  switch (event->type) {
+    case GEVENT_TYPE_SPRITE_ACTIVATE:
+    case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
+      spr->selected_core_type = id;
+      GSpriteEditor_update_core_buttons (spr);
+      ret = 1;
+      break;
+    case GEVENT_TYPE_SPRITE_IN:
+    case GEVENT_TYPE_MOVE:
+      ret = 1;
+      break;
+  }
+  return ret;
+}
+
 #define BUTTON(x,y,name, callback, icon) \
   GSprite_add_child (margin, \
     GSpriteButton_new_with_icon (res, x * mwidth / 4, y * line, mwidth / 2 - 2, line - 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, \
       res->font_small, 0xFFFFFFFF, 0xFF000000, name, callback, spr, res->font_icons_small, icon))
 
 GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *desc) {
+  int i;
   int line = res->game_height / 10;
   int mwidth = res->game_width - res->game_height;
   GSpriteEditor *spr = (GSpriteEditor *)GSprite_new (res, sizeof (GSpriteEditor),
@@ -449,7 +481,16 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
 
   BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard, NULL);
   BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard, NULL);
-  BUTTON (1, 6, "HELP", GSpriteEditor_help, NULL);
+  BUTTON (3, 6, "HELP", GSpriteEditor_help, NULL);
+
+  for (i = 0; i < 4; i++) {
+    spr->core_spr[i] = (GSpriteCore *)GSpriteCore_new (res, (GSpriteCoreType)i,
+        (float)i, 6, i, 0xFF404040, line, line, GSpriteEditor_core_button_event, spr, NULL);
+    ((GSprite *)spr->core_spr[i])->x = mwidth / 16 + i * mwidth / 8;
+    GSprite_add_child (margin, (GSprite *)spr->core_spr[i]);
+  }
+  spr->selected_core_type = 0;
+  GSpriteEditor_update_core_buttons (spr);
 
   spr->progress_spr = (GSpriteProgress *)GSpriteProgress_new (res, 0, 7 * line, mwidth, line / 2,
       "Finding solutions", res->font_mono, 0xFFFFFFFF, 0xFFFFFFFF, 0.f);

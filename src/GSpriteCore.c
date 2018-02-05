@@ -12,6 +12,7 @@ struct _GSpriteCore {
   Uint32 color;
   GSpriteCoreType type;
   GSpriteCoreCallback callback;
+  void *callback_userdata;
   GSpriteBoard *board;
 };
 
@@ -33,18 +34,27 @@ static void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
     case GCORE_TYPE_BLOCKER:
       tex = res->core_highlight_texture;
       break;
+    default:
+      tex = res->core_texture;
+      break;
   }
-  if (GSpriteBoard_get_selected_core (spr->board) != spr) {
-    SDL_SetTextureColorMod (tex, (0x40 + (spr->color >> 16)) & 0xFF, (0x40 + (spr->color >> 8)) & 0xFF, (0x40 + (spr->color >> 0)) & 0xFF);
+  if (spr->board) {
+    // This core is in a board, color is handled specially
+    if (GSpriteBoard_get_selected_core (spr->board) == spr) {
+      SDL_SetTextureColorMod (tex, 0xC0, 0xC0, 0x00);
+    } else {
+      SDL_SetTextureColorMod (tex, (0x40 + (spr->color >> 16)) & 0xFF, (0x40 + (spr->color >> 8)) & 0xFF, (0x40 + (spr->color >> 0)) & 0xFF);
+    }
   } else {
-    SDL_SetTextureColorMod (tex, 0xC0, 0xC0, 0x00);
+    // This is a basic core sprite, color works normally
+    SDL_SetTextureColorMod (tex, (spr->color >> 16) & 0xFF, (spr->color >> 8) & 0xFF, (spr->color >> 0) & 0xFF);
   }
   SDL_RenderCopy (renderer, tex, NULL, &dst);
 }
 
 static int GSpriteCore_event (GSpriteCore *spr, GEvent *event, int *destroyed) {
   if (spr->callback)
-    return spr->callback (spr->id, event, spr->board, destroyed);
+    return spr->callback (spr->id, event, spr->callback_userdata, destroyed);
   return 0;
 }
 
@@ -76,8 +86,8 @@ SDL_Texture *GSpriteCore_create_highlight_texture (GResources *res, int w, int h
   return tex;
 }
 
-GSprite *GSpriteCore_new (GResources *res, GSpriteCoreType type, float x, float y, int id,
-    int radiusX, int radiusY, GSpriteCoreCallback callback, void *board) {
+GSprite *GSpriteCore_new (GResources *res, GSpriteCoreType type, float x, float y, int id, Uint32 color,
+    int radiusX, int radiusY, GSpriteCoreCallback callback, void *callback_userdata, GSpriteBoard *board) {
   GSpriteCore *spr = (GSpriteCore *)GSprite_new (res, sizeof (GSpriteCore),
     (GSpriteRender)GSpriteCore_render, (GSpriteEvent)GSpriteCore_event, (GSpriteIsInside)GSpriteCore_is_inside, NULL);
   int r, g, b;
@@ -86,21 +96,26 @@ GSprite *GSpriteCore_new (GResources *res, GSpriteCoreType type, float x, float 
   spr->base.w = radiusX;
   spr->base.h = radiusY;
   spr->type = type;
-  if (id > -1) {
-    r = rand () % 0x40;
-    g = rand () % 0x40;
-    b = 0x40 - (r + g) / 2;
-    r += 0x40;
-    g += 0x40;
-    b += 0x40;
+  if (color == 0) {
+    if (id > -1) {
+      r = rand () % 0x40;
+      g = rand () % 0x40;
+      b = 0x40 - (r + g) / 2;
+      r += 0x40;
+      g += 0x40;
+      b += 0x40;
+    } else {
+      r = 0x80;
+      g = 0x80;
+      b = 0x00;
+    }
+    spr->color = 0x80000000 | (r << 16) + (g << 8) + b;
   } else {
-    r = 0x80;
-    g = 0x80;
-    b = 0x00;
+    spr->color = color;
   }
   spr->id = id;
-  spr->color = 0x80000000 | (r << 16) + (g << 8) + b;
   spr->callback = callback;
+  spr->callback_userdata = callback_userdata;
   spr->board = board;
   return (GSprite *)spr;
 }
@@ -115,6 +130,10 @@ void GSpriteCore_set_id (GSpriteCore *spr, int id) {
 
 Uint32 GSpriteCore_get_color (GSpriteCore *spr) {
   return spr->color;
+}
+
+void GSpriteCore_set_color (GSpriteCore *spr, Uint32 color) {
+  spr->color = color;
 }
 
 void GSpriteCore_get_corner (GSpriteCore *spr, int *x, int *y) {

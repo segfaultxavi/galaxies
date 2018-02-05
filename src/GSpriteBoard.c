@@ -114,8 +114,8 @@ static void GSpriteBoard_add_core (GSpriteBoard *spr, float cx, float cy, GSprit
   spr->numCores++;
   spr->cores = SDL_realloc (spr->cores, spr->numCores * sizeof (GSpriteCore *));
 
-  spr->cores[id] = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, id,
-    spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr);
+  spr->cores[id] = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, id, 0,
+    spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr, spr);
   GSpriteBoard_deploy_core (spr, cx, cy, type, id);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[id]);
   GSpriteBoard_set_curr_core_id (spr, id);
@@ -436,8 +436,8 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   spr->numCores = numInitialCores;
   spr->cores = SDL_malloc (spr->numCores * sizeof (GSpriteCore *));
   for (x = 0; x < numInitialCores; x++) {
-    spr->cores[x] = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, x,
-      spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr);
+    spr->cores[x] = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, x, 0,
+      spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr, spr);
     GSpriteBoard_deploy_core (spr, initialCores[x * 3 + 0], initialCores[x * 3 + 1], (int)initialCores[x * 3 + 2], x);
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[x]);
   }
@@ -456,7 +456,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   }
 
   if (spr->editing) {
-    spr->coreCursor = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, -1, spr->tileSizeX, spr->tileSizeY, NULL, spr);
+    spr->coreCursor = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, -1, 0, spr->tileSizeX, spr->tileSizeY, NULL, NULL, spr);
     ((GSprite *)spr->coreCursor)->visible = 0;
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->coreCursor);
   }

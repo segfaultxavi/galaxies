@@ -1,6 +1,8 @@
 #ifndef __GSPRITE_BOARD_H__
 #define __GSPRITE_BOARD_H__
 
+typedef struct _GSpriteBoard GSpriteBoard;
+
 #include "GSprite.h"
 #include "GResources.h"
 #include "GSpriteTile.h"
@@ -9,8 +11,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef struct _GSpriteBoard GSpriteBoard;
 
 GSprite *GSpriteBoard_new (GResources *res, int editing);
 void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numInitialCores, const float *initialCores, const int *initialTiles);
