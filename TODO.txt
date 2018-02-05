@@ -1,6 +1,8 @@
 FEATURES
+- Confirmation mode (disabled through options menu): click on a tile shows everything that will happen, click again confirms.
+- Editor: Buttons to select core type before deploying it
+- Core type Blocker should be unselectable (but removable in the editor)
 - Add icon to cores
-- Different types of cores
 - Add "Test" button to the editor (Or "Editor" button to the Level Selector)
 - Game collects stats (completion time)
 - Game sends stats (Google Play?)
@@ -8,7 +10,7 @@ FEATURES
 - Add more levels
 - More audio effects
 - Add sliders for volume control
-- Level select buttons: indicate map size with a grid instead of letters.
+- Level select buttons: indicate map size with a grid instead of letters. Maybe display a preview of the puzzle?
 - Translations (and button to change language)
 
 HOUSEKEEPING
@@ -17,10 +19,3 @@ HOUSEKEEPING
 - Multithreaded solver
 - Double click involves NO mouse movement, doh!
 - Indicate Linux build dependencies somewhere (README or CMakeLists.txt)
-
-IDEAS
-- Triangular and Hexagonal grids (add to save format)
-  Level selection buttons indicate the type of grid (in the shape of the button?)
-- Other types of symmetry besides 2-fold: 4-fold on square grid, 2-, 3- or 6-fold on hexagonal grid, 3-fold on triangular grid.
-  Each core can have its own symmetry, indicated in the save format with uppercase letters (aa, aA, Aa, AA = types 0, 1, 2, 3, for the same coords).
-- Each core indicates the type of symmetry it produces
