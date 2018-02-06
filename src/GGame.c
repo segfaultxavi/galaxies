@@ -156,9 +156,10 @@ void GGame_run (GGame *game) {
 
   while (!quit) {
     SDL_Event event;
-    GEvent gevent = { 0 };
+    GEvent gevent;
     SDL_WaitEventTimeout (NULL, 40);
     while (SDL_PollEvent (&event)) {
+      SDL_memset (&gevent, 0, sizeof (gevent));
       gevent.type = GEVENT_TYPE_NONE;
       switch (event.type) {
       case SDL_QUIT:
