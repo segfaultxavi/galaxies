@@ -21,6 +21,8 @@ GSprite *GSpriteButton_new_with_text (GResources *res, int x, int y, int w, int 
 GSprite *GSpriteButton_new_with_text_and_icon (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
     TTF_Font *font, Uint32 button_color, Uint32 label_color, const char *text, GSpriteButtonCallback callback, void *userdata,
     TTF_Font *icon_font, const char *icon_text);
+GSprite *GSpriteButton_new_with_sprite (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
+  GSprite *content, Uint32 button_color, GSpriteButtonCallback callback, void *userdata);
 
 void GSpriteButton_set_color (GSpriteButton *spr, Uint32 color);
 

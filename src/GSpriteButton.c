@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "GSpriteButton.h"
 #include "GSpriteLabel.h"
+#include "GSpriteNull.h"
 #include "GResources.h"
 #include "GAudio.h"
 
@@ -69,51 +70,26 @@ static int GSpriteButton_event (GSpriteButton *spr, GEvent *event, int *destroye
   return ret;
 }
 
-GSprite *GSpriteButton_new_with_text_and_icon (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
-    TTF_Font *font, Uint32 button_color, Uint32 label_color, const char *text, GSpriteButtonCallback callback, void *userdata,
-    TTF_Font *icon_font, const char *icon_text) {
-  GSprite *label = NULL, *icon = NULL;
+GSprite *GSpriteButton_new_with_sprite (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
+    GSprite *content, Uint32 button_color, GSpriteButtonCallback callback, void *userdata) {
   GSpriteButton *spr;
-  int org_w = w;
 
-  // Label
-  if (text) {
-    label = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, font, label_color, 0xFFFFFFFF, text);
-    if (w == -1) {
-      label->x = GBUTTON_MARGIN;
-      w = label->w + 2 * GBUTTON_MARGIN;
-    } else {
-      label->x = w / 2 - label->w / 2;
-    }
-    if (h == -1) {
-      label->y = GBUTTON_MARGIN;
-      h = label->h + 2 * GBUTTON_MARGIN;
-    } else {
-      label->y = h / 2 - label->h / 2;
-    }
+  // Content
+  if (w == -1) {
+    content->x = GBUTTON_MARGIN;
+    w = content->w + 2 * GBUTTON_MARGIN;
   } else {
-    if (w == -1)
-      w = GBUTTON_MARGIN;
+    content->x = w / 2 - content->w / 2;
   }
-
-  // Optional icon
-  if (icon_text) {
-    icon = GSpriteLabel_new (res, GBUTTON_MARGIN, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
-        icon_font, label_color, 0xFFFFFFFF, icon_text);
-    if (org_w == -1) {
-      w += icon->w + GBUTTON_MARGIN;
-      if (label)
-        label->x += icon->w + GBUTTON_MARGIN;
-    } else {
-      if (label)
-        label->x += icon->w / 2 + GBUTTON_MARGIN;
-      else
-        icon->x = w / 2 - icon->w / 2;
-    }
+  if (h == -1) {
+    content->y = GBUTTON_MARGIN;
+    h = content->h + 2 * GBUTTON_MARGIN;
+  } else {
+    content->y = h / 2 - content->h / 2;
   }
 
   spr = (GSpriteButton *)GSprite_new (res, sizeof (GSpriteButton),
-      (GSpriteRender)GSpriteButton_render, (GSpriteEvent)GSpriteButton_event, NULL, NULL);
+    (GSpriteRender)GSpriteButton_render, (GSpriteEvent)GSpriteButton_event, NULL, NULL);
   spr->base.w = w;
   spr->base.h = h;
   GSprite_justify ((GSprite *)spr, x, y, justify_hor, justify_ver);
@@ -121,17 +97,52 @@ GSprite *GSpriteButton_new_with_text_and_icon (GResources *res, int x, int y, in
   spr->userdata = userdata;
   spr->state = GBUTTON_STATE_NORMAL;
   spr->color = button_color;
-  if (label)
-    GSprite_add_child ((GSprite *)spr, label);
-  if (icon)
-    GSprite_add_child ((GSprite *)spr, icon);
+  GSprite_add_child ((GSprite *)spr, content);
+
   return (GSprite *)spr;
 }
 
+GSprite *GSpriteButton_new_with_text_and_icon (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
+    TTF_Font *font, Uint32 button_color, Uint32 label_color, const char *text, GSpriteButtonCallback callback, void *userdata,
+    TTF_Font *icon_font, const char *icon_text) {
+  GSprite *group = NULL, *label = NULL, *icon = NULL;
+
+  if (!icon_text)
+    return GSpriteButton_new_with_text (res, x, y, w, h, justify_hor, justify_ver, font, button_color, label_color, text, callback, userdata);
+
+  // Icon
+  icon = GSpriteLabel_new (res, GBUTTON_MARGIN, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
+    icon_font, label_color, 0xFFFFFFFF, icon_text);
+
+  if (!text) {
+    // Only Icon
+    group = icon;
+  } else {
+    // Text and Icon
+    group = GSpriteNull_new(res, 0, 0);
+    label = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, font, label_color, 0xFFFFFFFF, text);
+    GSprite_add_child (group, icon);
+    GSprite_add_child (group, label);
+    if (w == -1) {
+      group->w = icon->w + GBUTTON_MARGIN + label->w;
+      label->x = icon->w + GBUTTON_MARGIN;
+    } else {
+      group->w = w - GBUTTON_MARGIN * 2;
+      label->x = icon->w + (group->w - icon->w) / 2 - label->w / 2;
+    }
+    group->h = SDL_max (label->h, icon->h);
+    icon->y = (group->h - icon->h) / 2;
+    label->y = (group->h - label->h) / 2;
+  }
+
+  return GSpriteButton_new_with_sprite (res, x, y, w, h, justify_hor, justify_ver, group, button_color, callback, userdata);
+}
 
 GSprite *GSpriteButton_new_with_text (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
     TTF_Font *font, Uint32 button_color, Uint32 label_color, const char *text, GSpriteButtonCallback callback, void *userdata) {
-  return GSpriteButton_new_with_text_and_icon (res, x, y, w, h, justify_hor, justify_ver, font, button_color, label_color, text, callback, userdata, NULL, NULL);
+
+  GSprite *label = GSpriteLabel_new (res, 0, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, font, label_color, 0xFFFFFFFF, text);
+  return GSpriteButton_new_with_sprite (res, x, y, w, h, justify_hor, justify_ver, label, button_color, callback, userdata);
 }
 
 void GSpriteButton_set_color (GSpriteButton *spr, Uint32 color) {
