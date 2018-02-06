@@ -43,7 +43,7 @@ static GSprite *GSpriteOptions_new_bool_button (GSprite *spr, int x, int y, cons
   int w = spr->res->game_width / 2;
   int h = spr->res->game_height / 6;
   SDL_snprintf (buff, sizeof (buff), "%s: %s", name, value ? "ON" : "OFF");
-  return GSpriteButton_new_with_icon (spr->res, w / 2 + x * w, y * h, 9 * w / 10, h, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
+  return GSpriteButton_new_with_text_and_icon (spr->res, w / 2 + x * w, y * h, 9 * w / 10, h, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
     spr->res->font_med, 0xFFFFFFFF, 0xFF000000, buff, callback, spr, spr->res->font_icons_med, icon);
 }
 
@@ -109,7 +109,7 @@ GSprite *GSpriteOptions_new (GResources *res, GSprite *main_menu) {
   GSpriteOptions_music (spr);
 
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new_with_icon (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
+    GSpriteButton_new_with_text_and_icon (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
       res->font_med, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteOptions_back, spr, res->font_icons_med, GICON_BACK));
   return (GSprite *)spr;
 }

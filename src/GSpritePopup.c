@@ -120,13 +120,13 @@ GSprite *GSpritePopup_new (GResources *res, const char *title_text, const char *
 
   // Buttons
   if (callback1) {
-    but = GSpriteButton_new_with_icon (res, GPOPUP_MARGIN, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
+    but = GSpriteButton_new_with_text_and_icon (res, GPOPUP_MARGIN, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
         res->font_med, 0xFFFFFFFF, 0xFF000000, button1_text, GSpritePopup_callback1, spr, res->font_icons_med, button1_icon);
     GSprite_add_child ((GSprite *)spr, but);
   }
   if (callback2) {
     int pos = SDL_max (icon->w + GPOPUP_MARGIN + title->w, label->w) + GPOPUP_MARGIN;
-    but = GSpriteButton_new_with_icon (res, pos, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_BEGIN,
+    but = GSpriteButton_new_with_text_and_icon (res, pos, title->h + label->h + 3 * GPOPUP_MARGIN, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_BEGIN,
         res->font_med, 0xFFFFFFFF, 0xFF000000, button2_text, GSpritePopup_callback2, spr, res->font_icons_med, button2_icon);
     GSprite_add_child ((GSprite *)spr, but);
   }

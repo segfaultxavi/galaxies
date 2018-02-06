@@ -159,7 +159,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
     spr->buttons[l].level_spr = spr;
     spr->buttons[l].level = l;
     spr->buttons[l].button_spr = (GSpriteButton *)
-      GSpriteButton_new (res, x * bstride + bmargin / 2, 1 * line + y * bstride, bsize, bsize, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
+      GSpriteButton_new_with_text (res, x * bstride + bmargin / 2, 1 * line + y * bstride, bsize, bsize, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
         res->font_med, GSpriteLevelSelect_get_button_color (&spr->buttons[l]), 0xFF000000, text, GSpriteLevelSelect_selection, &spr->buttons[l]);
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->buttons[l].button_spr);
 
@@ -173,7 +173,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
         GSpriteLabel_new (res, bsize, bsize, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END, res->font_text, 0xFF000000, 0xFF808080, text));
   }
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new_with_icon (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
+    GSpriteButton_new_with_text_and_icon (res, res->game_width, res->game_height, -1, -1, GSPRITE_JUSTIFY_END, GSPRITE_JUSTIFY_END,
       res->font_med, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteLevelSelect_back, spr, res->font_icons_med, GICON_BACK));
   return (GSprite *)spr;
 }

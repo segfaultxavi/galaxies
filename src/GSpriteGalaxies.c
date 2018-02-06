@@ -119,18 +119,18 @@ GSprite *GSpriteGalaxies_new (GResources *res, GSprite *level_select, int level_
   GSprite_add_child (margin,
     GSpriteLabel_new (res, mwidth / 2, 1 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_small,
       0xFFFFFFFF, 0x00000000, str));
-  GSprite_add_child (margin, GSpriteButton_new (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+  GSprite_add_child (margin, GSpriteButton_new_with_text (res, mwidth / 2, 3 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
     res->font_small, 0xFFFFFFFF, 0xFF000000, "Help", GSpriteGalaxies_help, spr));
-  GSprite_add_child (margin, GSpriteButton_new (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+  GSprite_add_child (margin, GSpriteButton_new_with_text (res, mwidth / 2, 4 * line, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
     res->font_small, 0xFFFFFFFF, 0xFF000000, "Reset", GSpriteGalaxies_reset, spr));
   spr->completed_spr = GSpriteLabel_new_multiline (res, mwidth / 2, 6 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN,
     res->font_med, 0xFFFFFFFF, 0xFFFF0000, "level\ncomplete");
   GSprite_add_child (margin, spr->completed_spr);
   spr->completed_spr->visible = 0;
   GSprite_add_child (margin,
-    GSpriteButton_new_with_icon (res, mwidth / 4, res->game_height, mwidth / 2 - 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+    GSpriteButton_new_with_text_and_icon (res, mwidth / 4, res->game_height, mwidth / 2 - 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
       res->font_small, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteGalaxies_back, spr, res->font_icons_small, GICON_BACK));
-  spr->next_button = GSpriteButton_new_with_icon (res, 3 * mwidth / 4, res->game_height, mwidth / 2 - 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+  spr->next_button = GSpriteButton_new_with_text_and_icon (res, 3 * mwidth / 4, res->game_height, mwidth / 2 - 2, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
     res->font_small, 0xFFFFFFFF, 0xFF000000, "Next", GSpriteGalaxies_next, spr, res->font_icons_small, GICON_NEXT);
   spr->next_button->visible = 0;
   GSprite_add_child (margin, spr->next_button);

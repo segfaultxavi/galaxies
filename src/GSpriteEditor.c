@@ -443,7 +443,7 @@ int GSpriteEditor_core_button_event (int id, GEvent *event, void *userdata, int 
 
 #define BUTTON(x,y,name, callback, icon) \
   GSprite_add_child (margin, \
-    GSpriteButton_new_with_icon (res, x * mwidth / 4, y * line, mwidth / 2 - 2, line - 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, \
+    GSpriteButton_new_with_text_and_icon (res, x * mwidth / 4, y * line, mwidth / 2 - 2, line - 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, \
       res->font_small, 0xFFFFFFFF, 0xFF000000, name, callback, spr, res->font_icons_small, icon))
 
 GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *desc) {
@@ -473,10 +473,10 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
   BUTTON (3, 3, "RESTART", GSpriteEditor_restart, NULL);
 
   GSprite_add_child (margin,
-    GSpriteButton_new_with_icon (res, 0, 4 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+    GSpriteButton_new_with_text_and_icon (res, 0, 4 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
       res->font_small, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteEditor_size_minus, spr, res->font_icons_small, GICON_DOWN));
   GSprite_add_child (margin,
-    GSpriteButton_new_with_icon (res, 2 * mwidth / 3, 4 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+    GSpriteButton_new_with_text_and_icon (res, 2 * mwidth / 3, 4 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
       res->font_small, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteEditor_size_plus, spr, res->font_icons_small, GICON_UP));
 
   BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard, NULL);
@@ -498,10 +498,10 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
   ((GSprite *)spr->progress_spr)->visible = 0;
 
   GSprite_add_child (margin,
-    GSpriteButton_new_with_icon (res, 0, 8 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+    GSpriteButton_new_with_text_and_icon (res, 0, 8 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
       res->font_small, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteEditor_prev_solution, spr, res->font_icons_small, GICON_LEFT));
   GSprite_add_child (margin,
-    GSpriteButton_new_with_icon (res, 2 * mwidth / 3, 8 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
+    GSpriteButton_new_with_text_and_icon (res, 2 * mwidth / 3, 8 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
       res->font_small, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteEditor_next_solution, spr, res->font_icons_small, GICON_RIGHT));
 
   spr->num_sols_spr = spr->curr_sol_spr = NULL;
@@ -509,7 +509,7 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
   GSpriteEditor_update_solution_labels (spr);
 
   GSprite_add_child (margin,
-    GSpriteButton_new_with_icon (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
+    GSpriteButton_new_with_text_and_icon (res, mwidth / 2, res->game_height, mwidth, -1, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_END,
       res->font_small, 0xFFFFFFFF, 0xFF000000, "Back", GSpriteEditor_back, spr, res->font_icons_small, GICON_BACK));
 
   GSprite_add_child ((GSprite *)spr, margin);

@@ -69,7 +69,7 @@ static int GSpriteButton_event (GSpriteButton *spr, GEvent *event, int *destroye
   return ret;
 }
 
-GSprite *GSpriteButton_new_with_icon (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
+GSprite *GSpriteButton_new_with_text_and_icon (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
     TTF_Font *font, Uint32 button_color, Uint32 label_color, const char *text, GSpriteButtonCallback callback, void *userdata,
     TTF_Font *icon_font, const char *icon_text) {
   GSprite *label = NULL, *icon = NULL;
@@ -129,9 +129,9 @@ GSprite *GSpriteButton_new_with_icon (GResources *res, int x, int y, int w, int 
 }
 
 
-GSprite *GSpriteButton_new (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
+GSprite *GSpriteButton_new_with_text (GResources *res, int x, int y, int w, int h, GSpriteJustify justify_hor, GSpriteJustify justify_ver,
     TTF_Font *font, Uint32 button_color, Uint32 label_color, const char *text, GSpriteButtonCallback callback, void *userdata) {
-  return GSpriteButton_new_with_icon (res, x, y, w, h, justify_hor, justify_ver, font, button_color, label_color, text, callback, userdata, NULL, NULL);
+  return GSpriteButton_new_with_text_and_icon (res, x, y, w, h, justify_hor, justify_ver, font, button_color, label_color, text, callback, userdata, NULL, NULL);
 }
 
 void GSpriteButton_set_color (GSpriteButton *spr, Uint32 color) {
