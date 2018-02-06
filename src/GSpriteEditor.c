@@ -424,10 +424,10 @@ static void GSpriteEditor_update_core_buttons (GSpriteEditor *spr) {
 
   for (i = 0; i < 4; i++) {
     if (i == spr->selected_core_type) {
-      GSpriteButton_set_color (spr->core_type_button[i].button, 0xFFFFFF00);
+      GSpriteButton_set_color (spr->core_type_button[i].button, 0xFFC0C000);
       GSpriteCore_set_color (spr->core_type_button[i].core, 0xFFFFFF00);
     } else {
-      GSpriteButton_set_color (spr->core_type_button[i].button, 0xFFFFFFFF);
+      GSpriteButton_set_color (spr->core_type_button[i].button, 0xFFC0C0C0);
       GSpriteCore_set_color (spr->core_type_button[i].core, 0xFFC0C0C0);
     }
   }
