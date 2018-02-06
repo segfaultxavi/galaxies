@@ -24,6 +24,13 @@ typedef struct _GSpriteEditorCopyFromClipboard {
   char *new_desc;
 } GSpriteEditorCopyFromClipboard;
 
+typedef struct _GSpriteEditorCoreTypeButton {
+  GSpriteEditor *spr;
+  GSpriteButton *button;
+  GSpriteCore *core;
+  int id;
+} GSpriteEditorCoreTypeButton;
+
 struct _GSpriteEditor {
   GSprite base;
   GSprite *main_menu;
@@ -31,7 +38,7 @@ struct _GSpriteEditor {
   GSprite *num_sols_spr;
   GSprite *curr_sol_spr;
   GSprite *size_spr;
-  GSpriteCore *core_spr[4];
+  GSpriteEditorCoreTypeButton core_type_button[4];
   GSpriteProgress *progress_spr;
   GSpriteEditorSizeChange size_change_plus;
   GSpriteEditorSizeChange size_change_minus;
@@ -412,33 +419,26 @@ Uint32 GSpriteEditor_solver_timer (Uint32 interval, void *param) {
   return interval;
 }
 
-void GSpriteEditor_update_core_buttons (GSpriteEditor *spr) {
+static void GSpriteEditor_update_core_buttons (GSpriteEditor *spr) {
   int i;
 
   for (i = 0; i < 4; i++) {
-    if (i == spr->selected_core_type)
-      GSpriteCore_set_color (spr->core_spr[i], 0xFFC0C0C0);
-    else
-      GSpriteCore_set_color (spr->core_spr[i], 0xFF404040);
+    if (i == spr->selected_core_type) {
+      GSpriteButton_set_color (spr->core_type_button[i].button, 0xFFFFFF00);
+      GSpriteCore_set_color (spr->core_type_button[i].core, 0xFFFFFF00);
+    } else {
+      GSpriteButton_set_color (spr->core_type_button[i].button, 0xFFFFFFFF);
+      GSpriteCore_set_color (spr->core_type_button[i].core, 0xFFC0C0C0);
+    }
   }
 }
 
-int GSpriteEditor_core_button_event (int id, GEvent *event, void *userdata, int *destroyed) {
-  int ret = 0;
-  GSpriteEditor *spr = userdata;
-  switch (event->type) {
-    case GEVENT_TYPE_SPRITE_ACTIVATE:
-    case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
-      spr->selected_core_type = id;
-      GSpriteEditor_update_core_buttons (spr);
-      ret = 1;
-      break;
-    case GEVENT_TYPE_SPRITE_IN:
-    case GEVENT_TYPE_MOVE:
-      ret = 1;
-      break;
-  }
-  return ret;
+static int GSpriteEditor_core_button_event (void *userdata, int *destroyed) {
+  GSpriteEditorCoreTypeButton *ctb = userdata;
+  GSpriteEditor *spr = ctb->spr;
+  spr->selected_core_type = ctb->id;
+  GSpriteEditor_update_core_buttons (spr);
+  return 1;
 }
 
 #define BUTTON(x,y,name, callback) \
@@ -484,10 +484,17 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
   BUTTON (3, 6, "HELP", GSpriteEditor_help);
 
   for (i = 0; i < 4; i++) {
-    spr->core_spr[i] = (GSpriteCore *)GSpriteCore_new (res, (GSpriteCoreType)i,
-        (float)i, 6, i, 0xFF404040, line, line, GSpriteEditor_core_button_event, spr, NULL);
-    ((GSprite *)spr->core_spr[i])->x = mwidth / 16 + i * mwidth / 8;
-    GSprite_add_child (margin, (GSprite *)spr->core_spr[i]);
+    int size = SDL_min (line - 2, mwidth / 8 - 2);
+    spr->core_type_button[i].core = (GSpriteCore *)GSpriteCore_new (res, (GSpriteCoreType)i,
+      0.f, 0.f, i, 0xFFC0C0C0, size, size, NULL, NULL, NULL);
+    spr->core_type_button[i].id = i;
+    spr->core_type_button[i].spr = spr;
+    spr->core_type_button[i].button = (GSpriteButton *)
+        GSpriteButton_new_with_sprite (res, mwidth / 16 + i * mwidth / 8, 6 * line, mwidth / 8 - 2, line - 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
+          (GSprite *)spr->core_type_button[i].core, 0xFFFFFFFF, GSpriteEditor_core_button_event, &spr->core_type_button[i]);
+    ((GSprite *)spr->core_type_button[i].core)->x = mwidth / 16 - 1;
+    ((GSprite *)spr->core_type_button[i].core)->y = line / 2;
+    GSprite_add_child (margin, (GSprite *)spr->core_type_button[i].button);
   }
   spr->selected_core_type = 0;
   GSpriteEditor_update_core_buttons (spr);
