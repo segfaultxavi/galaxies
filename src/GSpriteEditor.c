@@ -441,10 +441,10 @@ int GSpriteEditor_core_button_event (int id, GEvent *event, void *userdata, int 
   return ret;
 }
 
-#define BUTTON(x,y,name, callback, icon) \
+#define BUTTON(x,y,name, callback) \
   GSprite_add_child (margin, \
-    GSpriteButton_new_with_text_and_icon (res, x * mwidth / 4, y * line, mwidth / 2 - 2, line - 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, \
-      res->font_small, 0xFFFFFFFF, 0xFF000000, name, callback, spr, res->font_icons_small, icon))
+    GSpriteButton_new_with_text (res, x * mwidth / 4, y * line, mwidth / 2 - 2, line - 2, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER, \
+      res->font_small, 0xFFFFFFFF, 0xFF000000, name, callback, spr))
 
 GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *desc) {
   int i;
@@ -469,8 +469,8 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
     GSpriteLabel_new (res, mwidth / 2, 1 * line, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
       0xFF000000, 0xFFFFFFFF, "EDITOR"));
 
-  BUTTON (1, 3, "RESET", GSpriteEditor_reset, NULL);
-  BUTTON (3, 3, "RESTART", GSpriteEditor_restart, NULL);
+  BUTTON (1, 3, "RESET", GSpriteEditor_reset);
+  BUTTON (3, 3, "RESTART", GSpriteEditor_restart);
 
   GSprite_add_child (margin,
     GSpriteButton_new_with_text_and_icon (res, 0, 4 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
@@ -479,9 +479,9 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
     GSpriteButton_new_with_text_and_icon (res, 2 * mwidth / 3, 4 * line, mwidth / 3, line - 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_CENTER, \
       res->font_small, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteEditor_size_plus, spr, res->font_icons_small, GICON_UP));
 
-  BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard, NULL);
-  BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard, NULL);
-  BUTTON (3, 6, "HELP", GSpriteEditor_help, NULL);
+  BUTTON (1, 5, "IMPORT", GSpriteEditor_copy_from_clipboard);
+  BUTTON (3, 5, "EXPORT", GSpriteEditor_copy_to_clipboard);
+  BUTTON (3, 6, "HELP", GSpriteEditor_help);
 
   for (i = 0; i < 4; i++) {
     spr->core_spr[i] = (GSpriteCore *)GSpriteCore_new (res, (GSpriteCoreType)i,
