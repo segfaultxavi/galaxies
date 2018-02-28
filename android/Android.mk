@@ -31,9 +31,10 @@ LOCAL_SRC_FILES := \
   GSolver.c \
   GSpriteProgress.c \
   GSpriteOptions.c \
+  GSpriteImage.c \
   GAudio.c
 
-LOCAL_SHARED_LIBRARIES := SDL2 SDL2_ttf SDL2_mixer
+LOCAL_SHARED_LIBRARIES := SDL2 SDL2_ttf SDL2_mixer SDL2_image
 
 LOCAL_LDLIBS := -lGLESv1_CM -lGLESv2 -llog
 

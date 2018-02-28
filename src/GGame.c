@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_image.h>
 #include "GGame.h"
 #include "GAudio.h"
 #include "GResources.h"
@@ -57,6 +58,11 @@ GGame *GGame_new () {
   }
   SDL_SetWindowTitle (game->sdl_window, "Tentai Show");
   SDL_SetRenderDrawBlendMode (res->sdl_renderer, SDL_BLENDMODE_BLEND);
+
+  // Images
+  if (IMG_Init (IMG_INIT_JPG) & IMG_INIT_JPG == 0) {
+    SDL_Log ("IMG_Init: %s", IMG_GetError ());
+  }
 
   // Fonts
   font_rwops = GGame_openAsset (res, "spincycle.otf");
@@ -119,6 +125,8 @@ void GGame_free (GGame *game) {
   SDL_free (game->resources.data_path);
   SDL_DestroyRenderer (game->resources.sdl_renderer);
   SDL_DestroyWindow (game->sdl_window);
+
+  IMG_Quit ();
 
   SDL_free (game);
 }

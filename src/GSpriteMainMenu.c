@@ -9,6 +9,7 @@
 #include "GSpriteOptions.h"
 #include "GSpriteCredits.h"
 #include "GSpritePopup.h"
+#include "GSpriteImage.h"
 #include "GIcons.h"
 
 struct _GSpriteMainMenu {
@@ -75,6 +76,8 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
       NULL, (GSpriteEvent)GSpriteMainMenu_event, NULL, NULL);
   spr->base.w = spr->base.h = -1;
   GSprite_add_child ((GSprite *)spr,
+    GSpriteImage_new (res, 0, 0, res->game_width, res->game_height, "../android/assets/icon/galaxy.jpg"));
+  GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_big,
       0xFF000000, 0xFFFFFFFF, "TENTAI SHOW"));
   GSprite_add_child ((GSprite *)spr,
@@ -82,18 +85,18 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
       0xFFFFFFFF, 0xFFFFFFFF, "BETA 9"));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new_with_text_and_icon (res, res->game_width / 2, 2 * line, res->game_width / 2, line - 4, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFFFFFFFF, 0xFF000000, "PLAY", GSpriteMainMenu_play, spr, res->font_icons_med, GICON_PLAY));
+      res->font_med, 0xC0FFFFFF, 0xFF000000, "PLAY", GSpriteMainMenu_play, spr, res->font_icons_med, GICON_PLAY));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new_with_text_and_icon (res, res->game_width / 2, 3 * line, res->game_width / 2, line - 4, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFFFFFFFF, 0xFF000000, "EDITOR", GSpriteMainMenu_editor, spr, res->font_icons_med, GICON_EDITOR));
+      res->font_med, 0xC0FFFFFF, 0xFF000000, "EDITOR", GSpriteMainMenu_editor, spr, res->font_icons_med, GICON_EDITOR));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new_with_text_and_icon (res, res->game_width / 2, 4 * line, res->game_width / 2, line - 4, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFFFFFFFF, 0xFF000000, "OPTIONS", GSpriteMainMenu_options, spr, res->font_icons_med, GICON_OPTIONS));
+      res->font_med, 0xC0FFFFFF, 0xFF000000, "OPTIONS", GSpriteMainMenu_options, spr, res->font_icons_med, GICON_OPTIONS));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new_with_text_and_icon (res, res->game_width / 2, 5 * line, res->game_width / 2, line - 4, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFFFFFFFF, 0xFF000000, "CREDITS", GSpriteMainMenu_credits, spr, res->font_icons_med, GICON_CREDITS));
+      res->font_med, 0xC0FFFFFF, 0xFF000000, "CREDITS", GSpriteMainMenu_credits, spr, res->font_icons_med, GICON_CREDITS));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new_with_text_and_icon (res, res->game_width / 2, 6 * line, res->game_width / 2, line - 4, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
-      res->font_med, 0xFFFFFFFF, 0xFF000000, "QUIT", GSpriteMainMenu_quit, spr, res->font_icons_med, GICON_QUIT));
+      res->font_med, 0xC0FFFFFF, 0xFF000000, "QUIT", GSpriteMainMenu_quit, spr, res->font_icons_med, GICON_QUIT));
   return (GSprite *)spr;
 }
