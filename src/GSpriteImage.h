@@ -12,9 +12,9 @@ extern "C" {
 typedef struct _GSpriteImage GSpriteImage;
 
 typedef enum _GSpriteImageFitMode {
-  GSPRITE_IMAGE_FIT_MODE_STRETCH,
-  GSPRITE_IMAGE_FIT_MODE_INSIDE,
-  GSPRITE_IMAGE_FIT_MODE_OUTSIDE
+  GSPRITE_IMAGE_FIT_MODE_STRETCH, // Does not preserve Aspect Ratio
+  GSPRITE_IMAGE_FIT_MODE_INSIDE,  // Preserves AR, whole image fits inside dest rectangle leaving blank areas (letterbox)
+  GSPRITE_IMAGE_FIT_MODE_OUTSIDE  // Preserves AR, zooms image to fill dest rectangle completely
 } GSpriteImageFitMode;
 
 GSprite *GSpriteImage_new (GResources *res, int x, int y, int w, int h, const char *filename, GSpriteImageFitMode fit_mode);
