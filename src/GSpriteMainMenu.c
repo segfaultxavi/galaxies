@@ -76,7 +76,7 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
       NULL, (GSpriteEvent)GSpriteMainMenu_event, NULL, NULL);
   spr->base.w = spr->base.h = -1;
   GSprite_add_child ((GSprite *)spr,
-    GSpriteImage_new (res, 0, 0, res->game_width, res->game_height, "../android/assets/icon/galaxy.jpg"));
+    GSpriteImage_new (res, 0, 0, res->game_width, res->game_height, "../android/assets/icon/galaxy_1024x500.jpg", GSPRITE_IMAGE_FIT_MODE_OUTSIDE));
   GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_big,
       0xFF000000, 0xFFFFFFFF, "TENTAI SHOW"));
