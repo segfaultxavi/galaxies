@@ -90,24 +90,26 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE; WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\contrib\SDL2-2.0.7\include;..\..\contrib\SDL2_ttf-2.0.14\include;..\..\contrib\SDL2_mixer-2.0.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\contrib\SDL2-2.0.8\include;..\..\contrib\SDL2_ttf-2.0.14\include;..\..\contrib\SDL2_mixer-2.0.2\include;..\..\contrib\SDL2_image-2.0.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>..\..\contrib\SDL2-2.0.7\lib\x86;..\..\contrib\SDL2_ttf-2.0.14\lib\x86;..\..\contrib\SDL2_mixer-2.0.2\lib\x86;%</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\contrib\SDL2-2.0.8\lib\x86;..\..\contrib\SDL2_ttf-2.0.14\lib\x86;..\..\contrib\SDL2_mixer-2.0.2\lib\x86;..\..\contrib\SDL2_image-2.0.3\lib\x86;%</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy ..\..\contrib\SDL2-2.0.7\lib\x86\*.dll $(OutputPath) /Q /Y
+      <Command>xcopy ..\..\contrib\SDL2-2.0.8\lib\x86\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x86\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\libogg*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\libvorbis*.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_image-2.0.3\lib\x86\SDL2_image.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_image-2.0.3\lib\x86\libjpeg-9.dll $(OutputPath) /Q /Y
 xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
       <Message>
       </Message>
@@ -120,24 +122,26 @@ xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE; _DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\contrib\SDL2-2.0.7\include;..\..\contrib\SDL2_ttf-2.0.14\include;..\..\contrib\SDL2_mixer-2.0.2\include;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\contrib\SDL2-2.0.8\include;..\..\contrib\SDL2_ttf-2.0.14\include;..\..\contrib\SDL2_mixer-2.0.2\include;..\..\contrib\SDL2_image-2.0.3\include;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>..\..\contrib\SDL2-2.0.7\lib\x64;..\..\contrib\SDL2_ttf-2.0.14\lib\x64;..\..\contrib\SDL2_mixer-2.0.2\lib\x64;%</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\contrib\SDL2-2.0.8\lib\x64;..\..\contrib\SDL2_ttf-2.0.14\lib\x64;..\..\contrib\SDL2_mixer-2.0.2\lib\x64;..\..\contrib\SDL2_image-2.0.3\lib\x64;%</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy ..\..\contrib\SDL2-2.0.7\lib\x64\*.dll $(OutputPath) /Q /Y
+      <Command>xcopy ..\..\contrib\SDL2-2.0.8\lib\x64\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libogg*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libvorbis*.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_image-2.0.3\lib\x64\SDL2_image.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_image-2.0.3\lib\x64\libjpeg-9.dll $(OutputPath) /Q /Y
 xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -150,7 +154,7 @@ xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE; WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\contrib\SDL2-2.0.7\include;..\..\contrib\SDL2_ttf-2.0.14\include;..\..\contrib\SDL2_mixer-2.0.2\include;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\contrib\SDL2-2.0.8\include;..\..\contrib\SDL2_ttf-2.0.14\include;..\..\contrib\SDL2_mixer-2.0.2\include;..\..\contrib\SDL2_image-2.0.3\include;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -158,19 +162,21 @@ xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\..\contrib\SDL2-2.0.7\lib\x86;..\..\contrib\SDL2_ttf-2.0.14\lib\x86;..\..\contrib\SDL2_mixer-2.0.2\lib\x86;%</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\contrib\SDL2-2.0.8\lib\x86;..\..\contrib\SDL2_ttf-2.0.14\lib\x86;..\..\contrib\SDL2_mixer-2.0.2\lib\x86;..\..\contrib\SDL2_image-2.0.3\lib\x86;%</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy ..\..\contrib\SDL2-2.0.7\lib\x86\*.dll $(OutputPath) /Q /Y
+      <Command>xcopy ..\..\contrib\SDL2-2.0.8\lib\x86\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x86\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\SDL2_mixer.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\libogg*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x86\libvorbis*.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_image-2.0.3\lib\x86\SDL2_image.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_image-2.0.3\lib\x86\libjpeg-9.dll $(OutputPath) /Q /Y
 xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
       <Message>
       </Message>
@@ -185,7 +191,7 @@ xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE; NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\contrib\SDL2-2.0.7\include;..\..\contrib\SDL2_ttf-2.0.14\include;..\..\contrib\SDL2_mixer-2.0.2\include;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\contrib\SDL2-2.0.8\include;..\..\contrib\SDL2_ttf-2.0.14\include;..\..\contrib\SDL2_mixer-2.0.2\include;..\..\contrib\SDL2_image-2.0.3\include;%%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -193,19 +199,21 @@ xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\..\contrib\SDL2-2.0.7\lib\x64;..\..\contrib\SDL2_ttf-2.0.14\lib\x64;..\..\contrib\SDL2_mixer-2.0.2\lib\x64;%</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\contrib\SDL2-2.0.8\lib\x64;..\..\contrib\SDL2_ttf-2.0.14\lib\x64;..\..\contrib\SDL2_mixer-2.0.2\lib\x64;..\..\contrib\SDL2_image-2.0.3\lib\x64;%</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_mixer.lib;SDL2_image.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy ..\..\contrib\SDL2-2.0.7\lib\x64\*.dll $(OutputPath) /Q /Y
+      <Command>xcopy ..\..\contrib\SDL2-2.0.8\lib\x64\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_ttf-2.0.14\lib\x64\*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\SDL2_mixer.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libogg*.dll $(OutputPath) /Q /Y
 xcopy ..\..\contrib\SDL2_mixer-2.0.2\lib\x64\libvorbis*.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_image-2.0.3\lib\x64\SDL2_image.dll $(OutputPath) /Q /Y
+xcopy ..\..\contrib\SDL2_image-2.0.3\lib\x64\libjpeg-9.dll $(OutputPath) /Q /Y
 xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -222,6 +230,7 @@ xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
     <ClCompile Include="..\..\src\GSpriteCredits.c" />
     <ClCompile Include="..\..\src\GSpriteEditor.c" />
     <ClCompile Include="..\..\src\GSpriteGalaxies.c" />
+    <ClCompile Include="..\..\src\GSpriteImage.c" />
     <ClCompile Include="..\..\src\GSpriteLabel.c" />
     <ClCompile Include="..\..\src\GSpriteLevelSelect.c" />
     <ClCompile Include="..\..\src\GSpriteMainMenu.c" />
@@ -249,6 +258,7 @@ xcopy ..\..\assets $(OutputPath)\assets\ /Q /Y</Command>
     <ClInclude Include="..\..\src\GSpriteCredits.h" />
     <ClInclude Include="..\..\src\GSpriteEditor.h" />
     <ClInclude Include="..\..\src\GSpriteGalaxies.h" />
+    <ClInclude Include="..\..\src\GSpriteImage.h" />
     <ClInclude Include="..\..\src\GSpriteLabel.h" />
     <ClInclude Include="..\..\src\GSpriteLevelSelect.h" />
     <ClInclude Include="..\..\src\GSpriteMainMenu.h" />
