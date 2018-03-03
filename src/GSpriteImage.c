@@ -60,7 +60,8 @@ static void GSpriteImage_render (GSpriteImage *spr, int offsx, int offsy) {
 }
 
 void GSpriteImage_free (GSpriteImage *spr) {
-  SDL_DestroyTexture (spr->tex);
+  if (spr->tex)
+    SDL_DestroyTexture (spr->tex);
 }
 
 GSprite *GSpriteImage_new (GResources *res, int x, int y, int w, int h, const char *filename, GSpriteImageFitMode fit_mode) {
@@ -73,6 +74,11 @@ GSprite *GSpriteImage_new (GResources *res, int x, int y, int w, int h, const ch
 
   rwops = GGame_openAsset (res, filename);
   surf = IMG_Load_RW (rwops, 1);
+  if (!surf) {
+    SDL_Log ("IMG_Load_RW: %s", IMG_GetError ());
+    GSprite_free ((GSprite *)spr);
+    return NULL;
+  }
   spr->tex = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
   spr->w = surf->w;
   spr->h = surf->h;

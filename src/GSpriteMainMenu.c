@@ -74,9 +74,13 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
   int line = res->game_height / 7;
   GSpriteMainMenu *spr = (GSpriteMainMenu *)GSprite_new (res, sizeof (GSpriteMainMenu),
       NULL, (GSpriteEvent)GSpriteMainMenu_event, NULL, NULL);
+  GSprite *child;
   spr->base.w = spr->base.h = -1;
-  GSprite_add_child ((GSprite *)spr,
-    GSpriteImage_new (res, 0, 0, res->game_width, res->game_height, "../android/assets/icon/galaxy_1024x500.jpg", GSPRITE_IMAGE_FIT_MODE_OUTSIDE));
+
+  child = GSpriteImage_new (res, 0, 0, res->game_width, res->game_height, "../android/assets/icon/galaxy_1024x500.jpg", GSPRITE_IMAGE_FIT_MODE_OUTSIDE);
+  if (!child) goto error;
+  GSprite_add_child ((GSprite *)spr, child);
+
   GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, res->game_width / 2, 0, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_big,
       0xFF000000, 0xFFFFFFFF, "TENTAI SHOW"));
@@ -99,4 +103,8 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
     GSpriteButton_new_with_text_and_icon (res, res->game_width / 2, 6 * line, res->game_width / 2, line - 4, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
       res->font_med, 0xC0FFFFFF, 0xFF000000, "QUIT", GSpriteMainMenu_quit, spr, res->font_icons_med, GICON_QUIT));
   return (GSprite *)spr;
+
+error:
+  GSprite_free ((GSprite *)spr);
+  return NULL;
 }

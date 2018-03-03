@@ -31,6 +31,7 @@ SDL_RWops *GGame_openAsset (GResources *res, const char *name) {
 GGame *GGame_new () {
   GGame *game = SDL_malloc (sizeof (GGame));
   GResources *res = &game->resources;
+  GSprite *main_menu;
   SDL_DisplayMode sdpm;
   SDL_RWops *font_rwops;
   SDL_memset (game, 0, sizeof (GGame));
@@ -99,7 +100,9 @@ GGame *GGame_new () {
 
   // Content
   res->root = GSpriteNull_new (res, 0, 0);
-  GSprite_add_child (res->root, GSpriteMainMenu_new (res));
+  main_menu = GSpriteMainMenu_new (res);
+  if (!main_menu) goto error;
+  GSprite_add_child (res->root, main_menu);
 
   return game;
 
