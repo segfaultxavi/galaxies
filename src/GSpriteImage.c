@@ -13,7 +13,6 @@ struct _GSpriteImage {
 
 static void GSpriteImage_render (GSpriteImage *spr, int offsx, int offsy) {
   SDL_Rect srect, drect;
-  SDL_Color col;
   SDL_Renderer *renderer = spr->base.res->sdl_renderer;
   int aw, ah;
 
