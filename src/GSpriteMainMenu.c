@@ -77,7 +77,7 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
   GSprite *child;
   spr->base.w = spr->base.h = -1;
 
-  child = GSpriteImage_new (res, 0, 0, res->game_width, res->game_height, "../android/assets/icon/galaxy_1024x500.jpg", GSPRITE_IMAGE_FIT_MODE_OUTSIDE);
+  child = GSpriteImage_new (res, 0, 0, res->game_width, res->game_height, "background.jpg", GSPRITE_IMAGE_FIT_MODE_OUTSIDE);
   if (!child) goto error;
   GSprite_add_child ((GSprite *)spr, child);
 
