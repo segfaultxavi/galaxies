@@ -61,7 +61,7 @@ GGame *GGame_new () {
   SDL_SetRenderDrawBlendMode (res->sdl_renderer, SDL_BLENDMODE_BLEND);
 
   // Images
-  if (IMG_Init (IMG_INIT_JPG) & IMG_INIT_JPG == 0) {
+  if ((IMG_Init (IMG_INIT_JPG) & IMG_INIT_JPG) == 0) {
     SDL_Log ("IMG_Init: %s", IMG_GetError ());
   }
 
