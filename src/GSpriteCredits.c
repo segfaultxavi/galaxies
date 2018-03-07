@@ -43,7 +43,7 @@ const char *credits[][2] = {
   {"", "WebHostingHub Glyphs"},
   {"Music", "Patrick Lieberkind"},
   {"Sound FX", "freesound.org"},
-  {"Libraries", "sdl, sdl_ttf, sdl_mixer"}
+  {"Libraries", "sdl, sdl_ttf, sdl_mixer, sdl_image"}
 };
 
 GSprite *GSpriteCredits_new (GResources *res, GSprite *main_menu) {
