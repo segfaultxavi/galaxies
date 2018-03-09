@@ -18,8 +18,8 @@ struct _GSpriteBoard {
   int numCores;
   GSpriteCore **cores;
   GSpriteBoardGrid *grid;
-  int currCoreId;
-  int currTileX, currTileY;
+  int selectedCoreId;
+  int selectedTileX, selectedTileY;
   int editing;
   GSpriteCore *coreCursor;
   char *last_code;
@@ -49,7 +49,7 @@ static void GSpriteBoard_set_curr_core_id (GSpriteBoard *spr, int id) {
     GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_ping);
   else
     GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_pong);
-  spr->currCoreId = id;
+  spr->selectedCoreId = id;
 }
 
 static void GSpriteBoard_remove_core (GSpriteBoard *spr, int id) {
@@ -89,12 +89,12 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata, int *
     case GEVENT_TYPE_SPRITE_ACTIVATE:
       res = 1;
       if (spr->finished) break;
-      if (spr->currCoreId != id)
+      if (spr->selectedCoreId != id)
         GSpriteBoard_set_curr_core_id (spr, id);
       else
         GSpriteBoard_set_curr_core_id (spr, -1);
-      spr->currTileX = -1;
-      spr->currTileY = -1;
+      spr->selectedTileX = -1;
+      spr->selectedTileY = -1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
       res = 1;
@@ -174,20 +174,8 @@ static int GSpriteBoard_valid_core_position (GSpriteBoard *spr, float sx, float 
 
 int GSpriteBoard_is_tile_selectable (GSpriteBoard *spr, int x, int y) {
   if (x < 0 || y < 0 || x >= spr->mapSizeX || y >= spr->mapSizeY) return 0;
-  if (GSpriteTile_get_id (GBOARD_TILE (spr, x, y)) == spr->currCoreId) return 1;
-  if (GSpriteBoard_valid_tile_position (spr, x, y, spr->currCoreId)) {
-#ifdef __ANDROID__
-    // On touch devices there is no hovering, so we use the galaxy outline to indicate
-    // valid moves instead of the tile opposite to the one currently hovered.
-    return 1;
-#else
-    int x2, y2;
-    if (x == spr->currTileX && y == spr->currTileY) return 1;
-    GSpriteCore_get_opposite (spr->cores[spr->currCoreId], spr->currTileX, spr->currTileY, &x2, &y2);
-    if (x == x2 && y == y2) return 1;
-#endif
-  }
-  return 0;
+  if (GSpriteTile_get_id (GBOARD_TILE (spr, x, y)) == spr->selectedCoreId) return 1;
+  return GSpriteBoard_valid_tile_position (spr, x, y, spr->selectedCoreId);
 }
 
 static int GSpriteBoard_flood_fill (GSpriteBoard *spr, int sx, int sy, int id) {
@@ -244,18 +232,17 @@ static void GSpriteBoard_get_core_coords (GSpriteBoard *spr, int x, int y, int s
   *outy = cy;
 }
 
-static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, int sy) {
+static void GSpriteBoard_handle_tile_click (GSpriteBoard *spr, int x, int y, int sx, int sy) {
   GSpriteTile *tile = GBOARD_TILE (spr, x, y);
   int tile_id = GSpriteTile_get_id (tile);
   int x2, y2;
   GSpriteTile *tile2;
   int tile_id2;
 
-  if (spr->currCoreId == -1) {
+  if (spr->selectedCoreId == -1) {
     float cx, cy;
     if (!spr->editing) {
-      // Without selected core, clicked on an owned tile 
-      GSpriteBoard_set_curr_core_id (spr, tile_id);
+      // Without selected core, clicking on tiles does nothing
       return;
     }
     GSpriteBoard_get_core_coords (spr, x, y, sx, sy, &cx, &cy);
@@ -266,25 +253,23 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
     // Add new core
     GSpriteBoard_add_core (spr, cx, cy, GCORE_TYPE_2_FOLD);
     return;
-  } else if (spr->currCoreId == tile_id) {
-    // Clicked on tile already owned: deselect core
-    GSpriteBoard_set_curr_core_id (spr, -1);
+  } else if (spr->selectedCoreId == tile_id) {
+    // Clicked on tile already owned: do nothing
     return;
   }
 
-  if (GSpriteBoard_valid_tile_position (spr, x, y, spr->currCoreId) == 0) {
-    // Clicked on an owned tile, which is invalid for the current core
-    GSpriteBoard_set_curr_core_id (spr, tile_id);
+  if (GSpriteBoard_valid_tile_position (spr, x, y, spr->selectedCoreId) == 0) {
+    // Clicked on an owned tile, which is invalid for the current core: do nothing
     return;
   }
 
-  GSpriteCore_get_opposite (spr->cores[spr->currCoreId], x, y, &x2, &y2);
-  if (GSpriteBoard_valid_tile_position (spr, x2, y2, spr->currCoreId) == 0) {
-    // The opposite position is invalid
+  GSpriteCore_get_opposite (spr->cores[spr->selectedCoreId], x, y, &x2, &y2);
+  if (GSpriteBoard_valid_tile_position (spr, x2, y2, spr->selectedCoreId) == 0) {
+    // The opposite position is invalid: do nothing
     return;
   }
 
-  if ((tile_id != -1) && (tile_id != spr->currCoreId)) {
+  if ((tile_id != -1) && (tile_id != spr->selectedCoreId)) {
     // Clicked on a valid tile which was owned by another core:
     int x3, y3;
     GSpriteTile *tile3;
@@ -298,7 +283,7 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
   }
   tile2 = GBOARD_TILE (spr, x2, y2);
   tile_id2 = GSpriteTile_get_id (tile2);
-  if ((tile_id2 != -1) && (tile_id2 != spr->currCoreId)) {
+  if ((tile_id2 != -1) && (tile_id2 != spr->selectedCoreId)) {
     // The tile opposite to the current core is also owned by another core
     int x3, y3;
     GSpriteTile *tile3;
@@ -312,8 +297,8 @@ static void GSpriteBoard_handle_click (GSpriteBoard *spr, int x, int y, int sx, 
   }
 
   // Assign tile to current core
-  GSpriteTile_set_id (tile, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
-  GSpriteTile_set_id (tile2, spr->currCoreId, GSpriteCore_get_color (spr->cores[spr->currCoreId]));
+  GSpriteTile_set_id (tile, spr->selectedCoreId, GSpriteCore_get_color (spr->cores[spr->selectedCoreId]));
+  GSpriteTile_set_id (tile2, spr->selectedCoreId, GSpriteCore_get_color (spr->cores[spr->selectedCoreId]));
   GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_woosh);
 
   if (!spr->editing) {
@@ -335,7 +320,7 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
     case GEVENT_TYPE_MOVE:
       res = 1;
       if (spr->finished) break;
-      if (spr->currCoreId == -1 && spr->editing) {
+      if (spr->selectedCoreId == -1 && spr->editing) {
         // Core placement mode
         float cx, cy;
         GSpriteBoard_get_core_coords (spr, x, y, event->x, event->y, &cx, &cy);
@@ -345,15 +330,13 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
       }
       break;
     case GEVENT_TYPE_SPRITE_IN:
-      spr->currTileX = x;
-      spr->currTileY = y;
       res = 1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE:
     case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
       res = 1;
       if (spr->finished) break;
-      GSpriteBoard_handle_click (spr, x, y, event->x, event->y);
+      GSpriteBoard_handle_tile_click (spr, x, y, event->x, event->y);
       break;
     default:
       break;
@@ -652,8 +635,8 @@ GSpriteTile *GSpriteBoard_get_tile (GSpriteBoard *spr, int x, int y) {
 }
 
 GSpriteCore *GSpriteBoard_get_selected_core (GSpriteBoard *spr) {
-  if (spr->currCoreId > -1)
-    return spr->cores[spr->currCoreId];
+  if (spr->selectedCoreId > -1)
+    return spr->cores[spr->selectedCoreId];
   return NULL;
 }
 
@@ -667,8 +650,8 @@ void GSpriteBoard_reset (GSpriteBoard *spr) {
       }
     }
   }
-  spr->currTileX = spr->currTileY = -1;
-  spr->currCoreId = -1;
+  spr->selectedTileX = spr->selectedTileY = -1;
+  spr->selectedCoreId = -1;
 
   if (!spr->editing)
     GSpriteGalaxies_update_level_status ((GSpriteGalaxies *)spr->base.parent, GSPRITE_LEVEL_SELECT_LEVEL_STATUS_UNTRIED, GSpriteBoard_save (spr, 0));
@@ -727,13 +710,13 @@ void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles) {
       }
     }
   }
-  spr->currCoreId = -1;
+  spr->selectedCoreId = -1;
 }
 
 void GSpriteBoard_set_finished (GSpriteBoard *spr, int finished) {
   int id, x, y, max_size = 0;
 
-  spr->currCoreId = -1;
+  spr->selectedCoreId = -1;
   spr->finished = finished;
 
   if (!finished) {
