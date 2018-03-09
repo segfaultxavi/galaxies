@@ -269,7 +269,7 @@ static void GSpriteBoard_handle_tile_click (GSpriteBoard *spr, int x, int y, int
     return;
   }
 
-  if ((tile_id != -1) && (tile_id != spr->selectedCoreId)) {
+  if (tile_id != -1) {
     // Clicked on a valid tile which was owned by another core:
     int x3, y3;
     GSpriteTile *tile3;
