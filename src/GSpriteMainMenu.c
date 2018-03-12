@@ -86,7 +86,7 @@ GSprite *GSpriteMainMenu_new (GResources *res) {
       0xFF000000, 0xFFFFFFFF, "TENTAI SHOW"));
   GSprite_add_child ((GSprite *)spr,
     GSpriteLabel_new (res, 3 * res->game_width / 4, 3 * res->game_height / 30, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_BEGIN, res->font_med,
-      0xFFFFFFFF, 0xFFFFFFFF, "BETA 9"));
+      0xFFFFFFFF, 0xFFFFFFFF, "BETA 10"));
   GSprite_add_child ((GSprite *)spr,
     GSpriteButton_new_with_text_and_icon (res, res->game_width / 2, 2 * line, res->game_width / 2, line - 4, GSPRITE_JUSTIFY_CENTER, GSPRITE_JUSTIFY_CENTER,
       res->font_med, 0xC0FFFFFF, 0xFF000000, "PLAY", GSpriteMainMenu_play, spr, res->font_icons_med, GICON_PLAY));
