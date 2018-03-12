@@ -49,7 +49,7 @@ static void GSpriteBoard_clear_target_colors (GSpriteBoard *spr) {
   int tx, ty;
   for (ty = 0; ty < spr->mapSizeY; ty++) {
     for (tx = 0; tx < spr->mapSizeX; tx++) {
-      GSpriteTile_set_target_id (GBOARD_TILE (spr, tx, ty), -1, 0);
+      GSpriteTile_remove_target_id (GBOARD_TILE (spr, tx, ty));
     }
   }
 }
@@ -337,7 +337,7 @@ static void GSpriteBoard_handle_tile_click (GSpriteBoard *spr, int x, int y, int
       for (tx = 0; tx < spr->mapSizeX; tx++) {
         GSpriteTile *ttile = target_tiles[GBOARD_TILE_OFFS(tx, ty, spr->mapSizeX)];
         int target_id = GSpriteTile_get_id (ttile);
-        Uint32 target_color = target_id > -1 ? GSpriteCore_get_color (spr->cores[target_id]) : 0xFF000000;
+        Uint32 target_color = target_id > -1 ? GSpriteCore_get_color (spr->cores[target_id]) : 0;
         GSpriteTile_set_target_id (GBOARD_TILE(spr, tx, ty), target_id, target_color);
         GSprite_free ((GSprite *)ttile);
       }
@@ -702,7 +702,6 @@ void GSpriteBoard_reset (GSpriteBoard *spr) {
       if ((GSpriteTile_get_flags (tile) & GTILE_FLAG_FIXED) == 0) {
         GSpriteTile_set_id (tile, -1, 0x00000000);
       }
-      GSpriteTile_set_target_id (tile, -1, 0);
     }
   }
   spr->selectedTileX = spr->selectedTileY = -1;
@@ -763,7 +762,6 @@ void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles) {
       } else {
         GSpriteTile_set_id (tile, id, 0x00000000);
       }
-      GSpriteTile_set_target_id (tile, -1, 0);
     }
   }
   spr->selectedCoreId = -1;

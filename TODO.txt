@@ -1,5 +1,4 @@
 FEATURES
-- Confirmation mode (disabled through options menu): click on a tile shows everything that will happen, click again confirms.
 - Editor: Buttons to select core type before deploying it
 - Core type Blocker should be unselectable (but removable in the editor)
 - Add icon to cores

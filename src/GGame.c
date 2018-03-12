@@ -159,6 +159,7 @@ void GGame_run (GGame *game) {
   int quit = 0;
   GSprite *focus = NULL;
   Uint32 click_timestamp = 0;
+  Uint32 last_frame_timestamp = 0;
 
   // Some events must be handled as fast as possible
   SDL_SetEventFilter (GGame_event_filter, game);
@@ -231,6 +232,10 @@ void GGame_run (GGame *game) {
         }
       }
     }
+
+    game->resources.game_time = SDL_GetTicks ();
+    game->resources.frame_time = game->resources.game_time - last_frame_timestamp;
+    last_frame_timestamp = game->resources.game_time;
 
     SDL_SetRenderDrawColor (game->resources.sdl_renderer, 0, 0, 0, 0);
     SDL_RenderClear (game->resources.sdl_renderer);

@@ -24,6 +24,8 @@ struct _GResources {
   GSprite *root;
   int game_width;
   int game_height;
+  Uint32 game_time; // milliseconds since game started
+  Uint32 frame_time; // milliseconds since last rendered frame
   GAudio *audio;
   GAudioSample *wav_ping, *wav_pong, *wav_woosh, *ogg_applause;
   GAudioMusic *ogg_music;

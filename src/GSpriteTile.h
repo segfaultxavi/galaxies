@@ -21,6 +21,7 @@ int GSpriteTile_get_id (const GSpriteTile *spr);
 void GSpriteTile_set_flags (GSpriteTile *spr, int flags);
 int GSpriteTile_get_flags (const GSpriteTile *spr);
 void GSpriteTile_set_target_id (GSpriteTile *spr, int target_id, Uint32 target_color);
+void GSpriteTile_remove_target_id (GSpriteTile *spr);
 
 #ifdef __cplusplus
 }

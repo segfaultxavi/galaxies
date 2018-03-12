@@ -40,11 +40,7 @@ static void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   }
   if (spr->board) {
     // This core is in a board, color is handled specially
-    if (GSpriteBoard_get_selected_core (spr->board) == spr) {
-      SDL_SetTextureColorMod (tex, 0xC0, 0xC0, 0x00);
-    } else {
-      SDL_SetTextureColorMod (tex, (0x40 + (spr->color >> 16)) & 0xFF, (0x40 + (spr->color >> 8)) & 0xFF, (0x40 + (spr->color >> 0)) & 0xFF);
-    }
+    SDL_SetTextureColorMod (tex, (0x40 + (spr->color >> 16)) & 0xFF, (0x40 + (spr->color >> 8)) & 0xFF, (0x40 + (spr->color >> 0)) & 0xFF);
   } else {
     // This is a basic core sprite, color works normally
     SDL_SetTextureColorMod (tex, (spr->color >> 16) & 0xFF, (spr->color >> 8) & 0xFF, (spr->color >> 0) & 0xFF);
@@ -109,7 +105,7 @@ GSprite *GSpriteCore_new (GResources *res, GSpriteCoreType type, float x, float 
       g = 0x80;
       b = 0x00;
     }
-    spr->color = 0x80000000 | (r << 16) + (g << 8) + b;
+    spr->color = 0xFF000000 | (r << 16) + (g << 8) + b;
   } else {
     spr->color = color;
   }
