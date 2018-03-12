@@ -45,19 +45,23 @@ static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
   }
 }
 
-static void GSpriteBoard_set_curr_core_id (GSpriteBoard *spr, int id) {
+static void GSpriteBoard_clear_target_colors (GSpriteBoard *spr) {
   int tx, ty;
+  for (ty = 0; ty < spr->mapSizeY; ty++) {
+    for (tx = 0; tx < spr->mapSizeX; tx++) {
+      GSpriteTile_set_target_id (GBOARD_TILE (spr, tx, ty), -1, 0);
+    }
+  }
+}
+
+static void GSpriteBoard_set_curr_core_id (GSpriteBoard *spr, int id) {
   if (id > -1)
     GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_ping);
   else
     GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_pong);
   spr->selectedCoreId = id;
 
-  for (ty = 0; ty < spr->mapSizeY; ty++) {
-    for (tx = 0; tx < spr->mapSizeX; tx++) {
-      GSpriteTile_set_target_id (GBOARD_TILE(spr, tx, ty), -1, 0);
-    }
-  }
+  GSpriteBoard_clear_target_colors (spr);
 }
 
 static void GSpriteBoard_remove_core (GSpriteBoard *spr, int id) {
@@ -698,6 +702,7 @@ void GSpriteBoard_reset (GSpriteBoard *spr) {
       if ((GSpriteTile_get_flags (tile) & GTILE_FLAG_FIXED) == 0) {
         GSpriteTile_set_id (tile, -1, 0x00000000);
       }
+      GSpriteTile_set_target_id (tile, -1, 0);
     }
   }
   spr->selectedTileX = spr->selectedTileY = -1;
@@ -758,6 +763,7 @@ void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles) {
       } else {
         GSpriteTile_set_id (tile, id, 0x00000000);
       }
+      GSpriteTile_set_target_id (tile, -1, 0);
     }
   }
   spr->selectedCoreId = -1;
