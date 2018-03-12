@@ -26,7 +26,8 @@ struct _GSpriteBoard {
   int finished;
 };
 
-#define GBOARD_TILE(spr,x,y) spr->tiles[(y) * spr->mapSizeX + (x)]
+#define GBOARD_TILE_OFFS(x,y,sizex) ((y) * (sizex) + (x))
+#define GBOARD_TILE(spr,x,y) spr->tiles[GBOARD_TILE_OFFS(x,y,spr->mapSizeX)]
 
 static void GSpriteBoard_deploy_core (GSpriteBoard *spr, float sx, float sy, GSpriteCoreType type, int id);
 
@@ -45,11 +46,18 @@ static void GSpriteBoard_render (GSpriteBoard *spr, int offsx, int offsy) {
 }
 
 static void GSpriteBoard_set_curr_core_id (GSpriteBoard *spr, int id) {
+  int tx, ty;
   if (id > -1)
     GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_ping);
   else
     GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_pong);
   spr->selectedCoreId = id;
+
+  for (ty = 0; ty < spr->mapSizeY; ty++) {
+    for (tx = 0; tx < spr->mapSizeX; tx++) {
+      GSpriteTile_set_target_id (GBOARD_TILE(spr, tx, ty), -1, 0);
+    }
+  }
 }
 
 static void GSpriteBoard_remove_core (GSpriteBoard *spr, int id) {
@@ -93,8 +101,7 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata, int *
         GSpriteBoard_set_curr_core_id (spr, id);
       else
         GSpriteBoard_set_curr_core_id (spr, -1);
-      spr->selectedTileX = -1;
-      spr->selectedTileY = -1;
+      spr->selectedTileX = spr->selectedTileY = -1;
       break;
     case GEVENT_TYPE_SPRITE_ACTIVATE_SECONDARY:
       res = 1;
@@ -178,8 +185,8 @@ int GSpriteBoard_is_tile_selectable (GSpriteBoard *spr, int x, int y) {
   return GSpriteBoard_valid_tile_position (spr, x, y, spr->selectedCoreId);
 }
 
-static int GSpriteBoard_flood_fill (GSpriteBoard *spr, int sx, int sy, int id) {
-  GSpriteTile *tile = GBOARD_TILE (spr, sx, sy);
+static int GSpriteBoard_flood_fill (GSpriteBoard *spr, GSpriteTile **tiles, int sx, int sy, int id) {
+  GSpriteTile *tile = tiles[GBOARD_TILE_OFFS (sx, sy, spr->mapSizeX)];
   int flags;
   int size = 0;
   if (GSpriteTile_get_id (tile) != id) return size;
@@ -188,14 +195,14 @@ static int GSpriteBoard_flood_fill (GSpriteBoard *spr, int sx, int sy, int id) {
   GSpriteTile_set_flags (tile, flags | GTILE_FLAG_VISITED);
 
   size = 1;
-  if (sx > 0) size += GSpriteBoard_flood_fill (spr, sx - 1, sy, id);
-  if (sx < spr->mapSizeX - 1) size += GSpriteBoard_flood_fill (spr, sx + 1, sy, id);
-  if (sy > 0) size += GSpriteBoard_flood_fill (spr, sx, sy - 1, id);
-  if (sy < spr->mapSizeY - 1) size += GSpriteBoard_flood_fill (spr, sx, sy + 1, id);
+  if (sx > 0) size += GSpriteBoard_flood_fill (spr, tiles, sx - 1, sy, id);
+  if (sx < spr->mapSizeX - 1) size += GSpriteBoard_flood_fill (spr, tiles, sx + 1, sy, id);
+  if (sy > 0) size += GSpriteBoard_flood_fill (spr, tiles, sx, sy - 1, id);
+  if (sy < spr->mapSizeY - 1) size += GSpriteBoard_flood_fill (spr, tiles, sx, sy + 1, id);
   return size;
 }
 
-static void GSpriteBoard_check_core (GSpriteBoard *spr, int id) {
+static void GSpriteBoard_check_core (GSpriteBoard *spr, GSpriteTile **tiles, int id) {
   GSpriteCore *core = spr->cores[id];
   int sx = (int)(((GSprite *)core)->x / spr->tileSizeX);
   int sy = (int)(((GSprite *)core)->y / spr->tileSizeY);
@@ -204,17 +211,17 @@ static void GSpriteBoard_check_core (GSpriteBoard *spr, int id) {
   // Clear flag
   for (y = 0; y < spr->mapSizeY; y++)
     for (x = 0; x < spr->mapSizeX; x++) {
-      GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+      GSpriteTile *tile = tiles[GBOARD_TILE_OFFS (x, y, spr->mapSizeX)];
       GSpriteTile_set_flags (tile, GSpriteTile_get_flags (tile) & ~GTILE_FLAG_VISITED);
     }
 
   // Fill all tiles connected to the core
-  GSpriteBoard_flood_fill (spr, sx, sy, id);
+  GSpriteBoard_flood_fill (spr, tiles, sx, sy, id);
 
   // Remove unconnected tiles
   for (y = 0; y < spr->mapSizeY; y++)
     for (x = 0; x < spr->mapSizeX; x++) {
-      GSpriteTile *tile = GBOARD_TILE (spr, x, y);
+      GSpriteTile *tile = tiles[GBOARD_TILE_OFFS (x, y, spr->mapSizeX)];
       if (GSpriteTile_get_id (tile) == id && (GSpriteTile_get_flags (tile) & GTILE_FLAG_VISITED) == 0) {
         GSpriteTile_set_id (tile, -1, 0);
       }
@@ -232,12 +239,50 @@ static void GSpriteBoard_get_core_coords (GSpriteBoard *spr, int x, int y, int s
   *outy = cy;
 }
 
+static void GSpriteBoard_commit_tile_change (GSpriteBoard *spr, GSpriteTile **tiles, int x, int y) {
+  GSpriteTile *tile = tiles[GBOARD_TILE_OFFS (x, y, spr->mapSizeX)];
+  int tile_id = GSpriteTile_get_id (tile);
+  GSpriteTile *tile2;
+  int x2, y2;
+  int tile_id2;
+
+  if (tile_id != -1) {
+    // Clicked on a valid tile which was owned by another core:
+    int x3, y3;
+    GSpriteTile *tile3;
+    // Remove tile from previous core
+    GSpriteTile_set_id (tile, -1, 0x00000000);
+    GSpriteCore_get_opposite (spr->cores[tile_id], x, y, &x3, &y3);
+    tile3 = tiles[GBOARD_TILE_OFFS (x3, y3, spr->mapSizeX)];
+    // And remove tile opposite to previous core
+    GSpriteTile_set_id (tile3, -1, 0x00000000);
+    GSpriteBoard_check_core (spr, tiles, tile_id);
+  }
+  GSpriteCore_get_opposite (spr->cores[spr->selectedCoreId], x, y, &x2, &y2);
+  tile2 = tiles[GBOARD_TILE_OFFS (x2, y2, spr->mapSizeX)];
+  tile_id2 = GSpriteTile_get_id (tile2);
+  if ((tile_id2 != -1) && (tile_id2 != spr->selectedCoreId)) {
+    // The tile opposite to the current core is also owned by another core
+    int x3, y3;
+    GSpriteTile *tile3;
+    // Remove tile from previous core
+    GSpriteTile_set_id (tile2, -1, 0x00000000);
+    GSpriteCore_get_opposite (spr->cores[tile_id2], x2, y2, &x3, &y3);
+    tile3 = tiles[GBOARD_TILE_OFFS (x3, y3, spr->mapSizeX)];
+    // And remove tile opposite to previous core
+    GSpriteTile_set_id (tile3, -1, 0x00000000);
+    GSpriteBoard_check_core (spr, tiles, tile_id2);
+  }
+
+  // Assign tile to current core
+  GSpriteTile_set_id (tile, spr->selectedCoreId, GSpriteCore_get_color (spr->cores[spr->selectedCoreId]));
+  GSpriteTile_set_id (tile2, spr->selectedCoreId, GSpriteCore_get_color (spr->cores[spr->selectedCoreId]));
+}
+
 static void GSpriteBoard_handle_tile_click (GSpriteBoard *spr, int x, int y, int sx, int sy) {
   GSpriteTile *tile = GBOARD_TILE (spr, x, y);
   int tile_id = GSpriteTile_get_id (tile);
   int x2, y2;
-  GSpriteTile *tile2;
-  int tile_id2;
 
   if (spr->selectedCoreId == -1) {
     float cx, cy;
@@ -269,36 +314,41 @@ static void GSpriteBoard_handle_tile_click (GSpriteBoard *spr, int x, int y, int
     return;
   }
 
-  if (tile_id != -1) {
-    // Clicked on a valid tile which was owned by another core:
-    int x3, y3;
-    GSpriteTile *tile3;
-    // Remove tile from previous core
-    GSpriteTile_set_id (tile, -1, 0x00000000);
-    GSpriteCore_get_opposite (spr->cores[tile_id], x, y, &x3, &y3);
-    tile3 = GBOARD_TILE (spr, x3, y3);
-    // And remove tile opposite to previous core
-    GSpriteTile_set_id (tile3, -1, 0x00000000);
-    GSpriteBoard_check_core (spr, tile_id);
-  }
-  tile2 = GBOARD_TILE (spr, x2, y2);
-  tile_id2 = GSpriteTile_get_id (tile2);
-  if ((tile_id2 != -1) && (tile_id2 != spr->selectedCoreId)) {
-    // The tile opposite to the current core is also owned by another core
-    int x3, y3;
-    GSpriteTile *tile3;
-    // Remove tile from previous core
-    GSpriteTile_set_id (tile2, -1, 0x00000000);
-    GSpriteCore_get_opposite (spr->cores[tile_id2], x2, y2, &x3, &y3);
-    tile3 = GBOARD_TILE (spr, x3, y3);
-    // And remove tile opposite to previous core
-    GSpriteTile_set_id (tile3, -1, 0x00000000);
-    GSpriteBoard_check_core (spr, tile_id2);
+  if (x != spr->selectedTileX || y != spr->selectedTileY) {
+    // If this was not the selected tile, calculate all effects and store them in the target_color of each tile
+    int tx, ty;
+    // Create a copy of the tile array
+    GSpriteTile **target_tiles = SDL_malloc (spr->mapSizeX * spr->mapSizeY * sizeof (GSpriteTile *));
+    for (ty = 0; ty < spr->mapSizeY; ty++) {
+      for (tx = 0; tx < spr->mapSizeX; tx++) {
+        GSpriteTile *ttile = (GSpriteTile *)GSpriteTile_new (spr->base.res, tx, ty, spr->tileSizeX, spr->tileSizeY, NULL, NULL);
+        target_tiles[GBOARD_TILE_OFFS (tx, ty, spr->mapSizeX)] = ttile;
+        GSpriteTile_set_id (ttile, GSpriteTile_get_id (GBOARD_TILE (spr, tx, ty)), 0x00000000);
+      }
+    }
+    // Commit the requested change in the copy
+    GSpriteBoard_commit_tile_change (spr, target_tiles, x, y);
+    // Store the target colors
+    for (ty = 0; ty < spr->mapSizeY; ty++) {
+      for (tx = 0; tx < spr->mapSizeX; tx++) {
+        GSpriteTile *ttile = target_tiles[GBOARD_TILE_OFFS(tx, ty, spr->mapSizeX)];
+        int target_id = GSpriteTile_get_id (ttile);
+        Uint32 target_color = target_id > -1 ? GSpriteCore_get_color (spr->cores[target_id]) : 0xFF000000;
+        GSpriteTile_set_target_id (GBOARD_TILE(spr, tx, ty), target_id, target_color);
+        GSprite_free ((GSprite *)ttile);
+      }
+    }
+    // Free the copy
+    SDL_free (target_tiles);
+
+    spr->selectedTileX = x;
+    spr->selectedTileY = y;
+    return;
   }
 
-  // Assign tile to current core
-  GSpriteTile_set_id (tile, spr->selectedCoreId, GSpriteCore_get_color (spr->cores[spr->selectedCoreId]));
-  GSpriteTile_set_id (tile2, spr->selectedCoreId, GSpriteCore_get_color (spr->cores[spr->selectedCoreId]));
+  // So we clicked twice on the same tile: we got confirmation and commit the change
+  GSpriteBoard_commit_tile_change (spr, spr->tiles, x, y);
+
   GAudio_play_sample (spr->base.res->audio, spr->base.res->wav_woosh);
 
   if (!spr->editing) {
@@ -380,7 +430,7 @@ static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, GSpr
         GSpriteTile_set_id (GBOARD_TILE (spr, x, y), -1, 0x00000000);
         GSpriteCore_get_opposite (spr->cores[tile_id], x, y, &x2, &y2);
         GSpriteTile_set_id (GBOARD_TILE(spr, x2, y2), -1, 0x00000000);
-        GSpriteBoard_check_core (spr, tile_id);
+        GSpriteBoard_check_core (spr, spr->tiles, tile_id);
       }
       
       GSpriteTile_set_id (tile, id, GSpriteCore_get_color (spr->cores[id]));
@@ -740,7 +790,7 @@ void GSpriteBoard_set_finished (GSpriteBoard *spr, int finished) {
       }
 
     // Fill all tiles connected to the core to find out size
-    size = GSpriteBoard_flood_fill (spr, sx, sy, id);
+    size = GSpriteBoard_flood_fill (spr, spr->tiles, sx, sy, id);
     if (size > max_size) max_size = size;
   }
 
@@ -762,7 +812,7 @@ void GSpriteBoard_set_finished (GSpriteBoard *spr, int finished) {
       }
 
     // Fill all tiles connected to the core to find out size
-    size = GSpriteBoard_flood_fill (spr, sx, sy, id);
+    size = GSpriteBoard_flood_fill (spr, spr->tiles, sx, sy, id);
 
     color = GSpriteCore_get_color (core);
     r = (color >> 16) & 0xFF;

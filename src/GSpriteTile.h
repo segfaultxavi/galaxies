@@ -20,6 +20,7 @@ void GSpriteTile_set_id (GSpriteTile *spr, int id, Uint32 color);
 int GSpriteTile_get_id (const GSpriteTile *spr);
 void GSpriteTile_set_flags (GSpriteTile *spr, int flags);
 int GSpriteTile_get_flags (const GSpriteTile *spr);
+void GSpriteTile_set_target_id (GSpriteTile *spr, int target_id, Uint32 target_color);
 
 #ifdef __cplusplus
 }
