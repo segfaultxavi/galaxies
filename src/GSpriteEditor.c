@@ -60,6 +60,21 @@ struct _GSpriteEditor {
 
 void GSpriteEditor_cores_changed (GSpriteEditor *spr);
 
+static void GSpriteEditor_update_core_buttons (GSpriteEditor *spr) {
+  int i;
+
+  for (i = 0; i < 4; i++) {
+    if (i == spr->selected_core_type) {
+      GSpriteButton_set_color (spr->core_type_button[i].button, 0xFFC0C000);
+      GSpriteCore_set_color (spr->core_type_button[i].core, 0xFFFFFF00);
+    } else {
+      GSpriteButton_set_color (spr->core_type_button[i].button, 0xFFC0C0C0);
+      GSpriteCore_set_color (spr->core_type_button[i].core, 0xFFC0C0C0);
+    }
+  }
+  GSpriteBoard_set_core_cursor (spr->board, spr->selected_core_type);
+}
+
 static int GSpriteEditor_help (void *userdata, int *destroyed) {
   GSpriteEditor *spr = userdata;
   SDL_Log ("Editor:Help");
@@ -95,6 +110,7 @@ static void GSpriteEditor_reset_yes (void *userdata) {
   GSpriteEditor *spr = userdata;
   SDL_Log ("Editor:Reset:Yes");
   GSpriteBoard_reset (spr->board);
+  GSpriteEditor_update_core_buttons (spr);
 }
 
 static int GSpriteEditor_reset (void *userdata, int *destroyed) {
@@ -122,6 +138,7 @@ static void GSpriteEditor_restart_yes (void *userdata) {
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
   GSpriteEditor_cores_changed (spr);
   GSpriteEditor_set_size_spr (spr);
+  GSpriteEditor_update_core_buttons (spr);
 }
 
 static int GSpriteEditor_restart(void *userdata, int *destroyed) {
@@ -164,6 +181,7 @@ static void GSpriteEditor_size_change_yes (void *userdata) {
   GSprite_add_child ((GSprite *)sc->spr, (GSprite *)sc->spr->board);
   GSpriteEditor_cores_changed (sc->spr);
   GSpriteEditor_set_size_spr (sc->spr);
+  GSpriteEditor_update_core_buttons (sc->spr);
 }
 
 static int GSpriteEditor_size_plus (void *userdata, int *destroyed) {
@@ -417,21 +435,6 @@ Uint32 GSpriteEditor_solver_timer (Uint32 interval, void *param) {
   SDL_PushEvent (&event);
 
   return interval;
-}
-
-static void GSpriteEditor_update_core_buttons (GSpriteEditor *spr) {
-  int i;
-
-  for (i = 0; i < 4; i++) {
-    if (i == spr->selected_core_type) {
-      GSpriteButton_set_color (spr->core_type_button[i].button, 0xFFC0C000);
-      GSpriteCore_set_color (spr->core_type_button[i].core, 0xFFFFFF00);
-    } else {
-      GSpriteButton_set_color (spr->core_type_button[i].button, 0xFFC0C0C0);
-      GSpriteCore_set_color (spr->core_type_button[i].core, 0xFFC0C0C0);
-    }
-  }
-  GSpriteBoard_set_core_cursor (spr->board, spr->selected_core_type);
 }
 
 static int GSpriteEditor_core_button_event (void *userdata, int *destroyed) {
