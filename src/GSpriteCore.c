@@ -91,6 +91,7 @@ GSprite *GSpriteCore_new (GResources *res, GSpriteCoreType type, float x, float 
   spr->base.w = radiusX;
   spr->base.h = radiusY;
   spr->type = type;
+  if (type == GCORE_TYPE_BLOCKER) color = 0xFF000000;
   if (color == 0) {
     if (id > -1) {
       r = rand () % 0x40;
