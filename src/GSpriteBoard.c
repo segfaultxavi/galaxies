@@ -738,7 +738,7 @@ int GSpriteBoard_get_map_size_x (GSpriteBoard *spr) {
 }
 
 int GSpriteBoard_get_map_size_y (GSpriteBoard *spr) {
-  return spr->mapSizeX;
+  return spr->mapSizeY;
 }
 
 int GSpriteBoard_is_empty (GSpriteBoard *spr) {
