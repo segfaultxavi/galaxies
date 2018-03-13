@@ -426,7 +426,7 @@ static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, GSpr
   ((GSprite *)spr->cores[id])->x = (int)(sx * spr->tileSizeX);
   ((GSprite *)spr->cores[id])->y = (int)(sy * spr->tileSizeY);
   GSpriteCore_set_type (spr->cores[id], type);
-  
+
   // Tiles under the core
   lenx = (int)sx != sx ? 1 : 2;
   leny = (int)sy != sy ? 1 : 2;
@@ -434,7 +434,7 @@ static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, GSpr
     for (y = (int)(sy - 0.5f); y < (int)(sy - 0.5f) + leny; y++) {
       GSpriteTile *tile = GBOARD_TILE (spr, x, y);
       int tile_id = GSpriteTile_get_id (tile);
-      
+
       if (tile_id != -1) {
         int x2, y2;
         GSpriteTile_set_id (GBOARD_TILE (spr, x, y), -1, 0x00000000);
@@ -442,7 +442,7 @@ static void GSpriteBoard_deploy_core(GSpriteBoard *spr, float sx, float sy, GSpr
         GSpriteTile_set_id (GBOARD_TILE(spr, x2, y2), -1, 0x00000000);
         GSpriteBoard_check_core (spr, spr->tiles, tile_id);
       }
-      
+
       GSpriteTile_set_id (tile, id, GSpriteCore_get_color (spr->cores[id]));
       GSpriteTile_set_flags (tile, GSpriteTile_get_flags (tile) | GTILE_FLAG_FIXED);
     }
@@ -664,7 +664,7 @@ char *GSpriteBoard_save (GSpriteBoard *spr, int includeTileColors) {
   char *code, *ptr;
   int code_len = 4 + spr->numCores * 2 + 1;
   int i;
-  
+
   if (includeTileColors)
     code_len += spr->mapSizeX * spr->mapSizeY;
 
