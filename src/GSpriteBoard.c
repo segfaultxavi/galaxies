@@ -460,8 +460,6 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   spr->base.x = (spr->base.res->game_height - spr->base.w) / 2;
   spr->base.y = (spr->base.res->game_height - spr->base.h) / 2;
   spr->tiles = SDL_malloc (mapSizeX * mapSizeY * sizeof (GSpriteTile *));
-  spr->currCoreCursor = NULL;
-  spr->currCoreCursorType = -1;
 
   spr->base.res->core_texture[GCORE_TYPE_2_FOLD] =
       GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, spr->base.res->font_icons_small, GICON_TWOFOLD);
@@ -508,6 +506,8 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
       ((GSprite *)spr->coreCursors[type])->visible = 0;
       GSprite_add_child ((GSprite *)spr, (GSprite *)spr->coreCursors[type]);
     }
+    spr->currCoreCursorType = GCORE_TYPE_2_FOLD;
+    spr->currCoreCursor = spr->coreCursors[GCORE_TYPE_2_FOLD];
   }
 
   GSpriteBoard_set_curr_core_id (spr, -1);
