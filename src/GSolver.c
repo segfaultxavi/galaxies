@@ -23,8 +23,8 @@ struct _GSolver {
  *   A core ID is a candidate for a tile if the opposite tile is not out-of-bounds or over another core.
  * Configuration: an array of tiles, with a core ID assigned to each tile.
  * Option: an array of tiles, with a core ID assigned to each tile, chosen from their candidates list.
- *   this must be further checked for correcteness to be a solution.
- * Solution: an Option with proven correcteness, this is, all tiles with the same core ID are connected.
+ *   this must be further checked for correctness to be a solution.
+ * Solution: an Option with proven correctness, this is, all tiles with the same core ID are connected.
  *
  * Algorithm:
  * 1. Build candidates list. If any tile has an empty list, this map has no solution.
