@@ -139,6 +139,10 @@ void GSpriteCore_get_corner (GSpriteCore *spr, int *x, int *y) {
 void GSpriteCore_get_opposite (GSpriteCore *spr, int x, int y, int *x2, int *y2) {
   int cx = (int)(spr->base.x * 2 / spr->base.w);
   int cy = (int)(spr->base.y * 2 / spr->base.h);
+  if (spr->type == GCORE_TYPE_BLOCKER) {
+    *x2 = *y2 = -1;
+    return;
+  }
   *x2 = cx - x - 1;
   *y2 = cy - y - 1;
 }
@@ -151,6 +155,7 @@ GSpriteCore *GSpriteCore_clone (GSpriteCore *spr) {
   clone->base.w = spr->base.w;
   clone->base.h = spr->base.h;
   clone->id = spr->id;
+  clone->type = spr->type;
   clone->callback = NULL;
   clone->board = NULL;
   return clone;
