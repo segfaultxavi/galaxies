@@ -13,6 +13,7 @@ typedef struct _GResources GResources;
 #include "GSprite.h"
 #include "GPrefs.h"
 #include "GAudio.h"
+#include "GSpriteCore.h"
 
 struct _GResources {
   // Owned by GGame
@@ -31,8 +32,7 @@ struct _GResources {
   GAudioMusic *ogg_music;
 
   // Owned by GSpriteBoard
-  SDL_Texture *core_texture;
-  SDL_Texture *core_highlight_texture;
+  SDL_Texture *core_texture[GCORE_NUM_TYPES];
 
   GPrefs preferences;
 };

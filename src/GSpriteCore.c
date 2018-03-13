@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include "GSprite.h"
 #include "GSpriteCore.h"
 #include "GResources.h"
@@ -27,17 +28,7 @@ static void GSpriteCore_render (GSpriteCore *spr, int offsx, int offsy) {
   dst.y = spr->base.y + offsy - spr->base.h / 2;
   dst.w = spr->base.w;
   dst.h = spr->base.h;
-  switch (spr->type) {
-    case GCORE_TYPE_2_FOLD:
-      tex = res->core_texture;
-      break;
-    case GCORE_TYPE_BLOCKER:
-      tex = res->core_highlight_texture;
-      break;
-    default:
-      tex = res->core_texture;
-      break;
-  }
+  tex = res->core_texture[spr->type];
   if (spr->board) {
     // This core is in a board, color is handled specially
     SDL_SetTextureColorMod (tex, (0x40 + (spr->color >> 16)) & 0xFF, (0x40 + (spr->color >> 8)) & 0xFF, (0x40 + (spr->color >> 0)) & 0xFF);
@@ -65,18 +56,26 @@ static int GSpriteCore_is_inside (GSprite *spr, int x, int y) {
   return (r2 < R2);
 }
 
-SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h) {
+SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h, TTF_Font *icon_font, const char *icon_text) {
   SDL_Surface *surf = GGraphics_circle (w, h, 0, (int)(GSPRITECORE_RADIUS * w / 2));
   SDL_Texture *tex;
-  tex = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
-  GGraphics_free_surface (surf);
-  return tex;
-}
 
-SDL_Texture *GSpriteCore_create_highlight_texture (GResources *res, int w, int h) {
-  int r = (int)(GSPRITECORE_RADIUS * w / 2);
-  SDL_Surface *surf = GGraphics_circle (w, h, (int)(r * 0.9f), (int)(r * 1.1f));
-  SDL_Texture *tex;
+
+  SDL_Surface *icon_surf;
+  SDL_Rect rect = { 0 };
+  SDL_Color col = { 0, 0, 0, 0xFF }; // Opaque black
+  icon_surf = TTF_RenderUTF8_Blended (icon_font, icon_text, col);
+  if (!icon_surf) {
+    SDL_Log ("TTF_RenderUTF8_Blended: %s", TTF_GetError ());
+  }
+  GGraphics_get_content_rect (icon_surf, &rect);
+  rect.x = (surf->w - rect.w) / 2 - rect.x;
+  rect.y = (surf->h - rect.h) / 2 - rect.y;
+  SDL_BlitSurface (icon_surf, NULL, surf, &rect);
+  SDL_FreeSurface (icon_surf);
+
+
+
   tex = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
   GGraphics_free_surface (surf);
   return tex;

@@ -1,14 +1,14 @@
 #ifndef __GSPRITE_TILE_H__
 #define __GSPRITE_TILE_H__
 
+typedef struct _GSpriteTile GSpriteTile;
+
 #include "GSprite.h"
 #include "GEvent.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef struct _GSpriteTile GSpriteTile;
 
 typedef int (*GSpriteTileCallback)(int x, int y, GEvent *event, void *userdata);
 

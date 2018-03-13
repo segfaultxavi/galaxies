@@ -8,6 +8,7 @@
 #include "GSpriteBoardGrid.h"
 #include "GSpriteCore.h"
 #include "GAudio.h"
+#include "GIcons.h"
 #include <string.h>
 
 struct _GSpriteBoard {
@@ -403,8 +404,8 @@ void GSpriteBoard_free (GSpriteBoard *spr) {
     SDL_free (spr->last_code);
   SDL_free (spr->tiles);
   SDL_free (spr->cores);
-  SDL_DestroyTexture (spr->base.res->core_texture);
-  SDL_DestroyTexture (spr->base.res->core_highlight_texture);
+  SDL_DestroyTexture (spr->base.res->core_texture[GCORE_TYPE_2_FOLD]);
+  SDL_DestroyTexture (spr->base.res->core_texture[GCORE_TYPE_BLOCKER]);
 }
 
 GSprite *GSpriteBoard_new (GResources *res, int editing) {
@@ -456,8 +457,10 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   spr->tiles = SDL_malloc (mapSizeX * mapSizeY * sizeof (GSpriteTile *));
   spr->coreCursor = NULL;
 
-  spr->base.res->core_texture = GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY);
-  spr->base.res->core_highlight_texture = GSpriteCore_create_highlight_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY);
+  spr->base.res->core_texture[GCORE_TYPE_2_FOLD] =
+      GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, spr->base.res->font_icons_small, GICON_TWOFOLD);
+  spr->base.res->core_texture[GCORE_TYPE_BLOCKER] =
+      GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, spr->base.res->font_icons_small, GICON_BLOCKER);
 
   for (y = 0; y < mapSizeY; y++) {
     for (x = 0; x < mapSizeX; x++) {

@@ -27,6 +27,9 @@ extern "C" {
 #define GICON_HELP "\xef\x8c\x95" // U+F315
 #define GICON_WARNING "\xef\x8c\x96" // U+F316
 #define GICON_PALMTREE "\xef\x8e\x92" // U+F392
+#define GICON_TWOFOLD "\xef\x8c\x98" // U+F318
+#define GICON_FOURFOLD "\xef\x8c\xa2" // U+F322
+#define GICON_BLOCKER "\xef\x8c\x94" // U+F314
 
 #ifdef __cplusplus
 }

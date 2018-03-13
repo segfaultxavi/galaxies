@@ -13,14 +13,14 @@ extern "C" {
 #endif
 
 typedef enum _GSpriteCoreType {
+  GCORE_TYPE_2_FOLD = 0,
   GCORE_TYPE_BLOCKER = 3,
-  GCORE_TYPE_2_FOLD = 0
+  GCORE_NUM_TYPES
 } GSpriteCoreType;
 
 typedef int (*GSpriteCoreCallback)(int id, GEvent *event, void *userdata, int *destroyed);
 
-SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h);
-SDL_Texture *GSpriteCore_create_highlight_texture (GResources *res, int w, int h);
+SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h, TTF_Font *icon_font, const char *icon_text);
 
 GSprite *GSpriteCore_new (GResources *res, GSpriteCoreType type, float x, float y, int id, Uint32 color,
     int radiusX, int radiusY, GSpriteCoreCallback callback, void *callback_userdata, GSpriteBoard *board);
