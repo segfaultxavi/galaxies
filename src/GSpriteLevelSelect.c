@@ -23,8 +23,15 @@ struct _GSpriteLevelSelect {
 };
 
 static const char *initial_level_descriptions[] = {
+  "1ddbcc",
+  "1dddccAAEE",
   "1dddccBADE",
-  "1ffeeedcdghg",
+  "1edbdc",
+  "1edfdcEACEGBAD",
+  "1eebdd",
+  "1eefddGBFGAFBA",
+  "1eecdbdf",
+  "1fffeeHGDGBCFC",
   "1gggfdcceahgjjcj",
   "1hhmeebfakekgckbkimgmmhmikcm",
   "1hhkggkakeljilceecafaldm",
