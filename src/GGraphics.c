@@ -107,3 +107,48 @@ void GGraphics_add_glow (SDL_Surface **org_surf, int strength, Uint32 color) {
   SDL_UnlockSurface (surf);
   *org_surf = surf;
 }
+
+#define PIXEL(x,y) ptr[(y) * surf->pitch + (x) * 4 + 3]
+
+// Read alpha values from an RGBA surface and return the rectangle bounding
+// the actual content, that is, the inner area which is not fully transparent.
+void GGraphics_get_content_rect (SDL_Surface *surf, SDL_Rect *content_rect) {
+  int x, y;
+  const unsigned char *ptr = surf->pixels;
+
+  SDL_LockSurface (surf);
+
+  for (x = 0; x < surf->w; x++) {
+    for (y = 0; y < surf->h; y++) {
+      if (PIXEL(x, y) != 0) break;
+    }
+    if (PIXEL(x, y) != 0) break;
+  }
+  content_rect->x = x;
+
+  for (x = surf->w - 1; x >= 0; x--) {
+    for (y = 0; y < surf->h; y++) {
+      if (PIXEL(x, y) != 0) break;
+    }
+    if (PIXEL(x, y) != 0) break;
+  }
+  content_rect->w = x - content_rect->x;
+
+  for (y = 0; y < surf->h; y++) {
+    for (x = 0; x < surf->w; x++) {
+      if (PIXEL(x, y) != 0) break;
+    }
+    if (PIXEL(x, y) != 0) break;
+  }
+  content_rect->y = y;
+
+  for (y = surf->h - 1; y >= 0; y--) {
+    for (x = 0; x < surf->w; x++) {
+      if (PIXEL(x, y) != 0) break;
+    }
+    if (PIXEL(x, y) != 0) break;
+  }
+  content_rect->h = y - content_rect->y;
+
+  SDL_UnlockSurface (surf);
+}
