@@ -22,7 +22,9 @@ struct _GSpriteBoard {
   int selectedCoreId;
   int selectedTileX, selectedTileY;
   int editing;
-  GSpriteCore *coreCursor;
+  GSpriteCore *currCoreCursor;
+  int currCoreCursorType;
+  GSpriteCore *coreCursors[GCORE_NUM_TYPES];
   char *last_code;
   int finished;
 };
@@ -126,12 +128,12 @@ static void GSpriteBoard_add_core (GSpriteBoard *spr, float cx, float cy, GSprit
   spr->numCores++;
   spr->cores = SDL_realloc (spr->cores, spr->numCores * sizeof (GSpriteCore *));
 
-  spr->cores[id] = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, id, 0,
+  spr->cores[id] = (GSpriteCore *)GSpriteCore_new (spr->base.res, type, 0, 0, id, 0,
     spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr, spr);
   GSpriteBoard_deploy_core (spr, cx, cy, type, id);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[id]);
   GSpriteBoard_set_curr_core_id (spr, id);
-  ((GSprite*)spr->coreCursor)->visible = 0;
+  ((GSprite*)spr->currCoreCursor)->visible = 0;
 
   GSpriteEditor_cores_changed ((GSpriteEditor *)spr->base.parent);
 }
@@ -301,7 +303,7 @@ static void GSpriteBoard_handle_tile_click (GSpriteBoard *spr, int x, int y, int
       return;
     }
     // Add new core
-    GSpriteBoard_add_core (spr, cx, cy, GCORE_TYPE_2_FOLD);
+    GSpriteBoard_add_core (spr, cx, cy, spr->currCoreCursorType);
     return;
   } else if (spr->selectedCoreId == tile_id) {
     // Clicked on tile already owned: do nothing
@@ -379,9 +381,9 @@ static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata)
         // Core placement mode
         float cx, cy;
         GSpriteBoard_get_core_coords (spr, x, y, event->x, event->y, &cx, &cy);
-        ((GSprite*)spr->coreCursor)->x = (int)(cx * spr->tileSizeX);
-        ((GSprite*)spr->coreCursor)->y = (int)(cy * spr->tileSizeY);
-        ((GSprite*)spr->coreCursor)->visible = GSpriteBoard_valid_core_position (spr, cx, cy);
+        ((GSprite*)spr->currCoreCursor)->x = (int)(cx * spr->tileSizeX);
+        ((GSprite*)spr->currCoreCursor)->y = (int)(cy * spr->tileSizeY);
+        ((GSprite*)spr->currCoreCursor)->visible = GSpriteBoard_valid_core_position (spr, cx, cy);
       }
       break;
     case GEVENT_TYPE_SPRITE_IN:
@@ -455,7 +457,8 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   spr->base.x = (spr->base.res->game_height - spr->base.w) / 2;
   spr->base.y = (spr->base.res->game_height - spr->base.h) / 2;
   spr->tiles = SDL_malloc (mapSizeX * mapSizeY * sizeof (GSpriteTile *));
-  spr->coreCursor = NULL;
+  spr->currCoreCursor = NULL;
+  spr->currCoreCursorType = -1;
 
   spr->base.res->core_texture[GCORE_TYPE_2_FOLD] =
       GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, spr->base.res->font_icons_small, GICON_TWOFOLD);
@@ -476,7 +479,7 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   spr->numCores = numInitialCores;
   spr->cores = SDL_malloc (spr->numCores * sizeof (GSpriteCore *));
   for (x = 0; x < numInitialCores; x++) {
-    spr->cores[x] = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, x, 0,
+    spr->cores[x] = (GSpriteCore *)GSpriteCore_new (spr->base.res, (GSpriteCoreType)initialCores[x * 3 + 2], 0, 0, x, 0,
       spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr, spr);
     GSpriteBoard_deploy_core (spr, initialCores[x * 3 + 0], initialCores[x * 3 + 1], (int)initialCores[x * 3 + 2], x);
     GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[x]);
@@ -496,12 +499,22 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   }
 
   if (spr->editing) {
-    spr->coreCursor = (GSpriteCore *)GSpriteCore_new (spr->base.res, GCORE_TYPE_2_FOLD, 0, 0, -1, 0, spr->tileSizeX, spr->tileSizeY, NULL, NULL, spr);
-    ((GSprite *)spr->coreCursor)->visible = 0;
-    GSprite_add_child ((GSprite *)spr, (GSprite *)spr->coreCursor);
+    int type;
+    for (type = 0; type < GCORE_NUM_TYPES; type++) {
+      spr->coreCursors[type] = (GSpriteCore *)GSpriteCore_new (spr->base.res, type, 0, 0, -1, 0, spr->tileSizeX, spr->tileSizeY, NULL, NULL, spr);
+      ((GSprite *)spr->coreCursors[type])->visible = 0;
+      GSprite_add_child ((GSprite *)spr, (GSprite *)spr->coreCursors[type]);
+    }
   }
 
   GSpriteBoard_set_curr_core_id (spr, -1);
+}
+
+void GSpriteBoard_set_core_cursor (GSpriteBoard *spr, GSpriteCoreType type) {
+  if (spr->currCoreCursor != NULL)
+    ((GSprite *)spr->currCoreCursor)->visible = 0;
+  spr->currCoreCursor = spr->coreCursors[type];
+  spr->currCoreCursorType = type;
 }
 
 static int GSpriteBoard_a2i (char a) {

@@ -431,6 +431,7 @@ static void GSpriteEditor_update_core_buttons (GSpriteEditor *spr) {
       GSpriteCore_set_color (spr->core_type_button[i].core, 0xFFC0C0C0);
     }
   }
+  GSpriteBoard_set_core_cursor (spr->board, spr->selected_core_type);
 }
 
 static int GSpriteEditor_core_button_event (void *userdata, int *destroyed) {
@@ -497,7 +498,6 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
     GSprite_add_child (margin, (GSprite *)spr->core_type_button[i].button);
   }
   spr->selected_core_type = 0;
-  GSpriteEditor_update_core_buttons (spr);
 
   spr->progress_spr = (GSpriteProgress *)GSpriteProgress_new (res, 0, 7 * line, mwidth, line / 2,
       "Finding solutions", res->font_mono, 0xFFFFFFFF, 0xFFFFFFFF, 0.f);
@@ -526,6 +526,8 @@ GSprite *GSpriteEditor_new (GResources *res, GSprite *main_menu, const char *des
   else
     GSpriteBoard_load (spr->board, desc);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->board);
+
+  GSpriteEditor_update_core_buttons (spr);
 
   GSpriteEditor_set_size_spr (spr);
 

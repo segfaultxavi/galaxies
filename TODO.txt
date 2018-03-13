@@ -1,7 +1,5 @@
 FEATURES
-- Editor: Buttons to select core type before deploying it
 - Core type Blocker should be unselectable (but removable in the editor)
-- Add icon to cores
 - Add "Test" button to the editor (Or "Editor" button to the Level Selector)
 - Game collects stats (completion time)
 - Game sends stats (Google Play?)

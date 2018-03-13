@@ -31,6 +31,7 @@ void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles);
 void GSpriteBoard_set_finished (GSpriteBoard *spr, int finished);
 void GSpriteBoard_size_from_desc (const char *desc, int *size_x, int *size_y);
 int GSpriteBoard_check_completion (GSpriteBoard *spr);
+void GSpriteBoard_set_core_cursor (GSpriteBoard *spr, GSpriteCoreType type);
 
 #ifdef __cplusplus
 }

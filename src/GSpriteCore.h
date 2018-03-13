@@ -3,6 +3,12 @@
 
 typedef struct _GSpriteCore GSpriteCore;
 
+typedef enum _GSpriteCoreType {
+  GCORE_TYPE_2_FOLD = 0,
+  GCORE_TYPE_BLOCKER = 3,
+  GCORE_NUM_TYPES
+} GSpriteCoreType;
+
 #include "GSprite.h"
 #include "GEvent.h"
 #include "GResources.h"
@@ -11,12 +17,6 @@ typedef struct _GSpriteCore GSpriteCore;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef enum _GSpriteCoreType {
-  GCORE_TYPE_2_FOLD = 0,
-  GCORE_TYPE_BLOCKER = 3,
-  GCORE_NUM_TYPES
-} GSpriteCoreType;
 
 typedef int (*GSpriteCoreCallback)(int id, GEvent *event, void *userdata, int *destroyed);
 
