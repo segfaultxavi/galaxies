@@ -104,6 +104,8 @@ static int GSpriteBoard_core_event (int id, GEvent *event, void *userdata, int *
     case GEVENT_TYPE_SPRITE_ACTIVATE:
       res = 1;
       if (spr->finished) break;
+      // Blocker cores cannot even be selected
+      if (GSpriteCore_get_type (spr->cores[id]) == GCORE_TYPE_BLOCKER) break;
       if (spr->selectedCoreId != id)
         GSpriteBoard_set_curr_core_id (spr, id);
       else
@@ -132,6 +134,7 @@ static void GSpriteBoard_add_core (GSpriteBoard *spr, float cx, float cy, GSprit
     spr->tileSizeX, spr->tileSizeY, GSpriteBoard_core_event, spr, spr);
   GSpriteBoard_deploy_core (spr, cx, cy, type, id);
   GSprite_add_child ((GSprite *)spr, (GSprite *)spr->cores[id]);
+  if (type == GCORE_TYPE_BLOCKER) id = -1;
   GSpriteBoard_set_curr_core_id (spr, id);
   ((GSprite*)spr->currCoreCursor)->visible = 0;
 
