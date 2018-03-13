@@ -635,7 +635,7 @@ int GSpriteBoard_load (GSpriteBoard *spr, const char *desc) {
   }
 
   // Build board: Needs to rebuild whole board in case of size change
-  GSpriteBoard_start (spr, size_x, size_x, num_cores, initial_cores, initial_tiles);
+  GSpriteBoard_start (spr, size_x, size_y, num_cores, initial_cores, initial_tiles);
   SDL_free (initial_cores);
   if (initial_tiles)
     SDL_free (initial_tiles);
