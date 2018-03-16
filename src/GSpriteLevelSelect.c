@@ -160,8 +160,8 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
   int episode_start_level = 0;
   int num_levels = sizeof (initial_level_descriptions) / sizeof (initial_level_descriptions[0]);
   int line = res->game_height / 8;
-  int bstride = res->game_width / GLEVEL_BUTTONS_PER_LINE;
-  int bmargin = bstride / 10;
+  int bmargin = res->game_width / 100;
+  int bstride = (res->game_width - bmargin) / GLEVEL_BUTTONS_PER_LINE;
   int bsize = bstride - bmargin;
   spr->base.w = spr->base.h = -1;
   spr->main_menu = main_menu;
@@ -192,10 +192,10 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
 
   // Episode change buttons
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new_with_text_and_icon (res, 0, 0, -1, -1, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
+    GSpriteButton_new_with_text_and_icon (res, bmargin, bmargin, line - bmargin, line - bmargin * 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
       NULL, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteLevel_prev_episode, spr, res->font_icons_small, GICON_LEFT));
   GSprite_add_child ((GSprite *)spr,
-    GSpriteButton_new_with_text_and_icon (res, line, 0, -1, -1, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
+    GSpriteButton_new_with_text_and_icon (res, bmargin + line, bmargin, line - bmargin, line - bmargin * 2, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
       NULL, 0xFFFFFFFF, 0xFF000000, NULL, GSpriteLevel_next_episode, spr, res->font_icons_small, GICON_RIGHT));
 
   spr->buttons = SDL_malloc (sizeof (GSpriteLevelSelectButtonData) * num_levels);
@@ -214,7 +214,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
       episode_start_level = l;
 
       GSprite_add_child (spr->episode_sprs[e],
-        GSpriteLabel_new (res, line * 2, 0, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, res->font_med,
+        GSpriteLabel_new (res, bmargin + line * 2, bmargin, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN, res->font_med,
           0xFF000000, 0xFFFFFFFF, initial_level_descriptions[l].title));
     }
 
@@ -224,7 +224,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
     spr->buttons[l].level_spr = spr;
     spr->buttons[l].level = l;
     spr->buttons[l].button_spr = (GSpriteButton *)
-      GSpriteButton_new_with_text (res, x * bstride + bmargin / 2, 1 * line + y * bstride, bsize, bsize, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
+      GSpriteButton_new_with_text (res, x * bstride + bmargin, 1 * line + y * bstride, bsize, bsize, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
         res->font_med, GSpriteLevelSelect_get_button_color (&spr->buttons[l]), 0xFF000000, text, GSpriteLevelSelect_selection, &spr->buttons[l]);
     GSprite_add_child (spr->episode_sprs[e], (GSprite *)spr->buttons[l].button_spr);
 
