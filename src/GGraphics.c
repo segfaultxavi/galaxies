@@ -122,7 +122,7 @@ void GGraphics_get_content_rect (SDL_Surface *surf, SDL_Rect *content_rect) {
     for (y = 0; y < surf->h; y++) {
       if (PIXEL(x, y) != 0) break;
     }
-    if (PIXEL(x, y) != 0) break;
+    if (y < surf->h) break;
   }
   content_rect->x = x;
 
@@ -130,7 +130,7 @@ void GGraphics_get_content_rect (SDL_Surface *surf, SDL_Rect *content_rect) {
     for (y = 0; y < surf->h; y++) {
       if (PIXEL(x, y) != 0) break;
     }
-    if (PIXEL(x, y) != 0) break;
+    if (y < surf->h) break;
   }
   content_rect->w = x - content_rect->x;
 
@@ -138,7 +138,7 @@ void GGraphics_get_content_rect (SDL_Surface *surf, SDL_Rect *content_rect) {
     for (x = 0; x < surf->w; x++) {
       if (PIXEL(x, y) != 0) break;
     }
-    if (PIXEL(x, y) != 0) break;
+    if (x < surf->w) break;
   }
   content_rect->y = y;
 
@@ -146,7 +146,7 @@ void GGraphics_get_content_rect (SDL_Surface *surf, SDL_Rect *content_rect) {
     for (x = 0; x < surf->w; x++) {
       if (PIXEL(x, y) != 0) break;
     }
-    if (PIXEL(x, y) != 0) break;
+    if (x < surf->w) break;
   }
   content_rect->h = y - content_rect->y;
 
