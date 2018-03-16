@@ -10,6 +10,8 @@
 
 #define GLEVEL_BUTTONS_PER_LINE 6
 
+typedef struct _GSpriteLevelSelect GSpriteLevelSelect;
+
 typedef struct _GSpriteLevelSelectButtonData {
   GSpriteLevelSelect *level_spr;
   GSpriteButton *button_spr;
