@@ -45,7 +45,7 @@ static GSpriteLevelDescription initial_level_descriptions[] = {
   { NULL, "1fffeeHGDGBCFC" },
   { NULL, "1eefdbdfGDAAAG" },
   { NULL, "1ffgcegeacHGFCAH" },
-  { "EPISODE 1", "1gggfdcceahgjjcj" },
+  { "EPISODE 1", "1gggfdcchgcjEAJJ" },
   { NULL, "1hhmeebfakekgckbkimgmmhmikcm" },
   { NULL, "1hhkggkakeljilceecafaldm" },
   { NULL, "1hhkhgcgillgkecmajabjafc" },
