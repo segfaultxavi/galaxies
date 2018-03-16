@@ -17,6 +17,7 @@ typedef struct _GSpriteLevelSelectButtonData {
   GSpriteLevelSelect *level_spr;
   GSpriteButton *button_spr;
   int level;
+  int episode;
 } GSpriteLevelSelectButtonData;
 
 struct _GSpriteLevelSelect {
@@ -79,6 +80,15 @@ static Uint32 GSpriteLevelSelect_get_button_color (GSpriteLevelSelectButtonData 
   return color;
 }
 
+static void GSpriteLevelSelect_show_episode (GSpriteLevelSelect *spr) {
+  int e;
+
+  for (e = 0; e < spr->num_episodes; e++) {
+    spr->episode_sprs[e]->visible = 0;
+  }
+  spr->episode_sprs[spr->curr_episode]->visible = 1;
+}
+
 void GSpriteLevelSelect_update_level_status (void *userdata, GSpriteLevelSelectLevelStatus status, char *desc) {
   GSpriteLevelSelectButtonData *button = userdata;
   GSpriteLevelSelect *spr = button->level_spr;
@@ -91,6 +101,8 @@ void GSpriteLevelSelect_update_level_status (void *userdata, GSpriteLevelSelectL
     prefs->level_desc[button->level] = desc;
   }
   GSpriteButton_set_color (button->button_spr, GSpriteLevelSelect_get_button_color (button));
+  spr->curr_episode = button->episode;
+  GSpriteLevelSelect_show_episode (spr);
 }
 
 static int GSpriteLevelSelect_back (void *userdata, int *destroyed) {
@@ -133,18 +145,16 @@ static int GSpriteLevelSelect_event (GSpriteLevelSelect *spr, GEvent *event, int
 static int GSpriteLevel_prev_episode (void *userdata, int *destroyed) {
   GSpriteLevelSelect *spr = userdata;
   if (spr->curr_episode == 0) return 1;
-  spr->episode_sprs[spr->curr_episode]->visible = 0;
   spr->curr_episode--;
-  spr->episode_sprs[spr->curr_episode]->visible = 1;
+  GSpriteLevelSelect_show_episode (spr);
   return 1;
 }
 
 static int GSpriteLevel_next_episode (void *userdata, int *destroyed) {
   GSpriteLevelSelect *spr = userdata;
   if (spr->curr_episode == spr->num_episodes - 1) return 1;
-  spr->episode_sprs[spr->curr_episode]->visible = 0;
   spr->curr_episode++;
-  spr->episode_sprs[spr->curr_episode]->visible = 1;
+  GSpriteLevelSelect_show_episode (spr);
   return 1;
 }
 
@@ -223,6 +233,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
     sprintf (text, "%d", l + 1);
     spr->buttons[l].level_spr = spr;
     spr->buttons[l].level = l;
+    spr->buttons[l].episode = e;
     spr->buttons[l].button_spr = (GSpriteButton *)
       GSpriteButton_new_with_text (res, x * bstride + bmargin, 1 * line + y * bstride, bsize, bsize, GSPRITE_JUSTIFY_BEGIN, GSPRITE_JUSTIFY_BEGIN,
         res->font_med, GSpriteLevelSelect_get_button_color (&spr->buttons[l]), 0xFF000000, text, GSpriteLevelSelect_selection, &spr->buttons[l]);
