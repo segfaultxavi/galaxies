@@ -60,7 +60,6 @@ SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h, TTF_Font
   SDL_Surface *surf = GGraphics_circle (w, h, 0, (int)(GSPRITECORE_RADIUS * w / 2));
   SDL_Texture *tex;
 
-
   SDL_Surface *icon_surf;
   SDL_Rect rect = { 0 };
   SDL_Color col = { 0, 0, 0, 0xFF }; // Opaque black
@@ -73,8 +72,6 @@ SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h, TTF_Font
   rect.y = (surf->h - rect.h) / 2 - rect.y;
   SDL_BlitSurface (icon_surf, NULL, surf, &rect);
   SDL_FreeSurface (icon_surf);
-
-
 
   tex = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
   GGraphics_free_surface (surf);
