@@ -462,9 +462,9 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
   spr->tiles = SDL_malloc (mapSizeX * mapSizeY * sizeof (GSpriteTile *));
 
   spr->base.res->core_texture[GCORE_TYPE_2_FOLD] =
-      GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, spr->base.res->font_icons_small, GICON_TWOFOLD);
+      GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, "core2.svg");
   spr->base.res->core_texture[GCORE_TYPE_BLOCKER] =
-      GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, spr->base.res->font_icons_small, GICON_BLOCKER);
+      GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, "core0.svg");
 
   for (y = 0; y < mapSizeY; y++) {
     for (x = 0; x < mapSizeX; x++) {

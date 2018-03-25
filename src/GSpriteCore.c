@@ -1,10 +1,11 @@
 #include <SDL.h>
-#include <SDL_ttf.h>
+#include <SDL_image.h>
 #include "GSprite.h"
 #include "GSpriteCore.h"
 #include "GResources.h"
 #include "GGraphics.h"
 #include "GSpriteBoard.h"
+#include "GGame.h"
 #include <stdlib.h>
 
 struct _GSpriteCore {
@@ -56,21 +57,22 @@ static int GSpriteCore_is_inside (GSprite *spr, int x, int y) {
   return (r2 < R2);
 }
 
-SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h, TTF_Font *icon_font, const char *icon_text) {
+SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h, const char *icon_filename) {
   SDL_Surface *surf = GGraphics_circle (w, h, 0, (int)(GSPRITECORE_RADIUS * w / 2));
   SDL_Texture *tex;
 
-  SDL_Surface *icon_surf;
   SDL_Rect rect = { 0 };
-  SDL_Color col = { 0, 0, 0, 0xFF }; // Opaque black
-  icon_surf = TTF_RenderUTF8_Blended (icon_font, icon_text, col);
+  SDL_RWops *rwops = GGame_openAsset (res, icon_filename);
+  SDL_Surface *icon_surf = IMG_Load_RW (rwops, 1);
   if (!icon_surf) {
-    SDL_Log ("TTF_RenderUTF8_Blended: %s", TTF_GetError ());
+    SDL_Log ("IMG_Load_RW: %s", IMG_GetError ());
   }
   GGraphics_get_content_rect (icon_surf, &rect);
-  rect.x = (surf->w - rect.w) / 2 - rect.x;
-  rect.y = (surf->h - rect.h) / 2 - rect.y;
-  SDL_BlitSurface (icon_surf, NULL, surf, &rect);
+  rect.w = GSPRITECORE_RADIUS * w;
+  rect.h = GSPRITECORE_RADIUS * w * icon_surf->h / icon_surf->w;
+  rect.x = (surf->w - rect.w) / 2;
+  rect.y = (surf->h - rect.h) / 2;
+  SDL_BlitScaled (icon_surf, NULL, surf, &rect);
   SDL_FreeSurface (icon_surf);
 
   tex = SDL_CreateTextureFromSurface (res->sdl_renderer, surf);
