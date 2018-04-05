@@ -787,7 +787,7 @@ void GSpriteBoard_set_tiles (GSpriteBoard *spr, char *tiles) {
 }
 
 void GSpriteBoard_set_finished (GSpriteBoard *spr, int finished) {
-  int id, x, y, max_size = 0;
+  int id, x, y, max_size = 1;
 
   spr->selectedCoreId = -1;
   spr->finished = finished;

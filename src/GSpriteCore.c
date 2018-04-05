@@ -66,6 +66,7 @@ SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h, const ch
   SDL_Surface *icon_surf = IMG_Load_RW (rwops, 1);
   if (!icon_surf) {
     SDL_Log ("IMG_Load_RW: %s", IMG_GetError ());
+    return NULL;
   }
   GGraphics_get_content_rect (icon_surf, &rect);
   rect.w = GSPRITECORE_RADIUS * w;
