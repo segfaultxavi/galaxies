@@ -60,7 +60,6 @@ GSprite *GSpriteLabel_new_multiline (GResources *res, int x, int y, GSpriteJusti
   spr = GSpriteNull_new (res, 0, 0);
   spr->w = spr->h = 0;
 
-  strcpy (split_text, text);
   ptr = strtok (split_text, "\n");
   while (ptr != NULL) {
     GSprite *line = GSpriteLabel_new (res, x, y, justify_hor, justify_ver, font, text_color, glow_color, ptr);

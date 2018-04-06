@@ -230,7 +230,7 @@ GSprite *GSpriteLevelSelect_new (GResources *res, GSprite *main_menu) {
 
     x = (l - episode_start_level) % GLEVEL_BUTTONS_PER_LINE;
     y = (l - episode_start_level) / GLEVEL_BUTTONS_PER_LINE;
-    sprintf (text, "%d", l + 1);
+    snprintf (text, sizeof (text), "%d", l + 1);
     spr->buttons[l].level_spr = spr;
     spr->buttons[l].level = l;
     spr->buttons[l].episode = e;
