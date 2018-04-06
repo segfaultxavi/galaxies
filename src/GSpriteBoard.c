@@ -375,7 +375,6 @@ static void GSpriteBoard_handle_tile_click (GSpriteBoard *spr, int x, int y, int
 static int GSpriteBoard_tile_event (int x, int y, GEvent *event, void *userdata) {
   int res = 0;
   GSpriteBoard *spr = userdata;
-  GSpriteTile *tile = GBOARD_TILE (spr, x, y);
   switch (event->type) {
     case GEVENT_TYPE_MOVE:
       res = 1;

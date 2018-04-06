@@ -82,10 +82,12 @@ int GSprite_event (GSprite *spr, GEvent *event, int *destroyed) {
 // to make comparisons.
 GSprite *GSprite_hierarchical_event (GSprite *parent, GEvent *event, int *destroyed) {
   GSprite *ptr = parent->children, *ptr_prev = NULL;
-  int oldx = parent->x, oldy = parent->y;
+  int oldx, oldy;
 
   if (!parent || !parent->visible)
     return NULL;
+  oldx = parent->x;
+  oldy = parent->y;
   if (event->x > GEVENT_POSITION_NONE && !GSprite_is_inside (parent, event->x, event->y))
     return NULL;
   event->x -= oldx;
@@ -135,6 +137,8 @@ void GSprite_justify (GSprite *spr, int x, int y, GSpriteJustify justify_hor, GS
     case GSPRITE_JUSTIFY_END:
       spr->x = x - spr->w;
       break;
+    default:
+      break;
   }
   switch (justify_ver) {
     case GSPRITE_JUSTIFY_BEGIN:
@@ -145,6 +149,8 @@ void GSprite_justify (GSprite *spr, int x, int y, GSpriteJustify justify_hor, GS
       break;
     case GSPRITE_JUSTIFY_END:
       spr->y = y - spr->h;
+      break;
+    default:
       break;
   }
 }

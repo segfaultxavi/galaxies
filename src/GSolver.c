@@ -167,7 +167,6 @@ int GSolver_set_candidate (GSolver *solver, int x, int y, int c) {
 }
 
 static int GSolver_next_configuration (GSolver *solver) {
-  int repeat = 0;
   int curr_x = solver->map_size_x - 1;
   int curr_y = solver->map_size_y - 1;
 
