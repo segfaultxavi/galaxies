@@ -409,6 +409,9 @@ void GSpriteBoard_free (GSpriteBoard *spr) {
   SDL_free (spr->tiles);
   SDL_free (spr->cores);
   SDL_DestroyTexture (spr->base.res->core_texture[GCORE_TYPE_2_FOLD]);
+  SDL_DestroyTexture (spr->base.res->core_texture[GCORE_TYPE_3_FOLD]);
+  SDL_DestroyTexture (spr->base.res->core_texture[GCORE_TYPE_4_FOLD]);
+  SDL_DestroyTexture (spr->base.res->core_texture[GCORE_TYPE_6_FOLD]);
   SDL_DestroyTexture (spr->base.res->core_texture[GCORE_TYPE_BLOCKER]);
 }
 
@@ -462,6 +465,12 @@ void GSpriteBoard_start (GSpriteBoard *spr, int mapSizeX, int mapSizeY, int numI
 
   spr->base.res->core_texture[GCORE_TYPE_2_FOLD] =
       GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, "core2.svg");
+  spr->base.res->core_texture[GCORE_TYPE_3_FOLD] =
+      GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, "core3.svg");
+  spr->base.res->core_texture[GCORE_TYPE_4_FOLD] =
+      GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, "core4.svg");
+  spr->base.res->core_texture[GCORE_TYPE_6_FOLD] =
+      GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, "core6.svg");
   spr->base.res->core_texture[GCORE_TYPE_BLOCKER] =
       GSpriteCore_create_texture (spr->base.res, spr->tileSizeX, spr->tileSizeY, "core0.svg");
 

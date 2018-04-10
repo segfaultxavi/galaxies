@@ -5,7 +5,10 @@ typedef struct _GSpriteCore GSpriteCore;
 
 typedef enum _GSpriteCoreType {
   GCORE_TYPE_2_FOLD = 0,
+  GCORE_TYPE_3_FOLD = 1,
+  GCORE_TYPE_4_FOLD = 2,
   GCORE_TYPE_BLOCKER = 3,
+  GCORE_TYPE_6_FOLD = 4,
   GCORE_NUM_TYPES
 } GSpriteCoreType;
 
