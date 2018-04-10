@@ -69,8 +69,8 @@ SDL_Texture *GSpriteCore_create_texture (GResources *res, int w, int h, const ch
     return NULL;
   }
   GGraphics_get_content_rect (icon_surf, &rect);
-  rect.w = GSPRITECORE_RADIUS * w;
-  rect.h = GSPRITECORE_RADIUS * w * icon_surf->h / icon_surf->w;
+  rect.w = GSPRITECORE_RADIUS * w * 3 / 4;
+  rect.h = GSPRITECORE_RADIUS * w * 3 / 4 * icon_surf->h / icon_surf->w;
   rect.x = (surf->w - rect.w) / 2;
   rect.y = (surf->h - rect.h) / 2;
   SDL_BlitScaled (icon_surf, NULL, surf, &rect);
